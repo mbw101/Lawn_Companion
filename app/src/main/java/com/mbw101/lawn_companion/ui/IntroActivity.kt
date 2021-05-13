@@ -3,11 +3,12 @@ package com.mbw101.lawn_companion.ui
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.Button
-import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
-import androidx.viewpager.widget.ViewPager
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayout
 import com.mbw101.lawn_companion.R
-import com.mbw101.lawn_companion.databinding.ActivityFullscreenBinding
 import com.mbw101.lawn_companion.utils.ApplicationPrefs
 
 /**
@@ -16,15 +17,14 @@ Created by Malcolm Wright
 Date: May 13th, 2021
 */
 
-class FullscreenActivity : AppCompatActivity() {
+private const val NUM_SCREENS = 4
 
-    private lateinit var binding: ActivityFullscreenBinding
-    private lateinit var introTitleTextView: TextView
-    private lateinit var mainIntroTextView: TextView
+class IntroActivity : FragmentActivity() {
+
     private lateinit var nextButton: Button
-    private lateinit var getStartedButton: Button
-    private var introViewPagerAdapter: IntroViewPagerAdapter? = null
-    private var viewPager: ViewPager? = null
+
+    private lateinit var viewPager: ViewPager2
+    private lateinit var tabLayout: TabLayout
 
     private lateinit var preferenceManager: ApplicationPrefs
 
@@ -32,9 +32,9 @@ class FullscreenActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityFullscreenBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        // set intro activity to full screen
+        setContentView(R.layout.activity_intro)
+//        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         // start the introduction
         init()
@@ -53,22 +53,19 @@ class FullscreenActivity : AppCompatActivity() {
         }
 
         // load all the components
-        nextButton = findViewById<Button>(R.id.nextButton)
-        getStartedButton = findViewById<Button>(R.id.getStartedButton)
-        introTitleTextView = findViewById<TextView>(R.id.introTitleTextView)
-        mainIntroTextView = findViewById<TextView>(R.id.mainIntroTextView)
+//        nextButton = findViewById(R.id.nextButton)
+        viewPager = findViewById(R.id.introViewPager)
+
+        // set up adapter
+        val pagerAdapter = ScreenSlidePagerAdapter(this)
+        viewPager.adapter = pagerAdapter
     }
 
     private fun setupListeners() {
-        nextButton.setOnClickListener {
-            // TODO: Navigate to the next screen
-        }
-
-        getStartedButton.setOnClickListener {
-            // ask location permission
-
-            launchMainActivity()
-        }
+//        nextButton.setOnClickListener {
+//            // Navigate to the next screen
+//            viewPager.currentItem = viewPager.currentItem + 1
+//        }
     }
 
     /***
@@ -88,5 +85,28 @@ class FullscreenActivity : AppCompatActivity() {
 //        val intent = Intent(this@IntroActivity, MainActivity::class.java)
 //        startActivity(intent)
         finish()
+    }
+
+    override fun onBackPressed() {
+        if (viewPager.currentItem == 0) {
+            // allow normal back behaviour when the user is
+            // on the first screen of intro
+            super.onBackPressed()
+        }
+        else { // otherwise, go back a screen
+            viewPager.currentItem = viewPager.currentItem - 1
+        }
+    }
+
+    private inner class ScreenSlidePagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
+        override fun getItemCount(): Int = NUM_SCREENS
+
+        override fun createFragment(position: Int): Fragment = when (position) {
+            0 -> FirstIntroScreenFragment()
+            1 -> SecondIntroScreenFragment()
+            2 -> ThirdIntroScreenFragment()
+            3 -> LastIntroScreenFragment()
+            else -> FirstIntroScreenFragment()
+        }
     }
 }

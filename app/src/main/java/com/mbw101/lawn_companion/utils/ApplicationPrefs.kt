@@ -9,7 +9,7 @@ Created by Malcolm Wright
 Date: 2021-05-13
  */
 class ApplicationPrefs {
-    private val mPreferences: SharedPreferences = MyApplication.self().getSharedPreferences(
+    private val mPreferences: SharedPreferences = MyApplication.applicationContext().getSharedPreferences(
         Constants.APPLICATION_PREFS, 0
     )
 
