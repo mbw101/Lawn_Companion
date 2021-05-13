@@ -12,5 +12,6 @@
     <style name="DefaultButton" parent="android:style/Widget.Button">
         <item name="android:textSize">19sp</item>
         <item name="android:background">@color/medium_spring_green</item>
+        <item name="android:textColor">@color/floral_white</item>
     </style>
 </resources>
