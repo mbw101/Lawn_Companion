@@ -7,12 +7,15 @@ Date: 2021-05-13
  */
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import com.mbw101.lawn_companion.R
+import com.mbw101.lawn_companion.utils.Constants
+import com.mbw101.lawn_companion.utils.UtilFunctions.checkLocationPermissions
 
 class LastIntroScreenFragment : Fragment(), View.OnClickListener {
     private lateinit var getStartedButton: Button
@@ -25,14 +28,15 @@ class LastIntroScreenFragment : Fragment(), View.OnClickListener {
 
     override fun onClick(v: View?) {
         // ask for location permissions
-
+        askPermissions()
 
         // launch main activity
         launchMainActivity()
     }
 
     private fun askPermissions() {
-        TODO("Request background location permissions")
+        val result = activity?.let { thisActivity -> checkLocationPermissions(thisActivity) }
+        Log.d(Constants.TAG, result.toString())
     }
 
     private fun launchMainActivity() {
