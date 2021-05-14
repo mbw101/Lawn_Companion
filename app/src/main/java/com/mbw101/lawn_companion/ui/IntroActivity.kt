@@ -2,14 +2,19 @@ package com.mbw101.lawn_companion.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.utils.ApplicationPrefs
+
 
 /**
 Lawn Companion
@@ -53,19 +58,45 @@ class IntroActivity : FragmentActivity() {
         }
 
         // load all the components
-//        nextButton = findViewById(R.id.nextButton)
+        nextButton = findViewById(R.id.nextButton)
         viewPager = findViewById(R.id.introViewPager)
+        tabLayout = findViewById(R.id.tab_indicator)
 
         // set up adapter
         val pagerAdapter = ScreenSlidePagerAdapter(this)
         viewPager.adapter = pagerAdapter
+
+        setupTabLayout()
     }
 
     private fun setupListeners() {
-//        nextButton.setOnClickListener {
-//            // Navigate to the next screen
-//            viewPager.currentItem = viewPager.currentItem + 1
-//        }
+        nextButton.setOnClickListener {
+            // Navigate to the next screen
+            viewPager.currentItem = viewPager.currentItem + 1
+        }
+        viewPager.registerOnPageChangeCallback(object : OnPageChangeCallback(){
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+                super.onPageScrolled(position, positionOffset, positionOffsetPixels)
+            }
+
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                Log.e("Selected_Page", position.toString())
+
+                if (position == 3) { // location part of intro
+                    nextButton.visibility = View.INVISIBLE
+                    tabLayout.visibility = View.INVISIBLE
+                }
+                else {
+                    nextButton.visibility = View.VISIBLE
+                    tabLayout.visibility = View.VISIBLE
+                }
+            }
+
+            override fun onPageScrollStateChanged(state: Int) {
+                super.onPageScrollStateChanged(state)
+            }
+        })
     }
 
     /***
@@ -74,6 +105,21 @@ class IntroActivity : FragmentActivity() {
      */
     private fun askLocationPermission() {
         TODO("Complete")
+    }
+
+    /***
+     * Adds all the icons
+     * to the TabLayout in the introduction
+     * screen
+     */
+    private fun setupTabLayout() {
+        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+            viewPager.setCurrentItem(tab.position, true)
+        }.attach()
+        tabLayout.tabMode = TabLayout.MODE_SCROLLABLE
+        for (i in 0..3) {
+            tabLayout.getTabAt(i)?.setIcon(R.drawable.indicator_selector)
+        }
     }
 
     /***

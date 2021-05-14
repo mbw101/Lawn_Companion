@@ -7,23 +7,21 @@
 
     <Button
         android:id="@+id/getStartedButton"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="135dp"
-        android:layout_marginLeft="135dp"
-        android:layout_marginTop="159dp"
-        android:layout_marginEnd="135dp"
-        android:layout_marginRight="135dp"
+        android:layout_marginStart="122dp"
+        android:layout_marginLeft="122dp"
+        android:layout_marginTop="120dp"
+        android:layout_marginEnd="123dp"
+        android:layout_marginRight="123dp"
         android:layout_marginBottom="180dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
+        android:padding="12dp"
         android:text="@string/getStartedText"
         android:theme="@style/DefaultButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mainIntroTextView"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/mainIntroTextView" />
 
     <TextView
         android:id="@+id/mainIntroTextView"
