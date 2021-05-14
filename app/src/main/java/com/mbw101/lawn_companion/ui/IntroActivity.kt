@@ -83,6 +83,7 @@ class IntroActivity : FragmentActivity() {
                 super.onPageSelected(position)
                 Log.e("Selected_Page", position.toString())
 
+                // hide/show components based on the current screen
                 if (position == 3) { // location part of intro
                     nextButton.visibility = View.INVISIBLE
                     tabLayout.visibility = View.INVISIBLE
@@ -117,9 +118,6 @@ class IntroActivity : FragmentActivity() {
             viewPager.setCurrentItem(tab.position, true)
         }.attach()
         tabLayout.tabMode = TabLayout.MODE_SCROLLABLE
-        for (i in 0..3) {
-            tabLayout.getTabAt(i)?.setIcon(R.drawable.indicator_selector)
-        }
     }
 
     /***
