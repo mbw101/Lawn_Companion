@@ -1,9 +1,12 @@
 package com.mbw101.lawn_companion.ui
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -31,7 +34,9 @@ class IntroActivity : FragmentActivity() {
     private lateinit var viewPager: ViewPager2
     private lateinit var tabLayout: TabLayout
 
-    private lateinit var preferenceManager: ApplicationPrefs
+    companion object {
+        lateinit var preferenceManager: ApplicationPrefs
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,7 +44,7 @@ class IntroActivity : FragmentActivity() {
 
         // set intro activity to full screen
         setContentView(R.layout.activity_intro)
-//        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         // start the introduction
         init()
@@ -53,6 +58,8 @@ class IntroActivity : FragmentActivity() {
      */
     private fun init() {
         preferenceManager = ApplicationPrefs()
+        // DEBUG STATEMENT, always ensures intro activity is ran
+        preferenceManager.setNotFirstTime(false)
         if (preferenceManager.isNotFirstTime()) { // we want to automatically go into Main
             launchMainActivity()
         }
@@ -93,19 +100,7 @@ class IntroActivity : FragmentActivity() {
                     tabLayout.visibility = View.VISIBLE
                 }
             }
-
-            override fun onPageScrollStateChanged(state: Int) {
-                super.onPageScrollStateChanged(state)
-            }
         })
-    }
-
-    /***
-     * Will be called when the user hits "Get Started" on the
-     * last intro screen
-     */
-    private fun askLocationPermission() {
-        TODO("Complete")
     }
 
     /***
@@ -124,10 +119,8 @@ class IntroActivity : FragmentActivity() {
      * Creates an intent to open main activity
      */
     private fun launchMainActivity() {
-        preferenceManager.setNotFirstTime(true) // finished the intro of App, so we can save that
-        // TODO: Fire an intent to launch MainActivity
-//        val intent = Intent(this@IntroActivity, MainActivity::class.java)
-//        startActivity(intent)
+        val intent = Intent(this@IntroActivity, MainActivity::class.java)
+        startActivity(intent)
         finish()
     }
 

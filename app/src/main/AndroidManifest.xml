@@ -10,6 +10,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Lawn_Companion">
+        <activity android:name=".ui.MainActivity"></activity>
         <activity
             android:name=".ui.IntroActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -22,5 +23,9 @@
             </intent-filter>
         </activity>
     </application>
+
+    <!-- To request location permissions -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
 </manifest>

@@ -26,7 +26,7 @@
     <!-- 4th screen/location permission part -->
     <string name="askForLocationMessage">
     But first, Lawn Companion needs your location
-    to access local weather.
+    to access local weather periodically.
     </string>
 
     <!-- Main activity strings -->
