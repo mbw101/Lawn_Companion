@@ -140,4 +140,6 @@
 
     <!-- Other strings -->
     <string name="moreThanOneCutMessage">Only one cut is allowed on a single day!</string>
+    <string name="settings_icon">Settings icon</string>
+    <string name="refresh_icon">Refresh icon</string>
 </resources>

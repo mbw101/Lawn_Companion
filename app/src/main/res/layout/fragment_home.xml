@@ -17,6 +17,7 @@
         android:layout_marginTop="16dp"
         android:text="@string/goodMorning"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textColor="@color/floral_white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

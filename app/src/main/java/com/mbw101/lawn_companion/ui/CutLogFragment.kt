@@ -2,6 +2,7 @@ package com.mbw101.lawn_companion.ui
 
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,8 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.CutEntry
+import com.mbw101.lawn_companion.utils.Constants
+import java.util.*
 
 
 /**
@@ -49,8 +52,12 @@ class CutLogFragment : Fragment() {
         val itemDecoration = DividerItemDecoration(mainRecyclerView.context, DividerItemDecoration.VERTICAL)
         itemDecoration.setDrawable(ColorDrawable(resources.getColor(R.color.light_gray)))
         mainRecyclerView.addItemDecoration(itemDecoration)
-//        mainRecyclerView.addItemDecoration(DividerItemDecoration(MyApplication.applicationContext(), DividerItemDecoration.VERTICAL))
     }
+
+    private fun refresh() {
+        // TODO: Refresh the list of data with DAO whenever they navigate to the cut log fragment
+    }
+
 
     /**
      * Will set up the list of data
@@ -59,6 +66,8 @@ class CutLogFragment : Fragment() {
     private fun setupCutEntries() {
         // load the list of sections with data
         // TODO: Later, fill in with real data via DAO
+
+        // fill all the entries for each month
         val janEntries: List<CutEntry> = listOf(
             CutEntry("4:36pm", 25, "January", 1),
             CutEntry("4:36pm", 25, "January", 1)
@@ -79,8 +88,15 @@ class CutLogFragment : Fragment() {
             CutEntry("4:36pm", 25, "may", 1),
             CutEntry("4:36pm", 25, "may", 1)
         )
-        monthSections = listOf(MonthSection("Jan", janEntries), MonthSection("Feb", febEntries),
-            MonthSection("Mar", marEntries), MonthSection("Apr", aprilEntries), MonthSection("May", mayEntries)
+
+        // add each month section
+        val cal: Calendar = Calendar.getInstance()
+        val currentYear: Int = cal.get(Calendar.YEAR)
+        Log.d(Constants.TAG, "Current year = $currentYear")
+
+        monthSections = listOf(MonthSection("Jan $currentYear", janEntries), MonthSection("Feb $currentYear", febEntries),
+            MonthSection("Mar $currentYear", marEntries), MonthSection("Apr $currentYear", aprilEntries),
+            MonthSection("May $currentYear", mayEntries)
         )
     }
 
