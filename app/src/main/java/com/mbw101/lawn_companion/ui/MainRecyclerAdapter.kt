@@ -38,10 +38,12 @@ class MainRecyclerAdaptor(list: List<MonthSection>): RecyclerView.Adapter<MainRe
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
         val section: MonthSection = sectionList[position]
         val monthName: String = section.monthName
-        var cutEntries: List<CutEntry> = section.items
+        val cutEntries: List<CutEntry> = section.items
 
         holder.monthTextView.text = monthName
 
+        val childAdapter = ChildRecyclerAdapter(cutEntries)
+        holder.childRecyclerView.adapter = childAdapter
     }
 
     override fun getItemCount(): Int = sectionList.size
