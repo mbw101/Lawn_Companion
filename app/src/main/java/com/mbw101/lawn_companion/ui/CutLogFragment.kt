@@ -23,11 +23,9 @@ Date: May 15th, 2021
 
 
 class CutLogFragment : Fragment() {
-    companion object {
-        lateinit var mainRecyclerView: RecyclerView
-        lateinit var monthSections: List<MonthSection>
-        lateinit var mainRecyclerAdaptor: MainRecyclerAdaptor
-    }
+    private lateinit var mainRecyclerView: RecyclerView
+    private lateinit var monthSections: List<MonthSection>
+    private lateinit var mainRecyclerAdaptor: MainRecyclerAdaptor
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +50,22 @@ class CutLogFragment : Fragment() {
         val itemDecoration = DividerItemDecoration(mainRecyclerView.context, DividerItemDecoration.VERTICAL)
         itemDecoration.setDrawable(ColorDrawable(resources.getColor(R.color.light_gray)))
         mainRecyclerView.addItemDecoration(itemDecoration)
+
+        setupListeners()
+    }
+
+    private fun setupListeners() {
+        // recyclerview listener (check for scrolling, so the FAB can be hidden)
+        mainRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (dy > 0 || dy < 0 && MainActivity.addCutFAB.isShown) MainActivity.addCutFAB.hide()
+            }
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) MainActivity.addCutFAB.show()
+                super.onScrollStateChanged(recyclerView, newState)
+            }
+        })
     }
 
     private fun refresh() {

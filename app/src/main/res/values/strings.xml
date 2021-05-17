@@ -142,4 +142,5 @@
     <string name="moreThanOneCutMessage">Only one cut is allowed on a single day!</string>
     <string name="settings_icon">Settings icon</string>
     <string name="refresh_icon">Refresh icon</string>
+    <string name="floating_action_button_for_adding_new_cuts">Floating action button for adding new cuts</string>
 </resources>

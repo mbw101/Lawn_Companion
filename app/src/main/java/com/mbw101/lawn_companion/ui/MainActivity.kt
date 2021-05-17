@@ -7,7 +7,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mbw101.lawn_companion.R
+
 
 /**
 Lawn Companion
@@ -21,6 +23,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var settingsIcon: ImageView
     private lateinit var refreshIcon: ImageView
     private lateinit var titleTextView: TextView
+
+    companion object {
+        lateinit var addCutFAB: FloatingActionButton
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +46,7 @@ class MainActivity : AppCompatActivity() {
         settingsIcon = findViewById(R.id.settingsIcon)
         refreshIcon = findViewById(R.id.refreshIcon)
         titleTextView = findViewById(R.id.titleTextView)
+        addCutFAB = findViewById(R.id.addCutFAB)
 
         setListeners()
     }
@@ -77,6 +84,12 @@ class MainActivity : AppCompatActivity() {
         refreshIcon.setOnClickListener {
             Toast.makeText(this, "Refresh was clicked!", Toast.LENGTH_SHORT).show()
             refresh()
+        }
+
+        // FAB listener
+        addCutFAB.setOnClickListener {
+            // TODO: Display the Add Cut activity here
+            Toast.makeText(this, "FAB clicked!", Toast.LENGTH_SHORT).show()
         }
     }
 
