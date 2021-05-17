@@ -2,6 +2,8 @@
 
     <style name="Widget.Theme.Lawn_Companion.ActionBar.Fullscreen" parent="Widget.AppCompat.ActionBar">
         <item name="android:background">@color/black_overlay</item>
+        <item name="android:textColorSecondary">#222</item>
+        <item name="android:textColor">#CCC</item>
     </style>
 
     <style name="Widget.Theme.Lawn_Companion.ButtonBar.Fullscreen" parent="">

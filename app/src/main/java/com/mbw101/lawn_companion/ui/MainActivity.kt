@@ -1,5 +1,6 @@
 package com.mbw101.lawn_companion.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
@@ -79,6 +80,7 @@ class MainActivity : AppCompatActivity() {
         settingsIcon.setOnClickListener {
             // TODO: Launch the settings activity
             Toast.makeText(this, "Settings was clicked!", Toast.LENGTH_SHORT).show()
+            launchSettings()
         }
 
         refreshIcon.setOnClickListener {
@@ -90,7 +92,20 @@ class MainActivity : AppCompatActivity() {
         addCutFAB.setOnClickListener {
             // TODO: Display the Add Cut activity here
             Toast.makeText(this, "FAB clicked!", Toast.LENGTH_SHORT).show()
+            launchAddCutScreen()
         }
+    }
+
+    private fun launchSettings() {
+        val intent = Intent(this@MainActivity, SettingsActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    private fun launchAddCutScreen() {
+//        val intent = Intent(this@IntroActivity, MainActivity::class.java)
+//        startActivity(intent)
+//        finish()
     }
 
     private fun refresh() {

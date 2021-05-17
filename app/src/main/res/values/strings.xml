@@ -1,7 +1,5 @@
 <resources>
-    <string name="app_name">Lawn_Companion</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="app_name">Lawn Companion</string>
 
     <!-- Intro activity strings -->
 
@@ -117,13 +115,24 @@
     <string name="cuttingSeasonDesc">Manual override the default cutting season. Stops all
     notifications and weather checking. Useful for abnormal weather conditions or pausing app functionality</string>
 
+    <string name="notificationsTitle">Notifications</string>
+    <string name="notification_summary_on">Notifications will be sent
+    </string>
+    <string name="notification_summary_off">Notifications will not be sent</string>
+    <string name="notificationDesc">Can be used if there\'s abnormal weather or you
+    would like to postpone use.</string>
+
     <!-- TODO: Implement the frequency later in development -->
     <string name="desiredCutFrequency">Desired Cut Frequency</string>
     <string name="lowestOptionFrequency">5 days</string>
     <string name="highestOptionFrequency">14 days</string>
 
     <string name="dataAccessTitle">Data Saver</string>
-    <string name="dataAccessDesc">Can be used to disable weather access when on data</string>
+    <string name="weatherDataAccessTitle">Fetch weather while on data</string>
+    <string name="data_summary_on">Weather will only be fetched while on Wi-Fi
+    </string>
+    <string name="data_summary_off">Weather will be fetched while on Wi-Fi or data</string>
+<!--    <string name="dataAccessDesc">Can be used to disable weather access when on data</string>-->
 
     <string name="versionNumber">Version 0.1</string>
 
@@ -143,4 +152,18 @@
     <string name="settings_icon">Settings icon</string>
     <string name="refresh_icon">Refresh icon</string>
     <string name="floating_action_button_for_adding_new_cuts">Floating action button for adding new cuts</string>
+
+    <!-- Preference Titles -->
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
 </resources>
