@@ -1,7 +1,11 @@
 package com.mbw101.lawn_companion.ui
 
+import android.content.Intent
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceFragmentCompat
 import com.mbw101.lawn_companion.R
 
@@ -16,7 +20,21 @@ class SettingsActivity : AppCompatActivity() {
                 .replace(R.id.settings, SettingsFragment())
                 .commit()
         }
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true) // allows back button
+        supportActionBar?.setBackgroundDrawable(ColorDrawable(ContextCompat.getColor(MyApplication.applicationContext(), R.color.background_black))) // background black colour
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        super.onOptionsItemSelected(item)
+        launchMainActivity()
+        return true
+    }
+
+    private fun launchMainActivity() {
+        val intent = Intent(MyApplication.applicationContext(), MainActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
     class SettingsFragment : PreferenceFragmentCompat() {
