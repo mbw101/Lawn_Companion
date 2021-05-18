@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginEnd="5dp"
-    android:layout_marginRight="5dp"
+    android:orientation="vertical"
     tools:context=".ui.MainActivity">
 
     <androidx.appcompat.widget.Toolbar
@@ -14,14 +13,9 @@
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
+        android:padding="5dp"
         android:theme="?attr/actionBarTheme"
-        app:layout_constraintBottom_toTopOf="@+id/nav_host_fragment"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        android:padding="5dp">
+        android:layout_gravity="top">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -34,7 +28,7 @@
             android:gravity="center|center_horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" >
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:id="@+id/settingsIcon"
@@ -48,22 +42,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
+                android:layout_toStartOf="@id/refreshIcon"
+                android:layout_toLeftOf="@id/refreshIcon"
+                android:layout_toEndOf="@id/settingsIcon"
+                android:layout_toRightOf="@id/settingsIcon"
                 android:gravity="center|center_vertical"
                 android:text="@string/home"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                android:layout_toEndOf="@id/settingsIcon"
-                android:layout_toStartOf="@id/refreshIcon"
-                android:layout_toRightOf="@id/settingsIcon"
-                android:layout_toLeftOf="@id/refreshIcon" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
             <ImageView
                 android:id="@+id/refreshIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:background="@drawable/ic_baseline_refresh_32"
-                android:contentDescription="@string/refresh_icon"
-                android:layout_alignParentEnd="true" />
+                android:contentDescription="@string/refresh_icon" />
         </RelativeLayout>
 
     </androidx.appcompat.widget.Toolbar>
@@ -72,17 +66,13 @@
         android:id="@+id/nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
-        android:layout_height="618dp"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
         app:defaultNavHost="true"
-        app:layout_constraintBottom_toTopOf="@+id/bottomNav"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
 
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
         app:navGraph="@navigation/nav_graph"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home"
+        android:layout_below="@+id/toolbar"
+        android:layout_above="@+id/bottomNav"/>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNav"
@@ -91,24 +81,24 @@
         android:layout_alignParentBottom="true"
         app:itemIconTint="@drawable/bottom_nav_colour_selector"
         app:itemTextColor="@drawable/bottom_nav_colour_selector"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/bottom_navigation_file" />
+        app:menu="@menu/bottom_navigation_file"
+        android:layout_gravity="bottom" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addCutFAB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNav"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
         android:clickable="true"
         android:contentDescription="@string/floating_action_button_for_adding_new_cuts"
         android:focusable="true"
+        android:layout_above="@+id/bottomNav"
         app:backgroundTint="@color/medium_spring_green"
-        app:layout_constraintBottom_toTopOf="@+id/bottomNav"
-        app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_baseline_add_32" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

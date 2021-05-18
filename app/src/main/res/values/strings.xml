@@ -108,6 +108,7 @@
     <!-- Day (Number) values -->
 
     <!-- Settings activity strings -->
+    <string name="settingsTitle">Settings</string>
     <string name="preferencesGroupTitle">Preferences</string>
     <string name="aboutGroupTitle">About</string>
 

@@ -15,9 +15,8 @@
             app:summaryOn="@string/notification_summary_on"
             app:title="@string/notificationsTitle" />
 
-        <SeekBarPreference
-            app:title="@string/desiredCutFrequency" />
-
+<!--        <SeekBarPreference-->
+<!--            app:title="@string/desiredCutFrequency" />-->
 
         <SwitchPreferenceCompat
             app:key="useData"
