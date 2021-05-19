@@ -3,13 +3,15 @@ package com.mbw101.lawn_companion.utils
 import android.Manifest
 import android.R
 import android.app.Activity
+import android.app.AlertDialog.Builder
 import android.content.DialogInterface
 import android.content.pm.PackageManager
+import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.mbw101.lawn_companion.ui.MyApplication
-import android.app.AlertDialog.Builder
-import android.util.Log
+import java.util.*
+import java.util.Calendar.DAY_OF_YEAR
 
 object UtilFunctions {
    private const val MY_PERMISSIONS_REQUEST_LOCATION = 99
@@ -49,5 +51,14 @@ object UtilFunctions {
         } else {
             true
         }
+    }
+
+    /***
+     * Avoids having to deal with GregorianCalendar
+     */
+    fun isLeapYear(year: Int): Boolean {
+        val cal: Calendar = Calendar.getInstance()
+        cal.set(Calendar.YEAR, year)
+        return cal.getActualMaximum(DAY_OF_YEAR) > 365
     }
 }

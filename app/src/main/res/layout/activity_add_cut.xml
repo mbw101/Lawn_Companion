@@ -60,6 +60,7 @@
             android:paddingRight="15dp"
             android:paddingStart="15dp"
             android:text="@string/enterMonthText"
+            android:textColor="@color/floral_white"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -67,19 +68,94 @@
 
         <Spinner
             android:id="@+id/monthDropdownMenu"
-            android:spinnerMode="dropdown"
             android:layout_width="409dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="21dp"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
             android:paddingStart="15dp"
+            android:paddingLeft="25dp"
+            android:paddingRight="25dp"
+            android:spinnerMode="dropdown"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/monthTextView" />
+            app:layout_constraintTop_toBottomOf="@+id/monthTextView"
+            android:textAlignment="center"
+            android:gravity="center_horizontal" />
 
+        <TextView
+            android:id="@+id/dayTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="43dp"
+            android:paddingStart="15dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:text="@string/enterDayText"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/floral_white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/monthDropdownMenu" />
+
+        <Spinner
+            android:id="@+id/dayDropdownMenu"
+            android:layout_width="409dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="21dp"
+            android:paddingStart="15dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:spinnerMode="dropdown"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dayTextView"
+            android:textAlignment="center"
+            android:gravity="center_horizontal" />
+
+        <TextView
+            android:id="@+id/timeTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:paddingStart="15dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:text="@string/enterTimeText"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/floral_white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dayDropdownMenu" />
+
+        <Button
+            android:id="@+id/addCutButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="28dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:text="@string/addCutText"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/selectedTimeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="38dp"
+            android:text="TextView"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/timeTextView" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
