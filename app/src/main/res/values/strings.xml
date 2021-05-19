@@ -105,6 +105,21 @@
     <string name="november">November</string>
     <string name="december">December</string>
 
+    <string-array name="months">
+        <item>January</item>
+        <item>February</item>
+        <item>March</item>
+        <item>April</item>
+        <item>May</item>
+        <item>June</item>
+        <item>July</item>
+        <item>August</item>
+        <item>September</item>
+        <item>October</item>
+        <item>November</item>
+        <item>December</item>
+    </string-array>
+
     <!-- Day (Number) values -->
 
     <!-- Settings activity strings -->
@@ -133,7 +148,7 @@
     <string name="data_summary_on">Weather will only be fetched while on Wi-Fi
     </string>
     <string name="data_summary_off">Weather will be fetched while on Wi-Fi or data</string>
-<!--    <string name="dataAccessDesc">Can be used to disable weather access when on data</string>-->
+    <!--    <string name="dataAccessDesc">Can be used to disable weather access when on data</string>-->
 
     <string name="versionNumber">Version 0.1</string>
 
@@ -154,17 +169,4 @@
     <string name="refresh_icon">Refresh icon</string>
     <string name="floating_action_button_for_adding_new_cuts">Floating action button for adding new cuts</string>
 
-    <!-- Preference Titles -->
-    <string name="sync_header">Sync</string>
-
-    <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
-
-    <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
-    </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
 </resources>

@@ -9,6 +9,11 @@ import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceFragmentCompat
 import com.mbw101.lawn_companion.R
 
+/**
+Lawn Companion
+Created by Malcolm Wright
+Date: 2021-05-15
+ */
 class SettingsActivity : AppCompatActivity(){
 
     override fun onCreate(savedInstanceState: Bundle?) {

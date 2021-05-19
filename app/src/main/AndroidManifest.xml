@@ -13,6 +13,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Lawn_Companion">
+        <activity
+            android:name=".ui.AddCutActivity"
+            android:label="@string/addCutTitle"
+            android:theme="@style/Theme.Lawn_Companion" />
         <activity android:name=".ui.MainActivity" />
         <activity
             android:name=".ui.IntroActivity"
@@ -25,11 +29,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.SettingsActivity"
-            android:theme="@style/myPreferencesTheme"
-            />
+            android:theme="@style/myPreferencesTheme" />
     </application>
 
 </manifest>

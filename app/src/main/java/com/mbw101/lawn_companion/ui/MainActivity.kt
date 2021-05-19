@@ -78,7 +78,6 @@ class MainActivity : AppCompatActivity() {
 
         // toolbar button listeners
         settingsIcon.setOnClickListener {
-            // TODO: Launch the settings activity
             Toast.makeText(this, "Settings was clicked!", Toast.LENGTH_SHORT).show()
             launchSettings()
         }
@@ -90,7 +89,6 @@ class MainActivity : AppCompatActivity() {
 
         // FAB listener
         addCutFAB.setOnClickListener {
-            // TODO: Display the Add Cut activity here
             Toast.makeText(this, "FAB clicked!", Toast.LENGTH_SHORT).show()
             launchAddCutScreen()
         }
@@ -103,9 +101,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun launchAddCutScreen() {
-//        val intent = Intent(this@IntroActivity, MainActivity::class.java)
-//        startActivity(intent)
-//        finish()
+        val intent = Intent(this@MainActivity, AddCutActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
     private fun refresh() {
