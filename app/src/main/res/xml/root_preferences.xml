@@ -1,0 +1,39 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory app:title="@string/preferencesGroupTitle">
+
+        <SwitchPreferenceCompat
+            app:key="inSeason"
+            app:title="@string/cuttingSeasonTitle"
+            app:summary="@string/cuttingSeasonDesc"/>
+
+        <SwitchPreferenceCompat
+            app:dependency="inSeason"
+            app:key="notificationSwitch"
+            app:summaryOff="@string/notification_summary_off"
+            app:summaryOn="@string/notification_summary_on"
+            app:title="@string/notificationsTitle" />
+
+<!--        <SeekBarPreference-->
+<!--            app:title="@string/desiredCutFrequency" />-->
+
+        <SwitchPreferenceCompat
+            app:key="useData"
+            app:summaryOff="@string/data_summary_off"
+            app:summaryOn="@string/data_summary_on"
+            app:title="@string/weatherDataAccessTitle" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/aboutGroupTitle">
+
+        <Preference android:title="Version"
+            android:summary="@string/app_version">
+
+        </Preference>
+
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

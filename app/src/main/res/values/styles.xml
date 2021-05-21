@@ -2,6 +2,8 @@
 
     <style name="Widget.Theme.Lawn_Companion.ActionBar.Fullscreen" parent="Widget.AppCompat.ActionBar">
         <item name="android:background">@color/black_overlay</item>
+        <item name="android:textColorSecondary">#222</item>
+        <item name="android:textColor">#CCC</item>
     </style>
 
     <style name="Widget.Theme.Lawn_Companion.ButtonBar.Fullscreen" parent="">
@@ -13,5 +15,18 @@
         <item name="android:textSize">28sp</item>
         <item name="android:background">@color/medium_spring_green</item>
         <item name="android:textColor">@color/floral_white</item>
+    </style>
+
+<!--    Theme.AppCompat.Light.NoActionBar for no action bar-->
+    <style name="myPreferencesTheme" parent="Theme.AppCompat">
+        <item name="android:textColorPrimary">@color/floral_white</item>
+        <item name="android:textColorSecondary">@color/light_gray</item>
+        <item name="android:windowBackground">@color/background_black</item>
+        <item name="android:textColorTertiary">@color/light_gray</item>
+        <item name="android:actionBarStyle">@style/MyActionBar</item>
+    </style>
+
+    <style name="MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">@color/background_black</item>
     </style>
 </resources>

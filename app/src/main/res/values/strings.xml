@@ -1,7 +1,5 @@
 <resources>
-    <string name="app_name">Lawn_Companion</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="app_name">Lawn Companion</string>
 
     <!-- Intro activity strings -->
 
@@ -26,7 +24,7 @@
     <!-- 4th screen/location permission part -->
     <string name="askForLocationMessage">
     But first, Lawn Companion needs your location
-    to access local weather.
+    to access local weather periodically.
     </string>
 
     <!-- Main activity strings -->
@@ -107,9 +105,25 @@
     <string name="november">November</string>
     <string name="december">December</string>
 
+    <string-array name="months">
+        <item>January</item>
+        <item>February</item>
+        <item>March</item>
+        <item>April</item>
+        <item>May</item>
+        <item>June</item>
+        <item>July</item>
+        <item>August</item>
+        <item>September</item>
+        <item>October</item>
+        <item>November</item>
+        <item>December</item>
+    </string-array>
+
     <!-- Day (Number) values -->
 
     <!-- Settings activity strings -->
+    <string name="settingsTitle">Settings</string>
     <string name="preferencesGroupTitle">Preferences</string>
     <string name="aboutGroupTitle">About</string>
 
@@ -117,13 +131,24 @@
     <string name="cuttingSeasonDesc">Manual override the default cutting season. Stops all
     notifications and weather checking. Useful for abnormal weather conditions or pausing app functionality</string>
 
+    <string name="notificationsTitle">Notifications</string>
+    <string name="notification_summary_on">Notifications will be sent
+    </string>
+    <string name="notification_summary_off">Notifications will not be sent</string>
+    <string name="notificationDesc">Can be used if there\'s abnormal weather or you
+    would like to postpone use.</string>
+
     <!-- TODO: Implement the frequency later in development -->
     <string name="desiredCutFrequency">Desired Cut Frequency</string>
     <string name="lowestOptionFrequency">5 days</string>
     <string name="highestOptionFrequency">14 days</string>
 
     <string name="dataAccessTitle">Data Saver</string>
-    <string name="dataAccessDesc">Can be used to disable weather access when on data</string>
+    <string name="weatherDataAccessTitle">Fetch weather while on data</string>
+    <string name="data_summary_on">Weather will only be fetched while on Wi-Fi
+    </string>
+    <string name="data_summary_off">Weather will be fetched while on Wi-Fi or data</string>
+    <!--    <string name="dataAccessDesc">Can be used to disable weather access when on data</string>-->
 
     <string name="versionNumber">Version 0.1</string>
 
@@ -140,4 +165,8 @@
 
     <!-- Other strings -->
     <string name="moreThanOneCutMessage">Only one cut is allowed on a single day!</string>
+    <string name="settings_icon">Settings icon</string>
+    <string name="refresh_icon">Refresh icon</string>
+    <string name="floating_action_button_for_adding_new_cuts">Floating action button for adding new cuts</string>
+
 </resources>
