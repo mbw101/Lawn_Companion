@@ -28,12 +28,13 @@ class LastIntroScreenFragment : Fragment(), View.OnClickListener {
 
     override fun onClick(v: View?) {
         // ask for location permissions
-        askPermissions()
+        //askPermissions()
 
         // launch main activity
         launchMainActivity()
     }
 
+    // TODO: Fix asking location permissions properly
     private fun askPermissions() {
         val result = activity?.let { thisActivity -> checkLocationPermissions(thisActivity) }
         Log.d(Constants.TAG, result.toString())

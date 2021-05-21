@@ -68,7 +68,7 @@
 
         <Spinner
             android:id="@+id/monthDropdownMenu"
-            android:layout_width="409dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="21dp"
             android:paddingStart="15dp"
@@ -101,12 +101,12 @@
 
         <Spinner
             android:id="@+id/dayDropdownMenu"
-            android:layout_width="409dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="21dp"
-            android:paddingStart="15dp"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
+            android:paddingStart="25dp"
+            android:paddingLeft="25dp"
+            android:paddingRight="25dp"
             android:spinnerMode="dropdown"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             app:layout_constraintEnd_toEndOf="parent"

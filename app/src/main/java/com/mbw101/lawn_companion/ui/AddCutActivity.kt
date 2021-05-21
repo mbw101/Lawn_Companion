@@ -7,6 +7,7 @@ import android.text.format.DateUtils
 import android.util.Log
 import android.view.View
 import android.widget.*
+import android.widget.AdapterView.OnItemSelectedListener
 import androidx.appcompat.app.AppCompatActivity
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.utils.Constants
@@ -20,7 +21,7 @@ Created by Malcolm Wright
 Date: 2021-05-18
  */
 
-class AddCutActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
+class AddCutActivity : AppCompatActivity() {
 
     private lateinit var monthDropdown: Spinner
     private lateinit var dayDropdown: Spinner
@@ -51,9 +52,11 @@ class AddCutActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             resources.getStringArray(R.array.months))
         monthAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line)
         monthDropdown.adapter = monthAdapter
+        val month: Int = cal.get(Calendar.MONTH)
+        monthDropdown.setSelection(month)
+
         val curMonth = cal.get(Calendar.MONTH)
         Log.d(Constants.TAG, "Current month = $curMonth")
-        setupDaysDropdown(curMonth, cal)
         cutTime = Calendar.getInstance()
 
         updateInputs()
@@ -102,6 +105,7 @@ class AddCutActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         // fill in the day values based on current month
         dayAdaptor.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line)
         dayDropdown.adapter = dayAdaptor
+        dayDropdown.setSelection(cal.get(Calendar.DAY_OF_MONTH)-1) // we need to reset the default selection each time
     }
 
     private fun setListeners() {
@@ -120,7 +124,17 @@ class AddCutActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             launchMainActivity()
         }
 
-        monthDropdown.onItemSelectedListener = this
+        monthDropdown.onItemSelectedListener = object : OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                val cal: Calendar = Calendar.getInstance()
+                Log.d(Constants.TAG, "Month selected = $position")
+
+                // update the days dropdown menu
+                setupDaysDropdown(position, cal)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
     }
 
     private fun launchMainActivity() {
@@ -135,8 +149,6 @@ class AddCutActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
      * time. Same with the text view.
      */
     private fun openClockDialog() {
-        val c = Calendar.getInstance()
-
         // Launch Time Picker Dialog
         // selectedTimeTextView.text =  DateUtils.formatDateTime(this,"HH:mm")
         val timePickerDialog = TimePickerDialog(this,
@@ -168,28 +180,14 @@ class AddCutActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private fun updateInputs() {
         // set selected time to current time
         val cal: Calendar = Calendar.getInstance()
-        // "$hour:$minute $am_or_pm"
         selectedTimeTextView.text = DateUtils.formatDateTime(this, cal.timeInMillis, DateUtils.FORMAT_SHOW_TIME)
 
         // set the current month and day values in dropdown as selected
-        val month = cal.get(Calendar.MONTH)
-        monthDropdown.setSelection(month)
+        val month: Int = cal.get(Calendar.MONTH)
+        setupDaysDropdown(month, cal) // sets up the correct amount of days based on month value
         Log.d(Constants.TAG, "Month = $month")
-        setupDaysDropdown(month, cal)// update the days dropdown
-        // TODO: Figure out why the default selection for day dropdown menu isn't working
-        dayDropdown.setSelection(4)
-        Log.d(Constants.TAG, "Day value = ${cal.get(Calendar.DAY_OF_MONTH)-1}")
-//        Log.d(Constants.TAG, "Result from day dropdown = ${dayDropdown.get(cal.get(Calendar.DAY_OF_MONTH)-1)}")
+
+        val day: Int = cal.get(Calendar.DAY_OF_MONTH)
+        dayDropdown.setSelection(day-1)
     }
-
-    override fun onItemSelected(parentView: AdapterView<*>?, selectedItemView: View?, position: Int, id: Long) {
-        val monthSelected = position // represents the month number
-        val cal: Calendar = Calendar.getInstance()
-        Log.d(Constants.TAG, "Month selected = $monthSelected")
-
-        // update the days dropdown menu
-        setupDaysDropdown(monthSelected, cal)
-    }
-
-    override fun onNothingSelected(p0: AdapterView<*>?) {}
 }
