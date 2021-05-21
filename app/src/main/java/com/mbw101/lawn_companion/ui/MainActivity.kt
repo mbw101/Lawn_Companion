@@ -78,18 +78,16 @@ class MainActivity : AppCompatActivity() {
 
         // toolbar button listeners
         settingsIcon.setOnClickListener {
-            Toast.makeText(this, "Settings was clicked!", Toast.LENGTH_SHORT).show()
             launchSettings()
         }
 
         refreshIcon.setOnClickListener {
-            Toast.makeText(this, "Refresh was clicked!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Refreshing...", Toast.LENGTH_SHORT).show()
             refresh()
         }
 
         // FAB listener
         addCutFAB.setOnClickListener {
-            Toast.makeText(this, "FAB clicked!", Toast.LENGTH_SHORT).show()
             launchAddCutScreen()
         }
     }
