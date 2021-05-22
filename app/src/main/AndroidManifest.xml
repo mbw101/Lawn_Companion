@@ -2,8 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.mbw101.lawn_companion">
     <!-- To request location permissions -->
+<!--    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />-->
+<!--    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />-->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
     <application
         android:name=".ui.MyApplication"

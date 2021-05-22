@@ -6,15 +6,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.mbw101.lawn_companion.R
+import com.mbw101.lawn_companion.utils.UtilFunctions
 import java.util.*
 
 
 class HomeFragment : Fragment() {
 
     private lateinit var openPermissions: Button
+    private lateinit var mainTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +32,20 @@ class HomeFragment : Fragment() {
 
     private fun init(view: View) {
         openPermissions = view.findViewById(R.id.openPermissionsButton)
+        mainTextView = view.findViewById(R.id.mainMessageTextView)
+        // shows the permissions button based on current permissions
+        openPermissions.visibility = when (UtilFunctions.hasLocationPermissions()) {
+            true -> {
+                // TODO: Set the appropriate text based on if there is a cut or not
+                mainTextView.text = getString(R.string.noCutMessage)
+                View.INVISIBLE
+            }
+            false -> {
+                mainTextView.text = getString(R.string.needsPermissionString)
+                View.VISIBLE
+            }
+        }
+
         setupListeners()
     }
 

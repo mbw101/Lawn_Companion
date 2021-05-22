@@ -169,4 +169,8 @@
     <string name="refresh_icon">Refresh icon</string>
     <string name="floating_action_button_for_adding_new_cuts">Floating action button for adding new cuts</string>
 
+    <!--    Dialog strings-->
+    <string name="permissionDialogTitle">Access to background location</string>
+    <string name="permissionDialogContent">Lawn Companion needs your background location to access local weather periodically!</string>
+
 </resources>
