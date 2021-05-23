@@ -44,9 +44,9 @@ class ChildRecyclerAdapter(cutEntries: List<CutEntry>): RecyclerView.Adapter<Chi
     }
 
     override fun onBindViewHolder(holder: ChildCustomViewHolder, position: Int) {
-        holder.cutEntryDayTextView.text = entries[position].day.toString()
+        holder.cutEntryDayTextView.text = entries[position].day_number.toString()
         holder.cutEntryMessageTextView.text = MyApplication.applicationContext().getString(R.string.completedCut)
-        holder.cutTimeTextView.text = entries[position].time
+        holder.cutTimeTextView.text = entries[position].cut_time
 
     }
 

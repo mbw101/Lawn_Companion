@@ -7,6 +7,7 @@ Lawn Companion
 Created by Malcolm Wright
 Date: 2021-05-22
  */
+@Dao
 interface CutEntryDAO {
 
     // get cuts queries
