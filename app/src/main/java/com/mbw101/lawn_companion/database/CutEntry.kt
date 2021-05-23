@@ -9,7 +9,6 @@ Created by Malcolm Wright
 Date: May 16th, 2021
  */
 
-
 @Entity(tableName = "cuts_table", primaryKeys = ["month_name", "day_number"])
 data class CutEntry (
 
