@@ -51,7 +51,6 @@ interface CutEntryDAO {
     fun updateCut(vararg cuts: CutEntry)
 
     // delete queries
-
     @Delete
     fun deleteCuts(vararg cuts: CutEntry): Int
 

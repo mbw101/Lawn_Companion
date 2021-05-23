@@ -30,6 +30,17 @@ class CutDatabaseTest {
 
     @Test
     @Throws(Exception::class)
+    fun testNumEntries() {
+        cutEntryDao.insertAll(CutEntry("4:36pm", 17, "September", 9),
+            CutEntry("4:36pm", 5, "October", 10),
+            CutEntry("4:36pm", 28, "September", 9),
+            CutEntry("4:36pm", 1, "October", 10))
+
+        Assert.assertEquals(cutEntryDao.getNumEntries(), 4)
+    }
+
+    @Test
+    @Throws(Exception::class)
     //  Tests the get all cuts by adding 3 CutEntries and ensuring a list with 3 entries are returned
     fun insertAndGetAllCuts() = runBlocking {
         cutEntryDao.insertAll(CutEntry("4:36pm", 17, "September", 9),
@@ -43,7 +54,6 @@ class CutDatabaseTest {
 
     @Test
     @Throws(Exception::class)
-    //  -> Tests the get all cuts by adding 3 CutEntries and ensuring a list with 3 entries are returned
     fun insertAndFindByMonthName() = runBlocking {
         cutEntryDao.insertAll(CutEntry("4:36pm", 17, "September", 9),
             CutEntry("4:36pm", 28, "September", 9),
@@ -54,6 +64,71 @@ class CutDatabaseTest {
 
         returnedEntries = cutEntryDao.findByMonthName("September")
         Assert.assertEquals(returnedEntries.size, 2)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun insertAndFindByMonthNum() {
+        cutEntryDao.insertAll(CutEntry("4:36pm", 17, "September", 9),
+            CutEntry("4:36pm", 28, "September", 9),
+            CutEntry("4:36pm", 5, "October", 10))
+
+        var returnedEntries = cutEntryDao.findByMonthNum(10)
+        Assert.assertEquals(returnedEntries.size, 1)
+
+        returnedEntries = cutEntryDao.findByMonthNum(9)
+        Assert.assertEquals(returnedEntries.size, 2)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testFindLastCut() {
+        cutEntryDao.insertAll(CutEntry("4:36pm", 17, "September", 9),
+            CutEntry("4:36pm", 5, "October", 10),
+            CutEntry("4:36pm", 28, "September", 9),
+            CutEntry("4:36pm", 1, "October", 10))
+
+        val returnedEntry = cutEntryDao.getLastCut()
+        Assert.assertEquals(returnedEntry.month_name, "October")
+        Assert.assertEquals(returnedEntry.day_number, 5)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testDeleteCut() {
+        cutEntryDao.insertAll(CutEntry("4:36pm", 17, "September", 9),
+            CutEntry("4:36pm", 5, "October", 10),
+            CutEntry("4:36pm", 28, "September", 9),
+            CutEntry("4:36pm", 1, "October", 10))
+
+        // delete both the october cuts and check each time afterwards
+        cutEntryDao.deleteCuts(CutEntry("4:36pm", 1, "October", 10))
+        var returnedEntry = cutEntryDao.getLastCut()
+        Assert.assertEquals(returnedEntry.month_name, "October")
+
+        cutEntryDao.deleteCuts(CutEntry("4:36pm", 5, "October", 10))
+        returnedEntry = cutEntryDao.getLastCut()
+        Assert.assertEquals(returnedEntry.month_name, "September")
+
+        // check size after deleting
+        val remainingEntries = cutEntryDao.getAllCuts()
+        Assert.assertEquals(remainingEntries.size, 2)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testDeleteAllCuts() {
+        cutEntryDao.insertAll(CutEntry("4:36pm", 17, "September", 9),
+            CutEntry("4:36pm", 5, "October", 10),
+            CutEntry("4:36pm", 28, "September", 9),
+            CutEntry("4:36pm", 1, "October", 10))
+
+        // delete both the october cuts and check each time afterwards
+        cutEntryDao.deleteAll()
+
+        // check size after deleting
+        val remainingEntries = cutEntryDao.getAllCuts()
+        Assert.assertEquals(remainingEntries.size, 0)
     }
 
     @After
