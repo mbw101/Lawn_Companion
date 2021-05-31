@@ -154,6 +154,7 @@
 
     <!-- Cut log activity strings -->
     <string name="completedCut">Completed Cut</string>
+    <string name="noCutMade">No Cuts Made</string>
 
     <!-- Notification strings -->
     <string name="markAsCut">Mark as cut</string>

@@ -10,6 +10,7 @@ import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.appcompat.app.AppCompatActivity
 import com.mbw101.lawn_companion.R
+import com.mbw101.lawn_companion.database.CutEntry
 import com.mbw101.lawn_companion.utils.Constants
 import com.mbw101.lawn_companion.utils.UtilFunctions
 import java.util.*
@@ -29,6 +30,12 @@ class AddCutActivity : AppCompatActivity() {
     private lateinit var selectedTimeTextView: TextView
     private lateinit var addCutButton: Button
     private lateinit var cutTime: Calendar
+
+    // database variables
+//    private lateinit var db: CutEntryDatabase
+//    private lateinit var cutEntryDAO: CutEntryDAO
+//    private lateinit var cutEntryRepository: CutEntryRepository
+    private lateinit var cutEntryViewModel: CutEntryViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -105,7 +112,20 @@ class AddCutActivity : AppCompatActivity() {
         // fill in the day values based on current month
         dayAdaptor.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line)
         dayDropdown.adapter = dayAdaptor
-        dayDropdown.setSelection(cal.get(Calendar.DAY_OF_MONTH)-1) // we need to reset the default selection each time
+
+        // set the default day value selected in the dropdown
+        val maxNumDays = cal.getActualMaximum(Calendar.DAY_OF_MONTH)
+        Log.d(Constants.TAG, "Max number of days = $maxNumDays")
+        Log.d(Constants.TAG, "Current month = ${cal.get(Calendar.MONTH)}")
+
+        val previousDay = cal.get(Calendar.DAY_OF_MONTH)-1
+
+        if (maxNumDays < previousDay) {
+            dayDropdown.setSelection(0)
+        }
+        else {
+            dayDropdown.setSelection(previousDay) // we need to reset the default selection each time
+        }
     }
 
     private fun setListeners() {
@@ -119,7 +139,10 @@ class AddCutActivity : AppCompatActivity() {
         }
 
         addCutButton.setOnClickListener {
-            // TODO: Add cut via DAO
+            // Add cut to DB
+            cutEntryViewModel = CutEntryViewModel(application)
+
+            addCut()
 
             launchMainActivity()
         }
@@ -127,6 +150,7 @@ class AddCutActivity : AppCompatActivity() {
         monthDropdown.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 val cal: Calendar = Calendar.getInstance()
+                cal.set(Calendar.MONTH, position) // set the month to what they picked
                 Log.d(Constants.TAG, "Month selected = $position")
 
                 // update the days dropdown menu
@@ -135,6 +159,15 @@ class AddCutActivity : AppCompatActivity() {
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
+    }
+
+    private fun addCut() {
+        // build cutEntry object and add to database
+        val cutEntry: CutEntry = CutEntry("4:10pm", dayDropdown.selectedItemPosition+1,
+            Constants.months[monthDropdown.selectedItemPosition], monthDropdown.selectedItemPosition+1);
+
+//        cutEntryRepository.addCut(cutEntry)
+        cutEntryViewModel.addEntry(cutEntry)
     }
 
     private fun launchMainActivity() {
@@ -187,7 +220,7 @@ class AddCutActivity : AppCompatActivity() {
         setupDaysDropdown(month, cal) // sets up the correct amount of days based on month value
         Log.d(Constants.TAG, "Month = $month")
 
-        val day: Int = cal.get(Calendar.DAY_OF_MONTH)
-        dayDropdown.setSelection(day-1)
+//        val day: Int = cal.get(Calendar.DAY_OF_MONTH)
+        dayDropdown.setSelection(0)
     }
 }

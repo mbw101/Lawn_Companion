@@ -14,9 +14,9 @@ Created by Malcolm Wright
 Date: May 16th, 2021
  */
 
-class MainRecyclerAdaptor(list: List<MonthSection>): RecyclerView.Adapter<MainRecyclerAdaptor.CustomViewHolder>() {
+class MainRecyclerAdaptor(): RecyclerView.Adapter<MainRecyclerAdaptor.CustomViewHolder>() {
 
-    var sectionList: List<MonthSection> = list
+    private var sectionList: List<MonthSection>? = null
 
     class CustomViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         var monthTextView: TextView
@@ -36,15 +36,24 @@ class MainRecyclerAdaptor(list: List<MonthSection>): RecyclerView.Adapter<MainRe
     }
 
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
-        val section: MonthSection = sectionList[position]
+        if (sectionList == null) return
+        val section: MonthSection = sectionList!![position]
         val monthName: String = section.monthName
         val cutEntries: List<CutEntry> = section.items
 
         holder.monthTextView.text = monthName
 
-        val childAdapter = ChildRecyclerAdapter(cutEntries)
-        holder.childRecyclerView.adapter = childAdapter
+        val childAdaptor = ChildRecyclerAdapter(cutEntries)
+
+        holder.childRecyclerView.adapter = childAdaptor
     }
 
-    override fun getItemCount(): Int = sectionList.size
+    override fun getItemCount(): Int = sectionList?.size ?: 0
+
+    fun setSections(sectionList: List<MonthSection>) {
+        this.sectionList = sectionList
+        // loop through each month and set cuts for that month
+//        for ()
+        notifyDataSetChanged() // redraw the layout
+    }
 }
