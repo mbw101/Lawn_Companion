@@ -4,8 +4,6 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.runner.AndroidJUnit4
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.toCollection
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert
@@ -32,7 +30,7 @@ class CutDatabaseTest {
 
     @Test
     @Throws(Exception::class)
-    fun testNumEntries() {
+    fun testNumEntries() = runBlocking {
         cutEntryDao.insertAll(CutEntry("4:36pm", 17, "September", 9),
             CutEntry("4:36pm", 5, "October", 10),
             CutEntry("4:36pm", 28, "September", 9),
@@ -145,7 +143,7 @@ class CutDatabaseTest {
 
     @Test
     @Throws(Exception::class)
-    fun testDeleteAllCuts() {
+    fun testDeleteAllCuts() = runBlocking {
         cutEntryDao.insertAll(CutEntry("4:36pm", 17, "September", 9),
             CutEntry("4:36pm", 5, "October", 10),
             CutEntry("4:36pm", 28, "September", 9),
