@@ -9,6 +9,7 @@ android {
     compileSdkVersion 30
 
     testOptions {
+        execution 'ANDROIDX_TEST_ORCHESTRATOR'
         unitTests {
             includeAndroidResources = true
         }
@@ -24,6 +25,7 @@ android {
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArguments clearPackageData: 'true'
     }
 
     buildTypes {
@@ -75,14 +77,22 @@ dependencies {
     testImplementation "androidx.room:room-testing:2.3.0"
 
     // testing
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+
+    // JUnit
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'androidx.test:rules:1.2.0'
-    androidTestImplementation 'androidx.test:core:1.2.0'
     testImplementation 'androidx.test:core:1.2.0'
     testImplementation "org.robolectric:robolectric:4.2.1"
     testImplementation 'androidx.test.ext:junit:1.1.0'
+    androidTestUtil 'androidx.test:orchestrator:1.1.0'
+
+    // espresso
+    androidTestImplementation 'androidx.test:runner:1.1.0'
+    androidTestImplementation 'androidx.test:rules:1.1.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test:core:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
     //App's dependencies, including test
     implementation 'com.android.support:support-annotations:22.2.0'
 
