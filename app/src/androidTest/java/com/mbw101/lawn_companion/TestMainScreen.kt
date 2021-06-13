@@ -73,6 +73,7 @@ class TestMainScreen {
         Log.d(Constants.TAG, "Salutation: $expected")
     }
 
+    // TODO: Figure out how to deny permission on purpose to check expected text on home frag
 //    @Test
 //    // test permissions text when permission is denied for location
 //    fun testNoPermissions() {
