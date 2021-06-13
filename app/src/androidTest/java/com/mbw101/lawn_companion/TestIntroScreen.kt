@@ -16,7 +16,7 @@ import org.junit.runner.RunWith
 @LargeTest
 class TestIntroScreen {
     @get:Rule
-    val mainActivityTestRule: ActivityTestRule<IntroActivity> = ActivityTestRule(IntroActivity::class.java)
+    val introActivityRule: ActivityTestRule<IntroActivity> = ActivityTestRule(IntroActivity::class.java)
 //    val activityRule = ActivityScenarioRule(IntroActivity::class.java)
 
     @Test

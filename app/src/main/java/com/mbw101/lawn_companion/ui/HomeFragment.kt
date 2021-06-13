@@ -18,6 +18,7 @@ class HomeFragment : Fragment() {
 
     private lateinit var openPermissions: Button
     private lateinit var mainTextView: TextView
+    private lateinit var salutationTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +34,7 @@ class HomeFragment : Fragment() {
     private fun init(view: View) {
         openPermissions = view.findViewById(R.id.openPermissionsButton)
         mainTextView = view.findViewById(R.id.mainMessageTextView)
+        salutationTextView = view.findViewById(R.id.salutationTextView)
         // shows the permissions button based on current permissions
         openPermissions.visibility = when (UtilFunctions.hasLocationPermissions()) {
             true -> {
@@ -45,6 +47,9 @@ class HomeFragment : Fragment() {
                 View.VISIBLE
             }
         }
+
+        // set correct salutation
+        salutationTextView.text = getSalutation()
 
         setupListeners()
     }
