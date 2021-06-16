@@ -163,10 +163,12 @@ class AddCutActivity : AppCompatActivity() {
 
     private fun addCut() {
         // build cutEntry object and add to database
-        val cutEntry: CutEntry = CutEntry("4:10pm", dayDropdown.selectedItemPosition+1,
+        // access the correct time from the selected time text view
+        val cutTimeString = DateUtils.formatDateTime(this, cutTime.timeInMillis, DateUtils.FORMAT_SHOW_TIME)
+        Log.d(Constants.TAG, "Time of cut: $cutTimeString")
+        val cutEntry = CutEntry(cutTimeString, dayDropdown.selectedItemPosition+1,
             Constants.months[monthDropdown.selectedItemPosition], monthDropdown.selectedItemPosition+1);
 
-//        cutEntryRepository.addCut(cutEntry)
         cutEntryViewModel.addEntry(cutEntry)
     }
 

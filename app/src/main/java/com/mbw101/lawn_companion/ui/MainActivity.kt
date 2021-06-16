@@ -25,6 +25,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var refreshIcon: ImageView
     private lateinit var titleTextView: TextView
 
+//    private lateinit var mainRecyclerAdaptor: MainRecyclerAdaptor
+//    lateinit val viewModel: CutEntryViewModel
+
     companion object {
         lateinit var addCutFAB: FloatingActionButton
     }
@@ -50,7 +53,16 @@ class MainActivity : AppCompatActivity() {
         addCutFAB = findViewById(R.id.addCutFAB)
 
         setListeners()
+//        setupViewmodel()
     }
+
+//    private fun setupViewmodel() {
+//        viewModel = CutEntryViewModel(application)
+//        // set up the adaptor
+//        mainRecyclerAdaptor = MainRecyclerAdaptor()
+//        mainRecyclerView.adapter = mainRecyclerAdaptor
+//
+//    }
 
     private fun setListeners() {
         // bottom navigation listener

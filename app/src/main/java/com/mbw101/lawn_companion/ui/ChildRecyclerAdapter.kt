@@ -40,12 +40,12 @@ class ChildRecyclerAdapter(cutEntries: List<CutEntry>) :
         }
     }
 
+    // TODO: Will be used for sections that do not have cuts yet
     class PlaceholderViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        var cutEntryMessageTextView: TextView
+        var cutEntryMessageTextView: TextView = v.findViewById(R.id.cutEntryMessageTextView)
 
         init {
             // initialize components of each individual cut entry row
-            cutEntryMessageTextView = v.findViewById(R.id.cutEntryMessageTextView)
             cutEntryMessageTextView.text =
                 MyApplication.applicationContext().getString(R.string.noCutMade)
         }

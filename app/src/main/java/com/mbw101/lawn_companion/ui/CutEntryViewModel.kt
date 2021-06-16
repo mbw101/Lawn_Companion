@@ -2,7 +2,6 @@ package com.mbw101.lawn_companion.ui
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.mbw101.lawn_companion.database.CutEntry
 import com.mbw101.lawn_companion.database.CutEntryRepository
@@ -18,12 +17,12 @@ Date: 2021-05-26
 class CutEntryViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository: CutEntryRepository
-    private var entries: LiveData<List<CutEntry>>
+//    private var entries: LiveData<List<CutEntry>>
 
     init {
         val dao = DatabaseBuilder.getInstance(application).cutEntryDao()
         repository = CutEntryRepository(dao)
-        entries = repository.getCuts()
+//        entries = repository.getCuts()
     }
 
     fun addEntry(entry: CutEntry) {
@@ -31,4 +30,6 @@ class CutEntryViewModel(application: Application) : AndroidViewModel(application
             repository.addCut(entry)
         }
     }
+
+    fun getCuts() = repository.getCuts()
 }

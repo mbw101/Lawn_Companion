@@ -53,11 +53,17 @@ class CutLogFragment : Fragment() {
         // set up the adaptor
         mainRecyclerAdaptor = MainRecyclerAdaptor()
         mainRecyclerView.adapter = mainRecyclerAdaptor
+
+        // set up entries in database
+
+
+
         val itemDecoration = DividerItemDecoration(mainRecyclerView.context, DividerItemDecoration.VERTICAL)
         itemDecoration.setDrawable(ColorDrawable(resources.getColor(R.color.light_gray)))
         mainRecyclerView.addItemDecoration(itemDecoration)
 
         setupListeners()
+        setupViewmodel()
     }
 
     private fun setupDB() {
@@ -79,17 +85,17 @@ class CutLogFragment : Fragment() {
                 super.onScrollStateChanged(recyclerView, newState)
             }
         })
+    }
 
+    private fun setupViewmodel() {
         // set up view model with fragment
-//        viewModel.getAllCuts(cutEntryRepository).observe(viewLifecycleOwner, { entries -> //update RecyclerView later
-//            Toast.makeText(activity, "onChanged", Toast.LENGTH_SHORT).show()
-//
-//            // get each months data using the repository
+        viewModel.getCuts().observe(viewLifecycleOwner, { entries -> //update RecyclerView later
+            // get each months data using the repository
 //            setupCutEntries(entries)
-//
-//            // call setSections
-//            mainRecyclerAdaptor.setSections(monthSections)
-//        })
+
+            // call setSections
+            mainRecyclerAdaptor.setEntries(entries)
+        })
     }
 
     private fun refresh() {
