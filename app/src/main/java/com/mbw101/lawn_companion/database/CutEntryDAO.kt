@@ -11,9 +11,13 @@ Date: 2021-05-22
 @Dao
 interface CutEntryDAO {
 
-    // get cuts queries
+    // get cuts queries (all sorted)
     @Query("SELECT * FROM cuts_table")
     fun getAllCuts(): LiveData<List<CutEntry>>
+
+    // get cuts queries (all sorted) Jan-Dec order
+    @Query("SELECT * FROM cuts_table ORDER BY month_num ASC, day_number ASC")
+    fun getAllCutsSorted(): LiveData<List<CutEntry>>
 
     // This query should get the # of entries in the cuts table
     @Query("SELECT COUNT(*) FROM cuts_table")

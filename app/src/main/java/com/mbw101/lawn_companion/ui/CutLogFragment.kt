@@ -2,7 +2,6 @@ package com.mbw101.lawn_companion.ui
 
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +12,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.*
 import com.mbw101.lawn_companion.utils.Constants
+import com.mbw101.lawn_companion.utils.UtilFunctions
 import java.util.*
+import kotlin.collections.HashMap
 
 
 /**
@@ -32,6 +33,64 @@ class CutLogFragment : Fragment() {
     private val viewModel: CutEntryViewModel by viewModels()
     private lateinit var cutEntryDAO: CutEntryDAO
     private lateinit var cutEntryRepository: CutEntryRepository
+
+    companion object {
+        // sets up the hashmap containing all entries for each respective month
+        fun setupHashmap(entries: List<CutEntry>): HashMap<Int, List<CutEntry>> {
+            // fill all the entries for each month
+            val tempList = mutableListOf<CutEntry>()
+            var previousMonth = 1
+            var currentMonth: Int
+            val hashMap: java.util.HashMap<Int, List<CutEntry>> = HashMap()
+
+            // map each month to empty list to start
+            for (i in 1..12) {
+                hashMap[i] = emptyList()
+            }
+
+            // loop through all the entries
+            for (cut in entries) {
+                currentMonth = cut.month_num
+
+                // map all those entries to previous month and clear tempList
+                if (currentMonth != previousMonth) {
+                    hashMap[previousMonth] = tempList.toList()
+                    tempList.clear()
+                }
+
+                // add to the list
+                tempList.add(cut)
+
+                // set previous
+                previousMonth = currentMonth
+            }
+
+            // add last list to hash map
+            hashMap[previousMonth] = tempList.toList()
+
+            return hashMap
+        }
+
+        fun setupMonthSections(hashMap: HashMap<Int, List<CutEntry>>): List<MonthSection> {
+            val currentYear = UtilFunctions.getCurrentYear()
+            println(hashMap)
+            // add each month section
+            return listOf(
+                MonthSection("Jan $currentYear", hashMap[Constants.Month.JANUARY.monthNum] ?: emptyList()),
+                MonthSection("Feb $currentYear", hashMap[Constants.Month.FEBRUARY.monthNum] ?: emptyList()),
+                MonthSection("Mar $currentYear", hashMap[Constants.Month.MARCH.monthNum] ?: emptyList()),
+                MonthSection("Apr $currentYear", hashMap[Constants.Month.APRIL.monthNum] ?: emptyList()),
+                MonthSection("May $currentYear", hashMap[Constants.Month.MAY.monthNum] ?: emptyList()),
+                MonthSection("June $currentYear", hashMap[Constants.Month.JUNE.monthNum] ?: emptyList()),
+                MonthSection("July $currentYear", hashMap[Constants.Month.JULY.monthNum] ?: emptyList()),
+                MonthSection("Aug $currentYear", hashMap[Constants.Month.AUGUST.monthNum] ?: emptyList()),
+                MonthSection("Sept $currentYear", hashMap[Constants.Month.SEPTEMBER.monthNum] ?: emptyList()),
+                MonthSection("Oct $currentYear", hashMap[Constants.Month.OCTOBER.monthNum] ?: emptyList()),
+                MonthSection("Nov $currentYear", hashMap[Constants.Month.NOVEMBER.monthNum] ?: emptyList()),
+                MonthSection("Dec $currentYear", hashMap[Constants.Month.DECEMBER.monthNum] ?: emptyList())
+            )
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,10 +112,6 @@ class CutLogFragment : Fragment() {
         // set up the adaptor
         mainRecyclerAdaptor = MainRecyclerAdaptor()
         mainRecyclerView.adapter = mainRecyclerAdaptor
-
-        // set up entries in database
-
-
 
         val itemDecoration = DividerItemDecoration(mainRecyclerView.context, DividerItemDecoration.VERTICAL)
         itemDecoration.setDrawable(ColorDrawable(resources.getColor(R.color.light_gray)))
@@ -89,12 +144,12 @@ class CutLogFragment : Fragment() {
 
     private fun setupViewmodel() {
         // set up view model with fragment
-        viewModel.getCuts().observe(viewLifecycleOwner, { entries -> //update RecyclerView later
+        viewModel.getSortedCuts().observe(viewLifecycleOwner, { entries -> //update RecyclerView later
             // get each months data using the repository
-//            setupCutEntries(entries)
+            setupCutEntries(entries)
 
             // call setSections
-            mainRecyclerAdaptor.setEntries(entries)
+            mainRecyclerAdaptor.setSections(monthSections)
         })
     }
 
@@ -108,81 +163,9 @@ class CutLogFragment : Fragment() {
      * which will be displayed in the recyclerview
      */
     private fun setupCutEntries(entries: List<CutEntry>) {
-        // load the list of sections with data
-        // TODO: Later, fill in with real data via DAO
-        // TODO: Figure out how to display "No cuts made part"
-
-        // fill all the entries for each month
-//        val janEntries: List<CutEntry> = cutRepository.findByMonthName(1)
-        val janEntries: List<CutEntry> = listOf(
-//            CutEntry("4:36pm", 25, "January", 1),
-//            CutEntry("4:36pm", 25, "January", 1)
-        )
-        val febEntries: List<CutEntry> = listOf(
-            CutEntry("4:36pm", 25, "February", 1),
-            CutEntry("4:36pm", 25, "February", 1)
-        )
-        val marEntries: List<CutEntry> = listOf(
-            CutEntry("4:36pm", 25, "March", 1),
-            CutEntry("4:36pm", 25, "March", 1)
-        )
-        val aprilEntries: List<CutEntry> = listOf(
-            CutEntry("4:36pm", 25, "april", 1),
-            CutEntry("4:36pm", 25, "april", 1)
-        )
-        val mayEntries: List<CutEntry> = listOf(
-            CutEntry("4:36pm", 25, "may", 1),
-            CutEntry("4:36pm", 25, "may", 1)
-        )
-        val juneEntries: List<CutEntry> = listOf()
-
-        // add each month section
-        val cal: Calendar = Calendar.getInstance()
-        val currentYear: Int = cal.get(Calendar.YEAR)
-        Log.d(Constants.TAG, "Current year = $currentYear")
-
-//        monthSections = listOf(MonthSection("Jan $currentYear", janEntries), MonthSection("Feb $currentYear", febEntries),
-//            MonthSection("Mar $currentYear", marEntries), MonthSection("Apr $currentYear", aprilEntries),
-//            MonthSection("May $currentYear", mayEntries), MonthSection("June $currentYear", juneEntries),
-//            MonthSection("June $currentYear", juneEntries), MonthSection("July $currentYear", emptyList()),
-//            MonthSection("Aug $currentYear", emptyList()), MonthSection("Sept $currentYear", emptyList()),
-//            MonthSection("Oct $currentYear", emptyList()), MonthSection("Nov $currentYear", emptyList()),
-//            MonthSection("Dec $currentYear", emptyList())
-//        )
-        monthSections = createMonthSections(entries)?.toList() ?: listOf(MonthSection("Jan $currentYear", janEntries), MonthSection("Feb $currentYear", febEntries),
-            MonthSection("Mar $currentYear", marEntries), MonthSection("Apr $currentYear", aprilEntries),
-            MonthSection("May $currentYear", mayEntries), MonthSection("June $currentYear", juneEntries),
-            MonthSection("June $currentYear", juneEntries), MonthSection("July $currentYear", emptyList()),
-            MonthSection("Aug $currentYear", emptyList()), MonthSection("Sept $currentYear", emptyList()),
-            MonthSection("Oct $currentYear", emptyList()), MonthSection("Nov $currentYear", emptyList()),
-            MonthSection("Dec $currentYear", emptyList())
-        )
-    }
-
-    /**
-     * Goes through all the entries and creates a monthSection list
-     *
-     */
-    private fun createMonthSections(entries: List<CutEntry>): ArrayList<MonthSection>? {
-        var tempMonthSections: ArrayList<MonthSection>? = null
-
-        for (i in 1..12) {
-            getEntriesFromSpecificMonth(entries, i)?.let {
-                MonthSection(
-                    "${Constants.months[i]} ${getCurrentYear()}",
-                    it.toList()
-                )
-            }?.let { tempMonthSections?.add(it) }
-        }
-        return tempMonthSections
-    }
-
-    private fun getCurrentYear(): Int {
-        // add each month section
-        val cal: Calendar = Calendar.getInstance()
-        val currentYear: Int = cal.get(Calendar.YEAR)
-        Log.d(Constants.TAG, "Current year = $currentYear")
-        return currentYear
+        // set up hashmap with entries for each month and create month sections
+        val hashMap: HashMap<Int, List<CutEntry>> = setupHashmap(entries)
+        monthSections = setupMonthSections(hashMap)
     }
 
     private fun getEntriesFromSpecificMonth(entries: List<CutEntry>, month: Int): ArrayList<CutEntry>? {

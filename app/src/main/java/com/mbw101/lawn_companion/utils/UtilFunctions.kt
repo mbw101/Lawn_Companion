@@ -27,4 +27,10 @@ object UtilFunctions {
         cal.set(Calendar.YEAR, year)
         return cal.getActualMaximum(DAY_OF_YEAR) > 365
     }
+
+    fun getCurrentYear(): Int {
+        // add each month section
+        val cal: Calendar = Calendar.getInstance()
+        return cal.get(Calendar.YEAR)
+    }
 }

@@ -12,6 +12,7 @@ Date: 2021-05-29
 class CutEntryRepository @Inject constructor(private val cutEntryDAO: CutEntryDAO) {
 
     fun getCuts() = cutEntryDAO.getAllCuts()
+    fun getSortedCuts() = cutEntryDAO.getAllCutsSorted()
     fun getCutsByMonth(monthNum: Int) = cutEntryDAO.findByMonthNum(monthNum)
     suspend fun addCut(cutEntry: CutEntry) = cutEntryDAO.insertAll(cutEntry)
 

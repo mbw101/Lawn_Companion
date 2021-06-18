@@ -36,7 +36,7 @@ class ChildRecyclerAdapter(cutEntries: List<CutEntry>) :
 
         // TODO: Can implement deleting a CutEntry through onClick event or modifying an existing one
         override fun onClick(p0: View?) {
-            TODO("Not yet implemented")
+            // TODO "Not yet implemented"
         }
     }
 

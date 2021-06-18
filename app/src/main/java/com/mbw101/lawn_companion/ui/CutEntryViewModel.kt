@@ -17,12 +17,10 @@ Date: 2021-05-26
 class CutEntryViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository: CutEntryRepository
-//    private var entries: LiveData<List<CutEntry>>
 
     init {
         val dao = DatabaseBuilder.getInstance(application).cutEntryDao()
         repository = CutEntryRepository(dao)
-//        entries = repository.getCuts()
     }
 
     fun addEntry(entry: CutEntry) {
@@ -32,4 +30,5 @@ class CutEntryViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun getCuts() = repository.getCuts()
+    fun getSortedCuts() = repository.getSortedCuts()
 }
