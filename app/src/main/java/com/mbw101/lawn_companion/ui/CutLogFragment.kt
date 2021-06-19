@@ -1,7 +1,10 @@
 package com.mbw101.lawn_companion.ui
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +16,7 @@ import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.*
 import com.mbw101.lawn_companion.utils.Constants
 import com.mbw101.lawn_companion.utils.UtilFunctions
+import kotlinx.coroutines.runBlocking
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -24,7 +28,7 @@ Date: May 15th, 2021
  */
 
 
-class CutLogFragment : Fragment() {
+class CutLogFragment : Fragment(), OnItemClickListener {
     private lateinit var mainRecyclerView: RecyclerView
     private lateinit var monthSections: List<MonthSection>
     private lateinit var mainRecyclerAdaptor: MainRecyclerAdaptor
@@ -110,7 +114,7 @@ class CutLogFragment : Fragment() {
         mainRecyclerView = v.findViewById(R.id.main_recyclerview)
 
         // set up the adaptor
-        mainRecyclerAdaptor = MainRecyclerAdaptor()
+        mainRecyclerAdaptor = MainRecyclerAdaptor(this) // pass in our click listener method
         mainRecyclerView.adapter = mainRecyclerAdaptor
 
         val itemDecoration = DividerItemDecoration(mainRecyclerView.context, DividerItemDecoration.VERTICAL)
@@ -178,5 +182,30 @@ class CutLogFragment : Fragment() {
         }
 
         return returnEntries
+    }
+
+    override fun onItemClick(entry: CutEntry): Unit = runBlocking{
+        Log.d(Constants.TAG, "onItemClick: $entry")
+        // TODO: Show a menu to possible delete it
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle(R.string.alertTitle)
+            .setPositiveButton(R.string.deleteOption,
+                DialogInterface.OnClickListener { dialog, id ->
+                    deleteCut(entry)
+                })
+            .setNegativeButton(R.string.cancelOption,
+                DialogInterface.OnClickListener { dialog, id ->
+                    // User cancelled the dialog
+                })
+            .setMessage(R.string.alertMessage)
+
+        // Create the AlertDialog object and set properties
+        val alertDialog: AlertDialog = builder.create()
+        alertDialog.setCancelable(false)
+        alertDialog.show()
+    }
+
+    private fun deleteCut(entry: CutEntry) = runBlocking {
+        viewModel.deleteCuts(entry)
     }
 }

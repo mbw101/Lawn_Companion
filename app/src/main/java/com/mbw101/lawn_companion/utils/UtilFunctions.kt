@@ -6,6 +6,8 @@ import androidx.core.content.ContextCompat
 import com.mbw101.lawn_companion.ui.MyApplication
 import java.util.*
 import java.util.Calendar.DAY_OF_YEAR
+import java.util.concurrent.TimeUnit
+import kotlin.math.abs
 
 object UtilFunctions {
    private const val MY_PERMISSIONS_REQUEST_LOCATION = 99
@@ -32,5 +34,24 @@ object UtilFunctions {
         // add each month section
         val cal: Calendar = Calendar.getInstance()
         return cal.get(Calendar.YEAR)
+    }
+
+    // returns the number of days between the two dates
+    // The order does NOT made for the calendar objects
+    // TODO: Get this figured out (this and the one below will be used for getDescriptionMessage)
+    fun getNumDaysBetween(date1: Calendar, date2: Calendar): Int {
+        // set hours and minutes to 0
+        date1.set(Calendar.HOUR, 12)
+        date2.set(Calendar.HOUR, 12)
+        date1.set(Calendar.MINUTE, 0)
+        date2.set(Calendar.MINUTE, 0)
+
+        val millis = abs(date2.timeInMillis - date1.timeInMillis)
+        return TimeUnit.MILLISECONDS.toDays(millis).toInt()
+    }
+
+    // Finds num days since the given date (using current date)
+    fun getNumDaysSince(date: Calendar): Int {
+        return getNumDaysBetween(date, Calendar.getInstance())
     }
 }

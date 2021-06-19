@@ -155,6 +155,11 @@
     <!-- Cut log activity strings -->
     <string name="completedCut">Completed Cut</string>
     <string name="noCutMade">No Cuts Made</string>
+    <string name="alertTitle">Delete cut entry?</string>
+    <string name="alertMessage">This will delete the selected cut entry from the Cut Log!</string>
+    <string name="cancelOption">Cancel</string>
+    <string name="deleteOption">Delete</string>
+
 
     <!-- Notification strings -->
     <string name="markAsCut">Mark as cut</string>

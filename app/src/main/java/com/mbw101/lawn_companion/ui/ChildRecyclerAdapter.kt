@@ -10,34 +10,24 @@ import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.CutEntry
 import com.mbw101.lawn_companion.utils.Constants
 
+
 /**
 Lawn Companion
 Created by Malcolm Wright
 Date: May 16th, 2021
  */
 
-class ChildRecyclerAdapter(cutEntries: List<CutEntry>) :
+class ChildRecyclerAdapter(cutEntries: List<CutEntry>, // add custom interface
+                           var onItemClickListener: OnItemClickListener) :
     RecyclerView.Adapter<ChildRecyclerAdapter.ChildCustomViewHolder>() {
     var entries: List<CutEntry> = cutEntries
 
-    class ChildCustomViewHolder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener {
-        var cutEntryDayTextView: TextView
-        var cutEntryMessageTextView: TextView
-        var cutTimeTextView: TextView
+    class ChildCustomViewHolder(v: View) : RecyclerView.ViewHolder(v){
+        // initialize components of each individual cut entry row
 
-        init {
-            v.setOnClickListener(this)
-
-            // initialize components of each individual cut entry row
-            cutEntryDayTextView = v.findViewById(R.id.cutEntryDayTextView)
-            cutEntryMessageTextView = v.findViewById(R.id.cutEntryMessageTextView)
-            cutTimeTextView = v.findViewById(R.id.cutTimeTextView)
-        }
-
-        // TODO: Can implement deleting a CutEntry through onClick event or modifying an existing one
-        override fun onClick(p0: View?) {
-            // TODO "Not yet implemented"
-        }
+        var cutEntryDayTextView: TextView = v.findViewById(R.id.cutEntryDayTextView)
+        var cutEntryMessageTextView: TextView = v.findViewById(R.id.cutEntryMessageTextView)
+        var cutTimeTextView: TextView = v.findViewById(R.id.cutTimeTextView)
     }
 
     // TODO: Will be used for sections that do not have cuts yet
@@ -60,10 +50,20 @@ class ChildRecyclerAdapter(cutEntries: List<CutEntry>) :
 
     override fun onBindViewHolder(holder: ChildCustomViewHolder, position: Int) {
         Log.d(Constants.TAG, entries.toString())
+        val entry: CutEntry = entries[position]
         holder.cutEntryDayTextView.text = entries[position].day_number.toString()
         holder.cutEntryMessageTextView.text =
             MyApplication.applicationContext().getString(R.string.completedCut)
         holder.cutTimeTextView.text = entries[position].cut_time
+
+        // set on click listener, so we can call our custom interface to pass the
+        // CutEntry data to our fragment
+        holder.itemView.setOnClickListener(View.OnClickListener {
+            Log.d(Constants.TAG, "onClick: $position")
+            // call the interface method
+            onItemClickListener.onItemClick(entry)
+        })
+
     }
 
     override fun getItemCount(): Int = entries.size
@@ -72,4 +72,8 @@ class ChildRecyclerAdapter(cutEntries: List<CutEntry>) :
         this.entries = entries
         notifyDataSetChanged() // redraw the layout
     }
+}
+
+interface OnItemClickListener {
+    fun onItemClick(entry: CutEntry)
 }

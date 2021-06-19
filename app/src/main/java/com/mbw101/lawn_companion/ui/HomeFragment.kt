@@ -10,6 +10,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.mbw101.lawn_companion.R
+import com.mbw101.lawn_companion.database.CutEntry
 import com.mbw101.lawn_companion.utils.UtilFunctions
 import java.util.*
 
@@ -19,6 +20,27 @@ class HomeFragment : Fragment() {
     private lateinit var openPermissions: Button
     private lateinit var mainTextView: TextView
     private lateinit var salutationTextView: TextView
+
+    companion object {
+        // Note: When calling this function in this fragment class, check before calling it that
+        // permissions are granted. If there isn't permission access, there's no sense in finding
+        // the description message first
+
+        // Determines the appropriate message to display on the home fragment
+        // Takes a list of cuts sorted in ascending order
+        fun getDescriptionMessage(entries: List<CutEntry>): String {
+            // take into account the last cut (or if there even is an entry made)
+            if (entries.isEmpty()) {
+                return MyApplication.applicationContext().getString(R.string.noCutMessage)
+            }
+            else {
+                // determine the date of last cut using last entry in list
+
+                // TODO: Perform a calculation of how many days since last cut (using Util function to do so)
+                return "TEst"
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

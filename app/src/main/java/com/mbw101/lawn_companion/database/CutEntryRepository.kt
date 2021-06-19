@@ -15,6 +15,7 @@ class CutEntryRepository @Inject constructor(private val cutEntryDAO: CutEntryDA
     fun getSortedCuts() = cutEntryDAO.getAllCutsSorted()
     fun getCutsByMonth(monthNum: Int) = cutEntryDAO.findByMonthNum(monthNum)
     suspend fun addCut(cutEntry: CutEntry) = cutEntryDAO.insertAll(cutEntry)
+    suspend fun deleteCuts(vararg cuts: CutEntry) = cutEntryDAO.deleteCuts(*cuts)
 
     // TODO: Implement more functions for repository down the road
 }
