@@ -20,7 +20,6 @@ object UtilFunctions {
             == PackageManager.PERMISSION_GRANTED)
     }
 
-
     /***
      * Avoids having to deal with GregorianCalendar
      */
@@ -37,17 +36,23 @@ object UtilFunctions {
     }
 
     // returns the number of days between the two dates
-    // The order does NOT made for the calendar objects
     // TODO: Get this figured out (this and the one below will be used for getDescriptionMessage)
-    fun getNumDaysBetween(date1: Calendar, date2: Calendar): Int {
+    fun getNumDaysBetween(start: Calendar, end: Calendar): Int {
         // set hours and minutes to 0
-        date1.set(Calendar.HOUR, 12)
-        date2.set(Calendar.HOUR, 12)
-        date1.set(Calendar.MINUTE, 0)
-        date2.set(Calendar.MINUTE, 0)
+        start.set(Calendar.HOUR_OF_DAY, 12)
+        end.set(Calendar.HOUR_OF_DAY, 12)
+        start.set(Calendar.MINUTE, 0)
+        end.set(Calendar.MINUTE, 0)
 
-        val millis = abs(date2.timeInMillis - date1.timeInMillis)
+        val millis = abs(end.timeInMillis - start.timeInMillis)
+
+//        return (millis / (24 * 60 * 60 * 1000)).toInt()
         return TimeUnit.MILLISECONDS.toDays(millis).toInt()
+    }
+
+    fun sameDate(date1: Calendar, date2: Calendar): Boolean {
+        return date1.get(DAY_OF_YEAR) == date2.get(DAY_OF_YEAR) &&
+                date1.get(Calendar.YEAR) == date2.get(Calendar.YEAR)
     }
 
     // Finds num days since the given date (using current date)

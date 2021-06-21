@@ -31,13 +31,31 @@ class HomeFragment : Fragment() {
         fun getDescriptionMessage(entries: List<CutEntry>): String {
             // take into account the last cut (or if there even is an entry made)
             if (entries.isEmpty()) {
-                return MyApplication.applicationContext().getString(R.string.noCutMessage)
+                return  MyApplication.applicationContext().getString(R.string.noCutMessage)
+            }
+
+            // get the current date
+            val currentDate = Calendar.getInstance()
+            val latestCut = entries.last()
+
+            if (currentDate.get(Calendar.MONTH) == latestCut.month_num &&
+                currentDate.get(Calendar.DAY_OF_MONTH) == latestCut.day_number) {
+                return MyApplication.applicationContext().getString(R.string.alreadyCutMessage)
             }
             else {
                 // determine the date of last cut using last entry in list
+                val cal = Calendar.getInstance()
+                cal.set(Calendar.MONTH, latestCut.month_num)
+                cal.set(Calendar.DAY_OF_MONTH, latestCut.day_number)
 
-                // TODO: Perform a calculation of how many days since last cut (using Util function to do so)
-                return "TEst"
+                // TODO: Implement the user's preference for how long they require a cut (replace the 1 week value -> 7 days)
+                val numDaysSince = UtilFunctions.getNumDaysSince(cal)
+                if (numDaysSince > 7) {
+                    return MyApplication.applicationContext().getString(R.string.passedIntervalMessage)
+                }
+                else {
+                    return MyApplication.applicationContext().getString(R.string.daysSinceLastCut, numDaysSince)
+                }
             }
         }
     }
@@ -60,7 +78,7 @@ class HomeFragment : Fragment() {
         // shows the permissions button based on current permissions
         openPermissions.visibility = when (UtilFunctions.hasLocationPermissions()) {
             true -> {
-                // TODO: Set the appropriate text based on if there is a cut or not
+                // TODO: Call getDescriptionMessage() using ViewModel sorted data for entries (just like cut entry fragment)
                 mainTextView.text = getString(R.string.noCutMessage)
                 View.INVISIBLE
             }

@@ -29,8 +29,26 @@ class TestUtil {
         // use 2 Calendar objects and test against expected
         val date1: Calendar = Calendar.getInstance()
         val date2: Calendar = Calendar.getInstance()
-        date1.set(2021, Calendar.JANUARY, 1) // Jan 1st, 2021
+        // The getNumDaysBetween function works when calculating from April 1st to JUne 18th
+        // but it fails when calculating from March 1st to June 18th.
+        date1.set(2021, Calendar.MARCH, 1) // Jan 1st, 2021
         date2.set(2021, Calendar.JUNE, 18) // June 18th, 2021
-//        assertEquals(UtilFunctions.getNumDaysBetween(date1, date2), 168)
+//        assertEquals(UtilFunctions.getNumDaysBetween(date1, date2), 109)
+    }
+
+    @Test
+    fun testSameDayCalculation() {
+        // use 2 Calendar objects and test against expected
+        val date1: Calendar = Calendar.getInstance()
+        val date2: Calendar = Calendar.getInstance()
+
+        // test different dates
+        date1.set(2021, Calendar.MARCH, 1) // Jan 1st, 2021
+        date2.set(2021, Calendar.JUNE, 18) // June 18th, 2021
+        assertEquals(UtilFunctions.sameDate(date1, date2), false)
+
+        // test when the dates are the same
+        date2.set(2021, Calendar.MARCH, 1) // Jan 1st, 2021
+        assertEquals(UtilFunctions.sameDate(date1, date2), true)
     }
 }
