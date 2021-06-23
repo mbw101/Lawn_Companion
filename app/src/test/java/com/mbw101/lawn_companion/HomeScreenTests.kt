@@ -33,7 +33,7 @@ class HomeScreenTests {
 
         // test 1 cut in the list (with cut on the same day)
         list.add(CutEntry("4:36pm", currentDate.get(Calendar.DAY_OF_MONTH), "January",
-            currentDate.get(Calendar.MONTH)))
+            currentDate.get(Calendar.MONTH)+1))
 
         // take into account calendar to calculate the correct days since this cut
         expectedString = "No need to cut the lawn! An entry has been made today already."
@@ -45,7 +45,7 @@ class HomeScreenTests {
 
         list.clear()
         list.add(CutEntry("4:36pm", newDate.get(Calendar.DAY_OF_MONTH), "January",
-            newDate.get(Calendar.MONTH)))
+            newDate.get(Calendar.MONTH)+1))
         // TODO: Remove 's' from message if equal to 1
         expectedString = "1 days since last cut"
         assertEquals(HomeFragment.getDescriptionMessage(list), expectedString)
@@ -54,7 +54,7 @@ class HomeScreenTests {
         list.clear()
         newDate.add(Calendar.DAY_OF_YEAR, -2) // set to 3 days ago
         list.add(CutEntry("4:36pm", newDate.get(Calendar.DAY_OF_MONTH), "January",
-            newDate.get(Calendar.MONTH)))
+            newDate.get(Calendar.MONTH)+1))
         expectedString = "3 days since last cut"
         assertEquals(HomeFragment.getDescriptionMessage(list), expectedString)
 
@@ -62,7 +62,7 @@ class HomeScreenTests {
         newDate.add(Calendar.DAY_OF_YEAR, -11) // set to 14 day ago (3 + 11)
         list.clear()
         list.add(CutEntry("4:36pm", newDate.get(Calendar.DAY_OF_MONTH), "January",
-            newDate.get(Calendar.MONTH)))
+            newDate.get(Calendar.MONTH)+1))
         expectedString = "Your last cut has surpassed the cutting interval. You will likely need a cut."
         assertEquals(HomeFragment.getDescriptionMessage(list), expectedString)
 
@@ -70,7 +70,7 @@ class HomeScreenTests {
         newDate.add(Calendar.DAY_OF_YEAR, -10000)
         list.clear()
         list.add(CutEntry("4:36pm", newDate.get(Calendar.DAY_OF_MONTH), "January",
-            newDate.get(Calendar.MONTH)))
+            newDate.get(Calendar.MONTH)+1))
         expectedString = "Your last cut has surpassed the cutting interval. You will likely need a cut."
         assertEquals(HomeFragment.getDescriptionMessage(list), expectedString)
     }

@@ -9,6 +9,7 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.CutEntry
 import com.mbw101.lawn_companion.utils.UtilFunctions
@@ -20,6 +21,7 @@ class HomeFragment : Fragment() {
     private lateinit var openPermissions: Button
     private lateinit var mainTextView: TextView
     private lateinit var salutationTextView: TextView
+    private val viewModel: CutEntryViewModel by viewModels()
 
     companion object {
         // Note: When calling this function in this fragment class, check before calling it that
@@ -38,30 +40,26 @@ class HomeFragment : Fragment() {
             val currentDate = Calendar.getInstance()
             val latestCut = entries.last()
 
-            if (currentDate.get(Calendar.MONTH) == latestCut.month_num &&
+            // month numbers in Calendar start at 0
+            if (currentDate.get(Calendar.MONTH) == (latestCut.month_num - 1) &&
                 currentDate.get(Calendar.DAY_OF_MONTH) == latestCut.day_number) {
                 return MyApplication.applicationContext().getString(R.string.alreadyCutMessage)
             }
             else {
                 // determine the date of last cut using last entry in list
                 val cal = Calendar.getInstance()
-                cal.set(Calendar.MONTH, latestCut.month_num)
+                cal.set(Calendar.MONTH, latestCut.month_num - 1) // month numbers in Calendar start at 0
                 cal.set(Calendar.DAY_OF_MONTH, latestCut.day_number)
 
                 // TODO: Implement the user's preference for how long they require a cut (replace the 1 week value -> 7 days)
                 val numDaysSince = UtilFunctions.getNumDaysSince(cal)
-                if (numDaysSince > 7) {
-                    return MyApplication.applicationContext().getString(R.string.passedIntervalMessage)
-                }
-                else {
-                    return MyApplication.applicationContext().getString(R.string.daysSinceLastCut, numDaysSince)
+                return if (numDaysSince > 7) {
+                    MyApplication.applicationContext().getString(R.string.passedIntervalMessage)
+                } else {
+                    MyApplication.applicationContext().getString(R.string.daysSinceLastCut, numDaysSince)
                 }
             }
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -78,8 +76,7 @@ class HomeFragment : Fragment() {
         // shows the permissions button based on current permissions
         openPermissions.visibility = when (UtilFunctions.hasLocationPermissions()) {
             true -> {
-                // TODO: Call getDescriptionMessage() using ViewModel sorted data for entries (just like cut entry fragment)
-                mainTextView.text = getString(R.string.noCutMessage)
+                setupViewModel()
                 View.INVISIBLE
             }
             false -> {
@@ -122,5 +119,14 @@ class HomeFragment : Fragment() {
                 getString(R.string.goodNight)
             }
         }
+    }
+
+    // sets up ViewModel and calls getDescriptionMessage
+    private fun setupViewModel() {
+        // set up view model with fragment
+        viewModel.getSortedCuts().observe(viewLifecycleOwner, { entries -> //update RecyclerView later
+            // set up text on home frag
+            mainTextView.text = getDescriptionMessage(entries)
+        })
     }
 }

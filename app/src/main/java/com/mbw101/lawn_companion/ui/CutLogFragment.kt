@@ -13,7 +13,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.mbw101.lawn_companion.R
-import com.mbw101.lawn_companion.database.*
+import com.mbw101.lawn_companion.database.CutEntry
 import com.mbw101.lawn_companion.utils.Constants
 import com.mbw101.lawn_companion.utils.UtilFunctions
 import kotlinx.coroutines.runBlocking
@@ -33,10 +33,7 @@ class CutLogFragment : Fragment(), OnItemClickListener {
     private lateinit var monthSections: List<MonthSection>
     private lateinit var mainRecyclerAdaptor: MainRecyclerAdaptor
 
-    private lateinit var db: CutEntryDatabase
     private val viewModel: CutEntryViewModel by viewModels()
-    private lateinit var cutEntryDAO: CutEntryDAO
-    private lateinit var cutEntryRepository: CutEntryRepository
 
     companion object {
         // sets up the hashmap containing all entries for each respective month
@@ -108,7 +105,7 @@ class CutLogFragment : Fragment(), OnItemClickListener {
     }
 
     private fun init(v: View) {
-        setupDB()
+//        setupDB()
 
         // initialize components
         mainRecyclerView = v.findViewById(R.id.main_recyclerview)
@@ -123,13 +120,6 @@ class CutLogFragment : Fragment(), OnItemClickListener {
 
         setupListeners()
         setupViewmodel()
-    }
-
-    private fun setupDB() {
-        // set up Room
-        db = DatabaseBuilder.getInstance(MyApplication.applicationContext())
-        cutEntryDAO = db.cutEntryDao()
-        cutEntryRepository = CutEntryRepository(cutEntryDAO)
     }
 
     private fun setupListeners() {
@@ -186,7 +176,6 @@ class CutLogFragment : Fragment(), OnItemClickListener {
 
     override fun onItemClick(entry: CutEntry): Unit = runBlocking{
         Log.d(Constants.TAG, "onItemClick: $entry")
-        // TODO: Show a menu to possible delete it
         val builder = AlertDialog.Builder(context)
         builder.setTitle(R.string.alertTitle)
             .setPositiveButton(R.string.deleteOption,

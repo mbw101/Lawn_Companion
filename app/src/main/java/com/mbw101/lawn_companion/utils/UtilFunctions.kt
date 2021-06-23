@@ -36,7 +36,6 @@ object UtilFunctions {
     }
 
     // returns the number of days between the two dates
-    // TODO: Get this figured out (this and the one below will be used for getDescriptionMessage)
     fun getNumDaysBetween(start: Calendar, end: Calendar): Int {
         // set hours and minutes to 0
         start.set(Calendar.HOUR_OF_DAY, 12)

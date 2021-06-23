@@ -16,13 +16,6 @@ class MyApplication: Application() {
         Log.d(Constants.TAG, "It has finished!")
     }
 
-    override fun onCreate() {
-        super.onCreate()
-
-        // Initialization here gets done before any activity gets created
-//        TODO("Implement creating the notification channel here")
-    }
-
     companion object {
         private var myApp: MyApplication? = null
 

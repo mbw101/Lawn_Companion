@@ -63,8 +63,6 @@ class LastIntroScreenFragment : Fragment(), View.OnClickListener {
                             requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), MY_PERMISSIONS_REQUEST_LOCATION)
                         }
                         .setNegativeButton(android.R.string.cancel) { _, i -> //Prompt the user once explanation has been shown
-                            // TODO: adjust the text on main activity to reflect them declining location permissions
-
                             // launch main activity
                             launchMainActivity()
                         }

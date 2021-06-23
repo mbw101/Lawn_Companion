@@ -65,6 +65,11 @@ class TestAddCutScreen {
         onView(withId(R.id.addCutButton)).perform(click())
         // test to see if main activity appeared on screen
         Intents.intended(IntentMatchers.hasComponent(MainActivity::class.java.name))
+
+        // TODO: test adding a cut and seeing if it appears in the cut log fragment
+        onView(withId(R.id.cutLog)).perform(click())
+        // check the January month section
+//        onView(withId(R.id.main_recyclerview)).
     }
 
     @After

@@ -203,7 +203,7 @@ class AddCutActivity : AppCompatActivity() {
             },
             cutTime.get(Calendar.HOUR_OF_DAY),
             cutTime.get(Calendar.MINUTE),
-            false // TODO: Add if statement to support 24-hour locales
+            false // TODO: Add if statement to support 24-hour locales (based on preference)
         )
         timePickerDialog.show()
     }
