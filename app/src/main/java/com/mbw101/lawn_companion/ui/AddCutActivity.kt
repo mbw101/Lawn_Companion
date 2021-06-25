@@ -32,10 +32,15 @@ class AddCutActivity : AppCompatActivity() {
     private lateinit var cutTime: Calendar
 
     // database variables
-//    private lateinit var db: CutEntryDatabase
-//    private lateinit var cutEntryDAO: CutEntryDAO
-//    private lateinit var cutEntryRepository: CutEntryRepository
     private lateinit var cutEntryViewModel: CutEntryViewModel
+
+    companion object {
+        // ensures the date of the cut is not past the current date
+        fun checkDateValidity(desiredDate: Calendar): Boolean {
+            val currentDate = Calendar.getInstance()
+            return currentDate.after(desiredDate) // check to see if the desired comes before the current date
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -139,12 +144,19 @@ class AddCutActivity : AppCompatActivity() {
         }
 
         addCutButton.setOnClickListener {
-            // Add cut to DB
-            cutEntryViewModel = CutEntryViewModel(application)
+            // Check to make sure the date isn't past current date
+            if (isValidDate()) {
+                // Add cut to DB
+                cutEntryViewModel = CutEntryViewModel(application)
 
-            addCut()
+                addCut()
 
-            launchMainActivity()
+                launchMainActivity()
+            }
+            else {
+                Toast.makeText(this, getString(R.string.futureCutsToastMessage), Toast.LENGTH_LONG).
+                        show()
+            }
         }
 
         monthDropdown.onItemSelectedListener = object : OnItemSelectedListener {
@@ -159,6 +171,22 @@ class AddCutActivity : AppCompatActivity() {
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
+    }
+
+    /***
+     * Calls checkDateValidity with a created calendar
+     * object from the dropdown menus
+     */
+    private fun isValidDate(): Boolean {
+        val desiredDate = Calendar.getInstance()
+        desiredDate.set(Calendar.DAY_OF_MONTH, dayDropdown.selectedItemPosition+1)
+        desiredDate.set(Calendar.MONTH, monthDropdown.selectedItemPosition) // months are zero based
+        // set to 00:00 or 12:00 start of the day to avoid any conflicts with validity checking
+        desiredDate.set(Calendar.HOUR_OF_DAY, 0)
+        desiredDate.set(Calendar.MINUTE, 0)
+        Log.d(Constants.TAG, desiredDate.toString())
+
+        return checkDateValidity(desiredDate)
     }
 
     private fun addCut() {

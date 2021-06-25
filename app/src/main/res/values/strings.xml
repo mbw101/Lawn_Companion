@@ -96,6 +96,7 @@
     Enter Time:
     </string>
     <string name="addCutText">Add Cut</string>
+    <string name="futureCutsToastMessage">You cannot add future cuts!</string>
 
     <!-- Months -->
     <string name="january">January</string>

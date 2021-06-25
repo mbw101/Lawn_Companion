@@ -2,12 +2,14 @@ package com.mbw101.lawn_companion
 
 import androidx.test.runner.AndroidJUnit4
 import com.mbw101.lawn_companion.database.CutEntry
+import com.mbw101.lawn_companion.ui.AddCutActivity
 import com.mbw101.lawn_companion.ui.CutLogFragment
 import com.mbw101.lawn_companion.utils.Constants
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
+import java.util.*
 
 /**
 Lawn Companion
@@ -88,5 +90,16 @@ class CutEntryTests {
         assertEquals(monthSections[4].items.size, 2)
         assertEquals(monthSections[5].items.size, 0)
         // rest of the months will have 0 entries
+    }
+
+    @Test
+    fun testDateValidity() {
+//        val currentDate = Calendar.getInstance()
+        val newDate = Calendar.getInstance()
+        assertEquals(AddCutActivity.checkDateValidity(newDate), true)
+        newDate.add(Calendar.DAY_OF_MONTH, -1)
+        assertEquals(AddCutActivity.checkDateValidity(newDate), true)
+        newDate.add(Calendar.DAY_OF_MONTH, 2)
+        assertEquals(AddCutActivity.checkDateValidity(newDate), false)
     }
 }

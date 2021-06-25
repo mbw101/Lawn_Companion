@@ -1,13 +1,15 @@
 package com.mbw101.lawn_companion.ui
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.mbw101.lawn_companion.R
@@ -74,6 +76,31 @@ class HomeFragment : Fragment() {
         mainTextView = view.findViewById(R.id.mainMessageTextView)
         salutationTextView = view.findViewById(R.id.salutationTextView)
         // shows the permissions button based on current permissions
+        checkPermissions()
+
+        // set correct salutation
+        salutationTextView.text = getSalutation()
+        setupListeners()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkPermissions() // check if permissions have been updated when app is reopened
+    }
+
+    private fun setupListeners() {
+        openPermissions.setOnClickListener {
+//            Toast.makeText(MyApplication.applicationContext(), "Clicked permissions button!", Toast.LENGTH_SHORT).show()
+            openPermissions()
+        }
+    }
+
+    /***
+     * Shows the correct UI elements
+     * based on permissions
+     */
+    private fun checkPermissions() {
+        // shows the permissions button based on current permissions
         openPermissions.visibility = when (UtilFunctions.hasLocationPermissions()) {
             true -> {
                 setupViewModel()
@@ -83,18 +110,6 @@ class HomeFragment : Fragment() {
                 mainTextView.text = getString(R.string.needsPermissionString)
                 View.VISIBLE
             }
-        }
-
-        // set correct salutation
-        salutationTextView.text = getSalutation()
-
-        setupListeners()
-    }
-
-    private fun setupListeners() {
-        openPermissions.setOnClickListener {
-            // TODO: Show permissions screen
-            Toast.makeText(MyApplication.applicationContext(), "Clicked permissions button!", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -128,5 +143,14 @@ class HomeFragment : Fragment() {
             // set up text on home frag
             mainTextView.text = getDescriptionMessage(entries)
         })
+    }
+
+    // Show permissions screen for app in settings
+    private fun openPermissions() {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        val uri: Uri = Uri.fromParts("package", MyApplication.applicationContext().packageName, null)
+        intent.data = uri
+        startActivity(intent)
     }
 }
