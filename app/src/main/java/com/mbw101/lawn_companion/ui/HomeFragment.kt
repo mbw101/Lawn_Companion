@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.CutEntry
+import com.mbw101.lawn_companion.utils.ApplicationPrefs
 import com.mbw101.lawn_companion.utils.UtilFunctions
 import java.util.*
 
@@ -90,25 +91,32 @@ class HomeFragment : Fragment() {
 
     private fun setupListeners() {
         openPermissions.setOnClickListener {
-//            Toast.makeText(MyApplication.applicationContext(), "Clicked permissions button!", Toast.LENGTH_SHORT).show()
             openPermissions()
         }
     }
 
     /***
      * Shows the correct UI elements
-     * based on permissions
+     * based on permissions and preferences
      */
     private fun checkPermissions() {
-        // shows the permissions button based on current permissions
-        openPermissions.visibility = when (UtilFunctions.hasLocationPermissions()) {
-            true -> {
-                setupViewModel()
-                View.INVISIBLE
-            }
-            false -> {
-                mainTextView.text = getString(R.string.needsPermissionString)
-                View.VISIBLE
+        val preferences = ApplicationPrefs()
+
+        // look at if they turned on/off cutting season
+        if (!preferences.isInCuttingSeason()) {
+            mainTextView.text = getString(R.string.cuttingSeasonOver)
+        }
+        else {
+            // shows the permissions button based on current permissions
+            openPermissions.visibility = when (UtilFunctions.hasLocationPermissions()) {
+                true -> {
+                    setupViewModel()
+                    View.INVISIBLE
+                }
+                false -> {
+                    mainTextView.text = getString(R.string.needsPermissionString)
+                    View.VISIBLE
+                }
             }
         }
     }
