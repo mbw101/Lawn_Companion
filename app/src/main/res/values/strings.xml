@@ -39,7 +39,13 @@
 
     <!-- Regular description -->
     <string name="daysSinceLastCut">
-    %2$d days since last cut
+    %1$d days since last cut
+    </string>
+
+    <!-- Description for when the lawn has passed the ideal cutting interval-->
+    <string name="passedIntervalMessage">
+        Your last cut has surpassed the cutting interval. You will likely
+        need a cut.
     </string>
 
     <!-- Initial message or no cuts -->
@@ -90,6 +96,7 @@
     Enter Time:
     </string>
     <string name="addCutText">Add Cut</string>
+    <string name="futureCutsToastMessage">You cannot add future cuts!</string>
 
     <!-- Months -->
     <string name="january">January</string>
@@ -154,6 +161,11 @@
 
     <!-- Cut log activity strings -->
     <string name="completedCut">Completed Cut</string>
+    <string name="noCutMade">No Cuts Made</string>
+    <string name="alertTitle">Delete cut entry?</string>
+    <string name="alertMessage">This will delete the selected cut entry from the Cut Log!</string>
+    <string name="cancelOption">Cancel</string>
+    <string name="deleteOption">Delete</string>
 
     <!-- Notification strings -->
     <string name="markAsCut">Mark as cut</string>
@@ -168,5 +180,9 @@
     <string name="settings_icon">Settings icon</string>
     <string name="refresh_icon">Refresh icon</string>
     <string name="floating_action_button_for_adding_new_cuts">Floating action button for adding new cuts</string>
+
+    <!--    Dialog strings-->
+    <string name="permissionDialogTitle">Access to background location</string>
+    <string name="permissionDialogContent">Lawn Companion needs your background location to access local weather periodically!</string>
 
 </resources>

@@ -5,11 +5,13 @@
 
         <SwitchPreferenceCompat
             app:key="inSeason"
+            android:defaultValue="true"
             app:title="@string/cuttingSeasonTitle"
             app:summary="@string/cuttingSeasonDesc"/>
 
         <SwitchPreferenceCompat
             app:dependency="inSeason"
+            android:defaultValue="true"
             app:key="notificationSwitch"
             app:summaryOff="@string/notification_summary_off"
             app:summaryOn="@string/notification_summary_on"
@@ -20,6 +22,7 @@
 
         <SwitchPreferenceCompat
             app:key="useData"
+            android:defaultValue="false"
             app:summaryOff="@string/data_summary_off"
             app:summaryOn="@string/data_summary_on"
             app:title="@string/weatherDataAccessTitle" />

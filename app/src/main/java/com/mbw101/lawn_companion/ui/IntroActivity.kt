@@ -43,7 +43,7 @@ class IntroActivity : FragmentActivity() {
 
         // set intro activity to full screen
         setContentView(R.layout.activity_intro)
-        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
 
         // start the introduction
         init()
@@ -58,7 +58,7 @@ class IntroActivity : FragmentActivity() {
     private fun init() {
         preferenceManager = ApplicationPrefs()
         // DEBUG STATEMENT, always ensures intro activity is ran
-        preferenceManager.setNotFirstTime(false)
+//        preferenceManager.setNotFirstTime(false)
         if (preferenceManager.isNotFirstTime()) { // we want to automatically go into Main
             launchMainActivity()
         }

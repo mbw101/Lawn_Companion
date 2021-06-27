@@ -9,18 +9,17 @@ Created by Malcolm Wright
 Date: May 16th, 2021
  */
 
-
 @Entity(tableName = "cuts_table", primaryKeys = ["month_name", "day_number"])
 data class CutEntry (
 
-    @ColumnInfo(name="cut_time") val time: String,
+    @ColumnInfo(name="cut_time") val cut_time: String,
 
-    @ColumnInfo(name="day_number") val day: Int,
+    @ColumnInfo(name="day_number") val day_number: Int,
 
     // used to organize into the month headings in CutLogActivity
-    @ColumnInfo(name="month_name") val month: String,
+    @ColumnInfo(name="month_name") val month_name: String,
 
-    @ColumnInfo(name="month_num") val monthNum: Int,
+    @ColumnInfo(name="month_num") val month_num: Int,
 
     @ColumnInfo(name = "millis") val millis: Long = System.currentTimeMillis()
 
