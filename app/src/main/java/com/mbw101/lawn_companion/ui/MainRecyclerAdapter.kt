@@ -14,19 +14,16 @@ Created by Malcolm Wright
 Date: May 16th, 2021
  */
 
-class MainRecyclerAdaptor(list: List<MonthSection>): RecyclerView.Adapter<MainRecyclerAdaptor.CustomViewHolder>() {
+class MainRecyclerAdaptor(clickListener: OnItemClickListener):  RecyclerView.Adapter<MainRecyclerAdaptor.CustomViewHolder>() {
 
-    var sectionList: List<MonthSection> = list
+    // add custom interface
+    var onItemClickListener: OnItemClickListener = clickListener
+    private var sectionList = mutableListOf<MonthSection>()
 
-    class CustomViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        var monthTextView: TextView
-        var childRecyclerView: RecyclerView
-
-        init {
-            // initialize components of each month section
-            monthTextView = v.findViewById(R.id.monthHeaderTextView)
-            childRecyclerView = v.findViewById(R.id.childRecyclerView)
-        }
+    class CustomViewHolder(v: View) : RecyclerView.ViewHolder(v){
+        // initialize components of each month section
+        var monthTextView: TextView = v.findViewById(R.id.monthHeaderTextView)
+        var childRecyclerView: RecyclerView = v.findViewById(R.id.childRecyclerView)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
@@ -36,15 +33,21 @@ class MainRecyclerAdaptor(list: List<MonthSection>): RecyclerView.Adapter<MainRe
     }
 
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
+        // set the month text for the month section
         val section: MonthSection = sectionList[position]
         val monthName: String = section.monthName
         val cutEntries: List<CutEntry> = section.items
-
         holder.monthTextView.text = monthName
 
-        val childAdapter = ChildRecyclerAdapter(cutEntries)
-        holder.childRecyclerView.adapter = childAdapter
+        // create adaptor and pass in the list of entries
+        val childAdaptor = ChildRecyclerAdapter(cutEntries, onItemClickListener)
+        holder.childRecyclerView.adapter = childAdaptor
     }
 
     override fun getItemCount(): Int = sectionList.size
+
+    fun setSections(sectionList: List<MonthSection>) {
+        this.sectionList = sectionList as MutableList<MonthSection>
+        notifyDataSetChanged() // redraw the layout
+    }
 }

@@ -48,6 +48,11 @@ class SettingsActivity : AppCompatActivity(){
         finish()
     }
 
+    // allow back button to go back to main activity
+    override fun onBackPressed() {
+        launchMainActivity()
+    }
+
     class SettingsFragment : PreferenceFragmentCompat() {
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
