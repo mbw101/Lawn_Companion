@@ -24,7 +24,6 @@ class ChildRecyclerAdapter(cutEntries: List<CutEntry>, // add custom interface
 
     class ChildCustomViewHolder(v: View) : RecyclerView.ViewHolder(v){
         // initialize components of each individual cut entry row
-
         var cutEntryDayTextView: TextView = v.findViewById(R.id.cutEntryDayTextView)
         var cutEntryMessageTextView: TextView = v.findViewById(R.id.cutEntryMessageTextView)
         var cutTimeTextView: TextView = v.findViewById(R.id.cutTimeTextView)

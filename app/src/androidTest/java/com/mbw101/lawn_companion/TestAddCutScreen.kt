@@ -1,16 +1,18 @@
 package com.mbw101.lawn_companion
 
-import androidx.test.espresso.Espresso.onData
-import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.Espresso.*
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
-import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
 import com.mbw101.lawn_companion.ui.AddCutActivity
 import com.mbw101.lawn_companion.ui.MainActivity
+import com.mbw101.lawn_companion.ui.MainRecyclerAdaptor
 import org.hamcrest.core.AllOf.allOf
 import org.hamcrest.core.Is.`is`
 import org.hamcrest.core.IsInstanceOf.instanceOf
@@ -19,6 +21,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.*
 
 
 /**
@@ -59,17 +62,35 @@ class TestAddCutScreen {
     }
 
     @Test
+    // tests back buttons to see if main activity is shown
+    fun testPhysicalBackButton() {
+        // hit back button
+        pressBack()
+        // test to see if main activity appeared on screen
+        Intents.intended(IntentMatchers.hasComponent(MainActivity::class.java.name))
+    }
+
+    @Test
     // tests add cut button see if main activity is shown
-    fun testAddCut() {
+    fun testAddAndDeleteCut() {
         // hit add cut button
         onView(withId(R.id.addCutButton)).perform(click())
         // test to see if main activity appeared on screen
         Intents.intended(IntentMatchers.hasComponent(MainActivity::class.java.name))
 
-        // TODO: test adding a cut and seeing if it appears in the cut log fragment
+        // test adding a cut and seeing if it appears in the cut log fragment
         onView(withId(R.id.cutLog)).perform(click())
-        // check the January month section
-//        onView(withId(R.id.main_recyclerview)).
+        // check the current month section for the new cut (ensure the size of list in month section is 1)
+        val month = Calendar.getInstance().get(Calendar.MONTH)
+        onView(withId(R.id.main_recyclerview))
+            .perform(actionOnItemAtPosition<MainRecyclerAdaptor.CustomViewHolder>(month, click()))
+
+        // test to see if the delete cut dialog is in view
+        onView(withText("Delete cut entry?")).check(matches(isDisplayed()))
+
+        // now, perform a click on the delete button and make sure the recyclerview is there afterwards
+        onView(withId(android.R.id.button1)).perform(click())
+        onView(withId(R.id.main_recyclerview)).check(matches(isDisplayed()))
     }
 
     @After

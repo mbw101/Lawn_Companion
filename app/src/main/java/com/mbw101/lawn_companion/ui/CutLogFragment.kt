@@ -17,8 +17,6 @@ import com.mbw101.lawn_companion.database.CutEntry
 import com.mbw101.lawn_companion.utils.Constants
 import com.mbw101.lawn_companion.utils.UtilFunctions
 import kotlinx.coroutines.runBlocking
-import java.util.*
-import kotlin.collections.HashMap
 
 
 /**
@@ -105,8 +103,6 @@ class CutLogFragment : Fragment(), OnItemClickListener {
     }
 
     private fun init(v: View) {
-//        setupDB()
-
         // initialize components
         mainRecyclerView = v.findViewById(R.id.main_recyclerview)
 
@@ -160,18 +156,6 @@ class CutLogFragment : Fragment(), OnItemClickListener {
         // set up hashmap with entries for each month and create month sections
         val hashMap: HashMap<Int, List<CutEntry>> = setupHashmap(entries)
         monthSections = setupMonthSections(hashMap)
-    }
-
-    private fun getEntriesFromSpecificMonth(entries: List<CutEntry>, month: Int): ArrayList<CutEntry>? {
-        val returnEntries: ArrayList<CutEntry>? = null
-
-        // loop through entries and add any entries
-        val iterator = entries.iterator()
-        iterator.forEach { entry ->
-            if (entry.month_num == month) returnEntries?.add(entry)
-        }
-
-        return returnEntries
     }
 
     override fun onItemClick(entry: CutEntry): Unit = runBlocking{

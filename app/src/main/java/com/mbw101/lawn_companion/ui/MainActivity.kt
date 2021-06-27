@@ -2,6 +2,7 @@ package com.mbw101.lawn_companion.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -54,6 +55,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setListeners() {
         // bottom navigation listener
+
         bottomNav.setOnNavigationItemSelectedListener { item ->
             when(item.itemId) {
                 R.id.home -> {
@@ -110,6 +112,17 @@ class MainActivity : AppCompatActivity() {
 //        val transaction: FragmentTransaction = requireFragmentManager().beginTransaction()
 //        transaction.setReorderingAllowed (false)
 //        transaction.detach(g).attach(this).commitAllowingStateLoss()
+    }
+
+    override fun onBackPressed() {
+        val homeItem: MenuItem = bottomNav.menu.getItem(0)
+
+        if (bottomNav.selectedItemId != homeItem.itemId) {
+            // Select home item
+            bottomNav.selectedItemId = homeItem.itemId
+        } else {
+            finish()
+        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {

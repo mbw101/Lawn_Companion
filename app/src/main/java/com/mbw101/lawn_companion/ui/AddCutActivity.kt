@@ -195,7 +195,7 @@ class AddCutActivity : AppCompatActivity() {
         val cutTimeString = DateUtils.formatDateTime(this, cutTime.timeInMillis, DateUtils.FORMAT_SHOW_TIME)
         Log.d(Constants.TAG, "Time of cut: $cutTimeString")
         val cutEntry = CutEntry(cutTimeString, dayDropdown.selectedItemPosition+1,
-            Constants.months[monthDropdown.selectedItemPosition], monthDropdown.selectedItemPosition+1);
+            Constants.months[monthDropdown.selectedItemPosition], monthDropdown.selectedItemPosition+1)
 
         cutEntryViewModel.addEntry(cutEntry)
     }
@@ -252,5 +252,10 @@ class AddCutActivity : AppCompatActivity() {
 
 //        val day: Int = cal.get(Calendar.DAY_OF_MONTH)
         dayDropdown.setSelection(0)
+    }
+
+    override fun onBackPressed() {
+        // show main activity
+        launchMainActivity()
     }
 }

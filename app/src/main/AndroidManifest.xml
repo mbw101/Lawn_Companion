@@ -32,7 +32,8 @@
         </activity>
         <activity
             android:name=".ui.SettingsActivity"
-            android:theme="@style/myPreferencesTheme" />
+            android:theme="@style/myPreferencesTheme"
+            android:parentActivityName=".ui.MainActivity"/>
     </application>
 
 </manifest>
