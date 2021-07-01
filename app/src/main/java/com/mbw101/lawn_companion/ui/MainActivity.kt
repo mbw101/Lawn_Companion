@@ -7,10 +7,12 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mbw101.lawn_companion.R
+import com.mbw101.lawn_companion.notifications.NotificationHelper
 
 
 /**
@@ -36,6 +38,14 @@ class MainActivity : AppCompatActivity() {
 
         init()
         setListeners()
+
+        // create notification channel
+        NotificationHelper.createNotificationChannel(this,
+            NotificationManagerCompat.IMPORTANCE_DEFAULT, true,
+            getString(R.string.app_name), "Notification channel")
+
+        // debug
+//        NotificationHelper.createCutNotification(this, getString(R.string.app_name), getString(R.string.cutSuggestionMessage), true)
     }
 
     /***
@@ -49,8 +59,6 @@ class MainActivity : AppCompatActivity() {
         refreshIcon = findViewById(R.id.refreshIcon)
         titleTextView = findViewById(R.id.titleTextView)
         addCutFAB = findViewById(R.id.addCutFAB)
-
-        setListeners()
     }
 
     private fun setListeners() {
