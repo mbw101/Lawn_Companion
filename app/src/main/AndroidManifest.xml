@@ -34,6 +34,9 @@
             android:name=".ui.SettingsActivity"
             android:theme="@style/myPreferencesTheme"
             android:parentActivityName=".ui.MainActivity"/>
+
+        <!-- Used for notifications       -->
+        <receiver android:name=".notifications.AppGlobalReceiver"/>
     </application>
 
 </manifest>

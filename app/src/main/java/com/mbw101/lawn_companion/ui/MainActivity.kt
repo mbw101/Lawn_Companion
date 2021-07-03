@@ -43,9 +43,6 @@ class MainActivity : AppCompatActivity() {
         NotificationHelper.createNotificationChannel(this,
             NotificationManagerCompat.IMPORTANCE_DEFAULT, true,
             getString(R.string.app_name), "Notification channel")
-
-        // debug
-//        NotificationHelper.createCutNotification(this, getString(R.string.app_name), getString(R.string.cutSuggestionMessage), true)
     }
 
     /***

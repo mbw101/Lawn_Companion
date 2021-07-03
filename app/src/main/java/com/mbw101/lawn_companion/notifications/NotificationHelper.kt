@@ -19,6 +19,9 @@ Date: June 29th, 2021
 
 object NotificationHelper {
 
+    const val CUT_NOTIFICATION_ID = 1
+    private const val MARK_AS_CUT_CODE = 2021
+
     /**
      * Creates the notification channels for API 26+
      * Uses package name + channel name to create unique channelId's
@@ -40,6 +43,11 @@ object NotificationHelper {
         }
     }
 
+    /**
+     * Creates a cut notification suggesting a new cut to be added
+     * along with an action button for adding a cut by simply
+     * tapping it.
+     */
     fun createCutNotification(context: Context, title: String, message: String, autoCancel: Boolean) {
         // create unique channel id for the app
         val channelId = "${context.packageName}-${context.getString(R.string.app_name)}"
@@ -58,12 +66,33 @@ object NotificationHelper {
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
 
             val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
-            // attaches intent
+            // attaches intent for when the user presses the notification itself
             setContentIntent(pendingIntent)
         }
 
+        // Add 2 actions: Mark as cut and skip
+        val markCutPendingIntent = createPendingIntentForAction(context)
+        // TODO: Add the skip button in the future
+
+        notificationBuilder.addAction(
+            R.drawable.indicator_selected, // TODO: Replace icon later
+            context.getString(R.string.markAsCut),
+            markCutPendingIntent)
+
         val notificationManager = NotificationManagerCompat.from(context)
 
-        notificationManager.notify(1001, notificationBuilder.build())
+        notificationManager.notify(CUT_NOTIFICATION_ID, notificationBuilder.build())
+    }
+
+    /**
+     * Creates the pending intent for the "Mark as cut" action on the notification.
+     */
+    private fun createPendingIntentForAction(context: Context): PendingIntent? {
+        // create an Intent to update the CutEntry database if "Mark as cut"" action is clicked
+        val markCutIntent = Intent(context, AppGlobalReceiver::class.java).apply {
+            action = context.getString(R.string.markAsCut)
+        }
+
+        return PendingIntent.getBroadcast(context, MARK_AS_CUT_CODE, markCutIntent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 }
