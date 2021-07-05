@@ -55,19 +55,35 @@ class AddCutActivity : AppCompatActivity() {
     }
 
     private fun init() {
-        // set up dropdown menu with months
         monthDropdown = findViewById(R.id.monthDropdownMenu)
         dayDropdown = findViewById(R.id.dayDropdownMenu)
         backIcon = findViewById(R.id.backIcon)
         selectedTimeTextView = findViewById(R.id.selectedTimeTextView)
         addCutButton = findViewById(R.id.addCutButton)
 
-        // Fill in the dropdown menus
-        val cal: Calendar = Calendar.getInstance()
-        val monthAdapter: ArrayAdapter<String> = ArrayAdapter(this, android.R.layout.simple_spinner_item,
-            resources.getStringArray(R.array.months))
+        fillDropdownMenus()
+        setMonthSelection()
+        updateInputs()
+    }
+
+    /**
+     * Adds the month values into
+     * the month dropdown
+     */
+    private fun fillDropdownMenus() {
+        val monthAdapter: ArrayAdapter<String> = ArrayAdapter(
+            this, android.R.layout.simple_spinner_item,
+            resources.getStringArray(R.array.months)
+        )
         monthAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line)
         monthDropdown.adapter = monthAdapter
+    }
+
+    /**
+     * Sets the current month in the dropdown menu
+     */
+    private fun setMonthSelection() {
+        val cal: Calendar = Calendar.getInstance()
         val month: Int = cal.get(Calendar.MONTH)
         monthDropdown.setSelection(month)
 
@@ -83,16 +99,40 @@ class AddCutActivity : AppCompatActivity() {
      * based on the month selected and if it's a leap year
      */
     private fun setupDaysDropdown(monthValue: Int, cal: Calendar) {
-        // set up the days dropdown values
-        val isLeapYear: Boolean = UtilFunctions.isLeapYear(cal.get(Calendar.YEAR))
+        addDaysToDropdown(monthValue)
+        // set the default day value selected in the dropdown
+        setDayDropdownSelection(cal)
+    }
+
+    private fun setDayDropdownSelection(cal: Calendar) {
+        val maxNumDays = cal.getActualMaximum(Calendar.DAY_OF_MONTH)
+        Log.d(Constants.TAG, "Max number of days = $maxNumDays")
+        Log.d(Constants.TAG, "Current month = ${cal.get(Calendar.MONTH)}")
+
+        val previousDay = cal.get(Calendar.DAY_OF_MONTH) - 1
+
+        if (maxNumDays < previousDay) {
+            dayDropdown.setSelection(0)
+        } else {
+            dayDropdown.setSelection(previousDay) // we need to reset the default selection each time
+        }
+    }
+
+    private fun addDaysToDropdown(monthValue: Int) {
         val days = ArrayList<String>(31)
         for (i in 1..31) {
             days.add(i.toString())
         }
         Log.d(Constants.TAG, days.toString())
 
+        dayDropdown.adapter = getCorrectDayAdapter(monthValue, days)
+    }
+
+    private fun getCorrectDayAdapter(monthValue: Int, days: ArrayList<String>): ArrayAdapter<String> {
+        val cal = Calendar.getInstance()
+        val isLeapYear: Boolean = UtilFunctions.isLeapYear(cal.get(Calendar.YEAR))
         val dayAdaptor: ArrayAdapter<String>
-        // go through all the months
+
         when (monthValue) {
 
             Calendar.FEBRUARY -> {
@@ -105,36 +145,25 @@ class AddCutActivity : AppCompatActivity() {
 
             // 30 days (april, june, september, november)
             Calendar.APRIL, Calendar.JUNE, Calendar.SEPTEMBER, Calendar.NOVEMBER -> {
-                dayAdaptor = ArrayAdapter(this, android.R.layout.simple_spinner_item, days.subList(0, 30))
+                dayAdaptor =
+                    ArrayAdapter(this, android.R.layout.simple_spinner_item, days.subList(0, 30))
             }
 
             // 31 days (January, march, may, july, august, october, december)
             Calendar.JANUARY, Calendar.MARCH, Calendar.MAY, Calendar.JULY, Calendar.AUGUST, Calendar.OCTOBER, Calendar.DECEMBER -> {
-                dayAdaptor = ArrayAdapter(this, android.R.layout.simple_spinner_item, days.subList(0, 31))
+                dayAdaptor =
+                    ArrayAdapter(this, android.R.layout.simple_spinner_item, days.subList(0, 31))
             }
 
             else -> {
-                dayAdaptor = ArrayAdapter(this, android.R.layout.simple_spinner_item, days.subList(0, 31))
+                dayAdaptor =
+                    ArrayAdapter(this, android.R.layout.simple_spinner_item, days.subList(0, 31))
             }
         }
 
         // fill in the day values based on current month
         dayAdaptor.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line)
-        dayDropdown.adapter = dayAdaptor
-
-        // set the default day value selected in the dropdown
-        val maxNumDays = cal.getActualMaximum(Calendar.DAY_OF_MONTH)
-        Log.d(Constants.TAG, "Max number of days = $maxNumDays")
-        Log.d(Constants.TAG, "Current month = ${cal.get(Calendar.MONTH)}")
-
-        val previousDay = cal.get(Calendar.DAY_OF_MONTH)-1
-
-        if (maxNumDays < previousDay) {
-            dayDropdown.setSelection(0)
-        }
-        else {
-            dayDropdown.setSelection(previousDay) // we need to reset the default selection each time
-        }
+        return dayAdaptor
     }
 
     private fun setListeners() {
@@ -259,7 +288,6 @@ class AddCutActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        // show main activity
         launchMainActivity()
     }
 }

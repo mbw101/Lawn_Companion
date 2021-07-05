@@ -26,27 +26,33 @@ class AppGlobalReceiver : BroadcastReceiver() {
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {
-
         if (context != null && intent != null) {
             NotificationManagerCompat.from(context).cancel(NotificationHelper.CUT_NOTIFICATION_ID)
 
-            // Debug
-//            Toast.makeText(context,
-//                "Deleted ID: ${NotificationHelper.CUT_NOTIFICATION_ID}",
-//                Toast.LENGTH_SHORT
-//            ).show()
-
-            // Add new cut to the database
-            val dao = DatabaseBuilder.getInstance(context.applicationContext).cutEntryDao()
-            val repository = CutEntryRepository(dao)
-            // use the current time & date
-            val cutTimeString = DateUtils.formatDateTime(context, Calendar.getInstance().timeInMillis, DateUtils.FORMAT_SHOW_TIME)
-            val monthNum = Calendar.getInstance().get(Calendar.MONTH) + 1
-            val cutEntry = CutEntry(cutTimeString, Calendar.getInstance().get(Calendar.DAY_OF_MONTH),
-                Constants.months[monthNum-1], monthNum)
-            runBlocking {
-                repository.addCut(cutEntry)
-            }
+            val cutEntry = buildEntry(context)
+            addEntryToDatabase(context, cutEntry)
         }
+    }
+
+    private fun addEntryToDatabase(context: Context, cutEntry: CutEntry) {
+        val dao = DatabaseBuilder.getInstance(context.applicationContext).cutEntryDao()
+        val repository = CutEntryRepository(dao)
+        runBlocking {
+            repository.addCut(cutEntry)
+        }
+    }
+
+    private fun buildEntry(context: Context): CutEntry {
+        // use the current time & date
+        val cutTimeString = DateUtils.formatDateTime(
+            context,
+            Calendar.getInstance().timeInMillis,
+            DateUtils.FORMAT_SHOW_TIME
+        )
+        val monthNum = Calendar.getInstance().get(Calendar.MONTH) + 1
+        return CutEntry(
+            cutTimeString, Calendar.getInstance().get(Calendar.DAY_OF_MONTH),
+            Constants.months[monthNum - 1], monthNum
+        )
     }
 }

@@ -15,11 +15,15 @@ class AlarmReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         if (context != null && intent != null && intent.action != null) {
+            showNotification(intent, context)
+        }
+    }
 
-            if (intent.action!!.equals(context.getString(R.string.markAsCut), ignoreCase = true)) {
-                NotificationHelper.createCutNotification(context, context.getString(R.string.app_name),
-                    context.getString(R.string.cutSuggestionMessage), true)
-            }
+    private fun showNotification(intent: Intent, context: Context) {
+        if (intent.action!!.equals(context.getString(R.string.markAsCut), ignoreCase = true)) {
+            NotificationHelper.createCutNotification(
+                context, context.getString(R.string.app_name),
+                context.getString(R.string.cutSuggestionMessage), true)
         }
     }
 

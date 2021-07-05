@@ -47,41 +47,54 @@ class LastIntroScreenFragment : Fragment(), View.OnClickListener {
     // check for background location permissions
     private fun checkLocationPermissions(activity: Activity): Boolean {
         Log.d(Constants.TAG, "Asking for permissions!")
-        when {
+        return when {
             // permission was not granted
             (ContextCompat.checkSelfPermission(activity.applicationContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) -> {
-
-                // see if we need to show an explanation
-                if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.ACCESS_COARSE_LOCATION)) {
-
-                    // Show an explanation to the user
-                    AlertDialog.Builder(context)
-                        .setTitle(getString(R.string.permissionDialogTitle))
-                        .setMessage(getString(R.string.permissionDialogContent))
-                        .setPositiveButton(android.R.string.ok) { _, i -> //Prompt the user once explanation has been shown
-                            // request perms again
-                            requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), MY_PERMISSIONS_REQUEST_LOCATION)
-                        }
-                        .setNegativeButton(android.R.string.cancel) { _, i -> //Prompt the user once explanation has been shown
-                            // launch main activity
-                            launchMainActivity()
-                        }
-                        .create()
-                        .show()
-                } else {
-                    // No explanation needed, we can request the permission.
-                    requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), MY_PERMISSIONS_REQUEST_LOCATION)
-                }
-
-                return false
+                requestLocationPermission(activity)
+                false
             }
 
             else -> {
                 Toast.makeText(activity, "Permission (already) Granted!", Toast.LENGTH_SHORT).show()
                 launchMainActivity()
-                return true
+                true
             }
         }
+    }
+
+    private fun requestLocationPermission(activity: Activity) {
+        // see if we need to show an explanation
+        if (ActivityCompat.shouldShowRequestPermissionRationale
+                (activity, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+
+            // Show an explanation to the user
+            showLocationPermissionDialog()
+        } else {
+            // No explanation needed, we can request the permission.
+            requestPermissions(
+                arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
+                MY_PERMISSIONS_REQUEST_LOCATION
+            )
+        }
+    }
+
+    private fun showLocationPermissionDialog() {
+        AlertDialog.Builder(context)
+            .setTitle(getString(R.string.permissionDialogTitle))
+            .setMessage(getString(R.string.permissionDialogContent))
+            .setPositiveButton(android.R.string.ok) { _, i -> //Prompt the user once explanation has been shown
+                // request perms again
+                requestPermissions(
+                    arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
+                    MY_PERMISSIONS_REQUEST_LOCATION
+                )
+            }
+            .setNegativeButton(android.R.string.cancel) { _, i -> //Prompt the user once explanation has been shown
+                // launch main activity
+                launchMainActivity()
+            }
+            .create()
+            .show()
     }
 
     private fun launchMainActivity() {

@@ -40,14 +40,8 @@ class CutLogFragment : Fragment(), OnItemClickListener {
             val tempList = mutableListOf<CutEntry>()
             var previousMonth = 1
             var currentMonth: Int
-            val hashMap: java.util.HashMap<Int, List<CutEntry>> = HashMap()
+            val hashMap: java.util.HashMap<Int, List<CutEntry>> = createEmptyMonthHashMap()
 
-            // map each month to empty list to start
-            for (i in 1..12) {
-                hashMap[i] = emptyList()
-            }
-
-            // loop through all the entries
             for (cut in entries) {
                 currentMonth = cut.month_num
 
@@ -56,8 +50,6 @@ class CutLogFragment : Fragment(), OnItemClickListener {
                     hashMap[previousMonth] = tempList.toList()
                     tempList.clear()
                 }
-
-                // add to the list
                 tempList.add(cut)
 
                 // set previous
@@ -67,6 +59,16 @@ class CutLogFragment : Fragment(), OnItemClickListener {
             // add last list to hash map
             hashMap[previousMonth] = tempList.toList()
 
+            return hashMap
+        }
+
+        private fun createEmptyMonthHashMap(): java.util.HashMap<Int, List<CutEntry>> {
+            val hashMap: java.util.HashMap<Int, List<CutEntry>> = HashMap()
+
+            // map each month to empty list to start
+            for (i in 1..12) {
+                hashMap[i] = emptyList()
+            }
             return hashMap
         }
 
@@ -91,10 +93,6 @@ class CutLogFragment : Fragment(), OnItemClickListener {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
         val view: View = inflater.inflate(R.layout.fragment_cut_log, container, false)
@@ -115,7 +113,7 @@ class CutLogFragment : Fragment(), OnItemClickListener {
         mainRecyclerView.addItemDecoration(itemDecoration)
 
         setupListeners()
-        setupViewmodel()
+        setupViewModel()
     }
 
     private fun setupListeners() {
@@ -132,7 +130,7 @@ class CutLogFragment : Fragment(), OnItemClickListener {
         })
     }
 
-    private fun setupViewmodel() {
+    private fun setupViewModel() {
         // set up view model with fragment
         viewModel.getSortedCuts().observe(viewLifecycleOwner, { entries -> //update RecyclerView later
             // get each months data using the repository
@@ -141,11 +139,6 @@ class CutLogFragment : Fragment(), OnItemClickListener {
             // call setSections
             mainRecyclerAdaptor.setSections(monthSections)
         })
-    }
-
-    private fun refresh() {
-        // TODO: Refresh the list of data with DAO whenever they navigate to the cut log fragment
-
     }
 
     /**

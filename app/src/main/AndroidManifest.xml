@@ -35,8 +35,11 @@
             android:theme="@style/myPreferencesTheme"
             android:parentActivityName=".ui.MainActivity"/>
 
-        <!-- Used for notifications       -->
+        <!-- Used for when the user presses the action button on the cut notification -->
         <receiver android:name=".notifications.AppGlobalReceiver"/>
+
+        <!-- Used for creating the notification when the receiver is called (by the alarm manager)  -->
+        <receiver android:name=".notifications.AlarmReceiver"/>
     </application>
 
 </manifest>

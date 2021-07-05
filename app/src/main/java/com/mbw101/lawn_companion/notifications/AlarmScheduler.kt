@@ -30,7 +30,7 @@ object AlarmScheduler {
         }
 
         // we need to use getBroadcast here because a BroadcastReceiver is our target
-        return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        return PendingIntent.getBroadcast(context, NotificationHelper.MARK_AS_CUT_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
     /**
@@ -38,30 +38,29 @@ object AlarmScheduler {
      */
     private fun scheduleAlarm(dayOfWeek: Int, alarmIntent: PendingIntent?, alarmMgr: AlarmManager) {
         // set up a Calendar object for the alarm's time
-        val datetimeToAlarm = Calendar.getInstance(Locale.getDefault())
+        val datetimeToAlarm = getInstance(Locale.getDefault())
         datetimeToAlarm.timeInMillis = System.currentTimeMillis()
         // TODO: Implement a setting where they can choose when they'd like notifications
         datetimeToAlarm.set(HOUR_OF_DAY, 9) // set as 9am for now
         datetimeToAlarm.set(MINUTE, 0)
         datetimeToAlarm.set(SECOND, 0)
         datetimeToAlarm.set(MILLISECOND, 0)
-        datetimeToAlarm.set(DAY_OF_WEEK, dayOfWeek)
+        datetimeToAlarm.set(DAY_OF_WEEK, dayOfWeek) // Sunday is set to 1
 
         // checks if alarm should be schedule today
-        val today = Calendar.getInstance(Locale.getDefault())
-        if (shouldNotifyToday(dayOfWeek, today, datetimeToAlarm)) {
-            // schedules the alarm if so
+        val today = getInstance(Locale.getDefault())
+        if (shouldNotifyToday(dayOfWeek, today, datetimeToAlarm)) { // schedules the alarm if so
+            // repeat the alarm every 7 days (1 week)
             alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP,
                 datetimeToAlarm.timeInMillis, (1000 * 60 * 60 * 24 * 7).toLong(), alarmIntent)
             return
         }
 
-        // otherwise, schedule alarm to repeat every week at that time
+        // otherwise, schedule alarm to repeat every week at that time by adding 1 week to it
         // TODO: Figure out how we'd modify this if the weather isn't suitable
         datetimeToAlarm.roll(WEEK_OF_YEAR, 1)
         alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP,
             datetimeToAlarm.timeInMillis, (1000 * 60 * 60 * 24 * 7).toLong(), alarmIntent)
-
     }
 
     // Determines if the Alarm should be scheduled for today.

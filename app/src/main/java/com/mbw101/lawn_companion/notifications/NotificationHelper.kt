@@ -20,7 +20,7 @@ Date: June 29th, 2021
 object NotificationHelper {
 
     const val CUT_NOTIFICATION_ID = 1
-    private const val MARK_AS_CUT_CODE = 2021
+    const val MARK_AS_CUT_CODE = 2021
 
     /**
      * Creates the notification channels for API 26+
@@ -29,7 +29,6 @@ object NotificationHelper {
     fun createNotificationChannel(context: Context, importance: Int, showBadge: Boolean, name: String, description: String) {
         // check android version
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
             // create the channel info
             // this info will be displayed inside the app's settings
             val channelId = "${context.packageName}-$name"
@@ -53,22 +52,8 @@ object NotificationHelper {
         val channelId = "${context.packageName}-${context.getString(R.string.app_name)}"
 
         // build the notification
-        val notificationBuilder = NotificationCompat.Builder(context, channelId).apply {
-            setSmallIcon(R.drawable.ic_baseline_home_24) // TODO: Replace with app logo later
-            setContentTitle(title) // title for notification
-            setContentText(message) // content
-//            setStyle(NotificationCompat.BigTextStyle().bigText(bigText))
-            priority = NotificationCompat.PRIORITY_DEFAULT // default
-            setAutoCancel(autoCancel) // auto cancels notification when taped
-
-            // create intent to open main activity
-            val intent = Intent(context, MainActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-
-            val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
-            // attaches intent for when the user presses the notification itself
-            setContentIntent(pendingIntent)
-        }
+        val notificationBuilder =
+            getNotificationBuilder(context, channelId, title, message, autoCancel)
 
         // Add 2 actions: Mark as cut and skip
         val markCutPendingIntent = createPendingIntentForAction(context)
@@ -80,8 +65,26 @@ object NotificationHelper {
             markCutPendingIntent)
 
         val notificationManager = NotificationManagerCompat.from(context)
-
         notificationManager.notify(CUT_NOTIFICATION_ID, notificationBuilder.build())
+    }
+
+    private fun getNotificationBuilder(context: Context, channelId: String, title: String, message: String, autoCancel: Boolean): NotificationCompat.Builder {
+        return NotificationCompat.Builder(context, channelId).apply {
+            setSmallIcon(R.drawable.ic_baseline_home_24) // TODO: Replace with app logo later
+            setContentTitle(title) // title for notification
+            setContentText(message) // content
+            //            setStyle(NotificationCompat.BigTextStyle().bigText(bigText))
+            priority = NotificationCompat.PRIORITY_DEFAULT // default
+            setAutoCancel(autoCancel) // auto cancels notification when taped
+
+            // create intent to open main activity
+            val intent = Intent(context, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+
+            val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+            // attaches intent for when the user presses the notification itself
+            setContentIntent(pendingIntent)
+        }
     }
 
     /**
