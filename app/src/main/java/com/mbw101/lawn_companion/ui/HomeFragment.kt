@@ -1,5 +1,8 @@
 package com.mbw101.lawn_companion.ui
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -14,6 +17,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.CutEntry
+import com.mbw101.lawn_companion.notifications.AlarmReceiver
+import com.mbw101.lawn_companion.notifications.AlarmScheduler
 import com.mbw101.lawn_companion.utils.ApplicationPrefs
 import com.mbw101.lawn_companion.utils.UtilFunctions
 import java.util.*
@@ -57,7 +62,21 @@ class HomeFragment : Fragment() {
                 // TODO: Implement the user's preference for how long they require a cut (replace the 1 week value -> 7 days)
                 val numDaysSince = UtilFunctions.getNumDaysSince(cal)
                 return if (numDaysSince > 7) {
+                    // Pass in the pending intent
+                    val intent = Intent(MyApplication.applicationContext(), AlarmReceiver::class.java)
+                    val pendingIntent = PendingIntent.getBroadcast(
+                        MyApplication.applicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT
+                    )
+                    val alarmManager: AlarmManager =
+                        MyApplication.applicationContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+                    // TODO: Generate function for creating Cal object on the correct time for a cut and write tests for it.
+                    // set notification
+                    AlarmScheduler.scheduleAlarm(Calendar.getInstance().get(Calendar.DAY_OF_WEEK),
+                        pendingIntent, alarmManager)
+
                     MyApplication.applicationContext().getString(R.string.passedIntervalMessage)
+
                 } else {
                     MyApplication.applicationContext().getString(R.string.daysSinceLastCut, numDaysSince)
                 }

@@ -14,17 +14,18 @@ Date: 2021-07-01
 class AlarmReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        if (context != null && intent != null && intent.action != null) {
+        if (context != null && intent != null) {
+            // TODO: check if eligible for cut via shared preferences/DAO
+
+
             showNotification(intent, context)
         }
     }
 
     private fun showNotification(intent: Intent, context: Context) {
-        if (intent.action!!.equals(context.getString(R.string.markAsCut), ignoreCase = true)) {
-            NotificationHelper.createCutNotification(
-                context, context.getString(R.string.app_name),
-                context.getString(R.string.cutSuggestionMessage), true)
-        }
+        NotificationHelper.createCutNotification(
+            context, context.getString(R.string.app_name),
+            context.getString(R.string.cutSuggestionMessage), true)
     }
 
 }
