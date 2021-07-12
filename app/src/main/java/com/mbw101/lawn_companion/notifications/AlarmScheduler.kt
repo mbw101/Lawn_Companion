@@ -47,7 +47,7 @@ object AlarmScheduler {
         datetimeToAlarm.set(MINUTE, datetimeToAlarm.get(MINUTE))
         datetimeToAlarm.set(SECOND, 0)
         datetimeToAlarm.set(MILLISECOND, 0)
-        datetimeToAlarm.set(DAY_OF_WEEK, SATURDAY) // Sunday is set to 1
+        datetimeToAlarm.set(DAY_OF_WEEK, dayOfWeek) // Sunday is set to 1
 
         Log.e(Constants.TAG, datetimeToAlarm.toString())
 

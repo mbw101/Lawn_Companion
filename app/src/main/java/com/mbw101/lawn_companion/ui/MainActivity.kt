@@ -1,5 +1,8 @@
 package com.mbw101.lawn_companion.ui
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
@@ -12,7 +15,10 @@ import androidx.navigation.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mbw101.lawn_companion.R
+import com.mbw101.lawn_companion.notifications.AlarmReceiver
+import com.mbw101.lawn_companion.notifications.AlarmScheduler
 import com.mbw101.lawn_companion.notifications.NotificationHelper
+import java.util.*
 
 
 /**
@@ -43,6 +49,28 @@ class MainActivity : AppCompatActivity() {
         NotificationHelper.createNotificationChannel(this,
             NotificationManagerCompat.IMPORTANCE_DEFAULT, true,
             getString(R.string.app_name), "Notification channel")
+
+        // TODO: Call an AlarmManager that uses a receiver that does the checking daily for new cuts
+        // TODO: Then, if the condition where it's in need of a cut (either weather or time sake), call "send notification" in the receiver
+        setupNotificationAlarmManager()
+
+        //NotificationWorker.run()
+    }
+
+    private fun setupNotificationAlarmManager() {
+        // Pass in the pending intent
+        val intent = Intent(MyApplication.applicationContext(), AlarmReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            MyApplication.applicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        val alarmManager: AlarmManager =
+            MyApplication.applicationContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        // TODO: Generate function for creating Cal object on the correct time for a cut and write tests for it.
+        // set notification
+        AlarmScheduler.scheduleAlarm(
+            Calendar.getInstance().get(Calendar.DAY_OF_WEEK),
+            pendingIntent, alarmManager)
     }
 
     /***

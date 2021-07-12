@@ -19,7 +19,7 @@ data class CutEntry (
     // used to organize into the month headings in CutLogActivity
     @ColumnInfo(name="month_name") val month_name: String,
 
-    @ColumnInfo(name="month_num") val month_num: Int,
+    @ColumnInfo(name="month_num") val month_number: Int,
 
     @ColumnInfo(name = "millis") val millis: Long = System.currentTimeMillis()
 

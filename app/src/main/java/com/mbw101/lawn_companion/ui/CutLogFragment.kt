@@ -43,7 +43,7 @@ class CutLogFragment : Fragment(), OnItemClickListener {
             val hashMap: java.util.HashMap<Int, List<CutEntry>> = createEmptyMonthHashMap()
 
             for (cut in entries) {
-                currentMonth = cut.month_num
+                currentMonth = cut.month_number
 
                 // map all those entries to previous month and clear tempList
                 if (currentMonth != previousMonth) {
