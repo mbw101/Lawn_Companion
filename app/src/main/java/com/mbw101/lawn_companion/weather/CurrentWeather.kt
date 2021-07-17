@@ -8,9 +8,12 @@ Created by Malcolm Wright
 Date: 2021-07-12
  */
 
+const val MIN_CUTTING_HUMIDITY = 45
+const val MAX_CUTTING_HUMIDITY = 85
+
 data class CurrentWeather(
-    @field:SerializedName("dt") // holds the current miliseconds of when the API request was made
-    val timeOfRetrieval: Long? = null, // Time of data calculation, unix, UTC
+    @field:SerializedName("dt") 
+    val timeOfRetrievalInMillis: Long? = null, // Time of data calculation, unix, UTC
 
     @field:SerializedName("sunrise")
     val sunrise: Long? = null,
@@ -31,16 +34,27 @@ data class CurrentWeather(
     val uvIndex: Int? = null,
 
     @field:SerializedName("weather")
-    val weatherDescription: WeatherDescription? = null // end of constructor
+    val weatherDescription: WeatherDescription? = null
 )
 
 // assumes celsius temperature when calculating if it's suitable
 fun isCurrentWeatherSuitable(currentWeather: CurrentWeather): Boolean {
     // TODO: Add and adjust these conditions to be more realistic
     // especially ones relating to temperature, humidity, and uvIndex
-    if (currentWeather.weatherDescription == null) return false
-
+    if (currentWeather.weatherDescription == null ||
+        currentWeather.humidity == null) return false
     if (!isWeatherDescriptionSuitable(currentWeather.weatherDescription)) return false
+    //if (!isWithinDayTempRange((Float) currentWeather.temperature)) return false
 
+    if (!isWithinHumidityRange(currentWeather.humidity)) return false
+
+    // TODO: Implement UV Index range check
+
+    return true
+}
+
+fun isWithinHumidityRange(humidity: Int): Boolean {
+    if (humidity < MIN_CUTTING_HUMIDITY ||
+        humidity > MAX_CUTTING_HUMIDITY) return false
     return true
 }
