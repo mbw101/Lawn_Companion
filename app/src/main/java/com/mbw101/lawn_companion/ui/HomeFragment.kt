@@ -66,9 +66,12 @@ class HomeFragment : Fragment() {
                 val numDaysSince = UtilFunctions.getNumDaysSince(cal)
                 return if (numDaysSince > 7) {
                     MyApplication.applicationContext().getString(R.string.passedIntervalMessage)
-
-                } else {
+                }
+                else if (numDaysSince > 1) { // days will be multiple
                     MyApplication.applicationContext().getString(R.string.daysSinceLastCut, numDaysSince)
+                }
+                else { // a single day (so not "days")
+                    MyApplication.applicationContext().getString(R.string.singleDaySinceLastCut, numDaysSince)
                 }
             }
         }

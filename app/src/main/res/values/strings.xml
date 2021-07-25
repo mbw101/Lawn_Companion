@@ -42,6 +42,10 @@
     %1$d days since last cut
     </string>
 
+    <string name="singleDaySinceLastCut">
+    %1$d day since last cut
+    </string>
+
     <!-- Description for when the lawn has passed the ideal cutting interval-->
     <string name="passedIntervalMessage">
         Your last cut has surpassed the cutting interval. You will likely
@@ -66,7 +70,7 @@
     <!-- Cut has been made text -->
     <string name="alreadyCutMessage">
     No need to cut the lawn! An entry has
-    been made today already.
+    been made today.
     </string>
 
     <!-- No available connection (so the app can still be used gracefully) -->
