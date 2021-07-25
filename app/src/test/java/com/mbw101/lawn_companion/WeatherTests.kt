@@ -19,17 +19,17 @@ class WeatherTests {
 
     @Test
     fun testSuitableFunctionForCurrentWeather() {
-        var weatherDescription = WeatherDescription("Rain", "light rain", 500)
-        var currentWeather = CurrentWeather(null, 10000, 10000, 17,
-            17, 92, 5, weatherDescription)
+        var weatherDescription = WeatherItem("05d", "Rain", "light rain",500)
+        var currentWeather = Current(0, 12.0, 10000, 12.0, 10000, 17,
+            17.0, 92.0, 50000, 12, listOf(weatherDescription), 0, 12.0)
 
         assertEquals(isWeatherDescriptionSuitable(weatherDescription), false)
         assertEquals(isCurrentWeatherSuitable(currentWeather), false)
 
         // test good weather
-        weatherDescription = WeatherDescription("Clouds", "few clouds: 11-25%", 801)
-        currentWeather = CurrentWeather(null, 10000, 10000, 17,
-            17, 63, 5, weatherDescription)
+        weatherDescription = WeatherItem("05d", "Clouds", "few clouds: 11-25%", 801)
+        currentWeather = Current(0, 16.0, 10000, 12.0, 10000, 17,
+            17.0, 92.0, 50000, 12, listOf(weatherDescription), MIN_CUTTING_HUMIDITY, 12.0)
 
         assertEquals(isWeatherDescriptionSuitable(weatherDescription), true)
         assertEquals(isCurrentWeatherSuitable(currentWeather), true)
@@ -37,16 +37,16 @@ class WeatherTests {
 
     @Test
     fun testSuitableForTemp() {
-        var temperature = Temperature(null, null, null, null, null, null)
+        var temperature = Temp(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
         assertEquals(isTemperatureSuitable(temperature), false)
 
-        temperature = Temperature(12.0f, 12.0f, 26.0f, 8.0f, 8.0f, 8.0f)
+        temperature = Temp(12.0, 12.0, 26.0, 8.0, 8.0, 8.0)
         assertEquals(isTemperatureSuitable(temperature), true)
     }
 
     @Test
     fun testSuitableForFeelsLikeTemp() {
-        var feelsLikeTemp = FeelsLikeTemp(null, null, null, null)
+        val feelsLikeTemp = FeelsLike(0.0, 0.0, 0.0, 0.0)
         assertEquals(isFeelsLikeSuitable(feelsLikeTemp), false)
     }
 
@@ -75,40 +75,68 @@ class WeatherTests {
         assertEquals(isSuitableRainPercentage(HIGHEST_ACCEPTABLE_CHANCE_OF_RAIN - 1), true)
         assertEquals(isSuitableRainPercentage(HIGHEST_ACCEPTABLE_CHANCE_OF_RAIN), true)
         assertEquals(isSuitableRainPercentage(HIGHEST_ACCEPTABLE_CHANCE_OF_RAIN + 1), false)
-        assertEquals(isSuitableRainPercentage(0.0f), true)
+        assertEquals(isSuitableRainPercentage(0.0), true)
     }
 
     @Test
     fun testSuitableSingleDayWeather() {
-        var weatherDescription = WeatherDescription("Rain", "light rain", 500)
-        var temperature = Temperature(null, null, null, null, null)
-        var feelsLikeTemp = FeelsLikeTemp(null, null, null, null)
-        var singleDayWeather = SingleDayWeather(0, 10000, 10000, temperature,
-            feelsLikeTemp, 16, weatherDescription, 0.0f, 0)
+        var weatherDescription = WeatherItem("05d", "Rain", "light rain", 500)
+        var temperature = Temp(0.0, 0.0, 0.0, 0.0, 0.0)
+        var feelsLikeTemp = FeelsLike(0.0, 0.0, 0.0, 0.0)
+        var singleDayWeather = DailyItem(0.0, 10000, temperature, 12.0, 100,
+            0, feelsLikeTemp, 16.0, 1000, 0.0, 0, 0.0,
+            0, listOf(weatherDescription), 0, 0.0)
 
         // test bad case
         assertEquals(isSingleDaySuitable(singleDayWeather), false)
 
-        weatherDescription = WeatherDescription("Rain", "light rain", 500)
-        temperature = Temperature(16.0f, 12.0f, 12.0f, 12.0f, 12.0f)
-        feelsLikeTemp = FeelsLikeTemp(16.0f, 12.0f, 12.0f, 12.0f)
-        singleDayWeather = SingleDayWeather(0, 10000, 10000, temperature,
-            feelsLikeTemp, 16, weatherDescription, 0.0f, 0)
+        weatherDescription = WeatherItem("05d","Rain", "light rain", 500)
+        temperature = Temp(16.0, 12.0, 12.0, 12.0, 12.0)
+        feelsLikeTemp = FeelsLike(16.0, 12.0, 12.0, 12.0)
+        singleDayWeather = DailyItem(0.0, 10000, temperature, 12.0, 100,
+            0, feelsLikeTemp, 16.0, 1000, 0.0, 0, 0.0,
+            0, listOf(weatherDescription), 0, 0.0)
 
         assertEquals(isSingleDaySuitable(singleDayWeather), false)
 
-        weatherDescription = WeatherDescription("Sunny", "clear", 800)
+        weatherDescription = WeatherItem("05d","Sunny", "clear", 800)
         assertEquals(isWeatherDescriptionSuitable(weatherDescription), true)
-        temperature = Temperature(16.0f, 12.0f, 12.0f, 12.0f, 12.0f, 12.0f)
+        temperature = Temp(16.0, 12.0, 12.0, 12.0, 12.0, 12.0)
         assertEquals(isTemperatureSuitable(temperature), true)
-        feelsLikeTemp = FeelsLikeTemp(16.0f, 16.0f, 16.0f, 16.0f)
+        feelsLikeTemp = FeelsLike(16.0, 16.0, 16.0, 16.0)
         assertEquals(isFeelsLikeSuitable(feelsLikeTemp), true)
-        singleDayWeather = SingleDayWeather(0, 10000, 10000, temperature,
-            feelsLikeTemp, MIN_CUTTING_HUMIDITY, weatherDescription, 0.0f, 0)
+        singleDayWeather = DailyItem(0.0, 10000, temperature, 12.0, 100,
+            0, feelsLikeTemp, 16.0, 1000, 0.0, 0, 0.0,
+            0, listOf(weatherDescription), MIN_CUTTING_HUMIDITY, 0.0)
         assertEquals(isSingleDaySuitable(singleDayWeather), true)
 
 
 //        singleDayWeather = SingleDayWeather(0, 10000, 10000, temperature,
 //            feelsLikeTemp, 16, weatherDescription, HIGHEST_ACCEPTABLE_CHANCE_OF_RAIN, 0)
+    }
+
+    @Test
+    fun testWeatherApiCall() {
+//        val okHttpClient = OkHttpClient.Builder()
+//            .addInterceptor(APIInterceptor())
+//            .build()
+//        val client = Mockito.mock(OkHttpClient.Builder()
+//            .addInterceptor(APIInterceptor())
+//            .build())
+        
+        // TODO: Incorporate a logging interceptor
+//        val retrofit = Retrofit.Builder()
+//            .baseUrl(WeatherService.BASE_URL)
+//            .addConverterFactory(GsonConverterFactory.create())
+//            .client(okHttpClient)
+//            .build()
+
+        //val weatherService = retrofit.create(WeatherService::class.java)
+
+//        var coroutineJob = CoroutineScope(Dispatchers.IO).launch {
+//            val httpResponse = weatherService.getWeather(43.531054f, -80.230215f)
+//
+//            assertEquals(httpResponse.code(), 200)
+//        }
     }
 }

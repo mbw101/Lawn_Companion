@@ -15,7 +15,15 @@ import androidx.fragment.app.viewModels
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.CutEntry
 import com.mbw101.lawn_companion.utils.ApplicationPrefs
+import com.mbw101.lawn_companion.utils.Constants
 import com.mbw101.lawn_companion.utils.UtilFunctions
+import com.mbw101.lawn_companion.weather.WeatherService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.util.*
 
 
@@ -83,6 +91,30 @@ class HomeFragment : Fragment() {
         // set correct salutation
         salutationTextView.text = getSalutation()
         setupListeners()
+        getWeather()
+    }
+
+    private fun getWeather() {
+        val retrofit = Retrofit.Builder()
+            .baseUrl(WeatherService.BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        val weatherService = retrofit.create(WeatherService::class.java)
+        var coroutineJob = CoroutineScope(Dispatchers.IO).launch {
+            val httpResponse = weatherService.getWeather(43.531054f, -80.230215f)
+
+            withContext(Dispatchers.Main) {
+                if (httpResponse.isSuccessful) {
+                    val weatherData = httpResponse.body()
+                    if (weatherData != null) {
+                        Log.d(Constants.TAG, "Current weather = ${weatherData.current}")
+                        Log.d(Constants.TAG, "Daily forecast list = ${weatherData.daily}")
+
+                    }
+                }
+            }
+        }
     }
 
     override fun onResume() {
