@@ -36,6 +36,29 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         lateinit var addCutFAB: FloatingActionButton
+
+        fun setupNotificationAlarmManager() {
+            // Pass in the pending intent
+            val intent = Intent(MyApplication.applicationContext(), AlarmReceiver::class.java)
+            val pendingIntent = PendingIntent.getBroadcast(
+                MyApplication.applicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT
+            )
+            val alarmManager: AlarmManager =
+                MyApplication.applicationContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+            // set notification
+            AlarmScheduler.scheduleAlarm(
+                Calendar.getInstance().get(Calendar.DAY_OF_WEEK),
+                pendingIntent, alarmManager)
+        }
+
+        fun createNotificationChannel(context: Context) {
+            NotificationHelper.createNotificationChannel(
+                context,
+                NotificationManagerCompat.IMPORTANCE_DEFAULT, true,
+                context.getString(R.string.app_name), "Notification channel"
+            )
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,31 +69,11 @@ class MainActivity : AppCompatActivity() {
         setListeners()
 
         // create notification channel
-        NotificationHelper.createNotificationChannel(this,
-            NotificationManagerCompat.IMPORTANCE_DEFAULT, true,
-            getString(R.string.app_name), "Notification channel")
+        createNotificationChannel(this)
 
         // TODO: Call an AlarmManager that uses a receiver that does the checking daily for new cuts
         // TODO: Then, if the condition where it's in need of a cut (either weather or time sake), call "send notification" in the receiver
         setupNotificationAlarmManager()
-
-        //NotificationWorker.run()
-    }
-
-    private fun setupNotificationAlarmManager() {
-        // Pass in the pending intent
-        val intent = Intent(MyApplication.applicationContext(), AlarmReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(
-            MyApplication.applicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT
-        )
-        val alarmManager: AlarmManager =
-            MyApplication.applicationContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-        // TODO: Generate function for creating Cal object on the correct time for a cut and write tests for it.
-        // set notification
-        AlarmScheduler.scheduleAlarm(
-            Calendar.getInstance().get(Calendar.DAY_OF_WEEK),
-            pendingIntent, alarmManager)
     }
 
     /***

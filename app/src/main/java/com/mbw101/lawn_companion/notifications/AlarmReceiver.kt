@@ -35,11 +35,9 @@ class AlarmReceiver : BroadcastReceiver() {
         const val DEFAULT_DAYS_SINCE = 7
     }
 
-    override fun onReceive(context: Context?, intent: Intent?) {
-        if (context != null && intent != null) {
-            val preferences = ApplicationPrefs()
-            performNotificationSetup(preferences, context)
-        }
+    override fun onReceive(context: Context, intent: Intent) {
+        val preferences = ApplicationPrefs()
+        performNotificationSetup(preferences, context)
     }
 
     private fun performNotificationSetup(preferences: ApplicationPrefs, context: Context) {
@@ -153,8 +151,6 @@ class AlarmReceiver : BroadcastReceiver() {
         else {
             // calculate the time since last cut until now
             val daysSince = findDaysSince(lastCut)
-
-            // TODO: Get the weather data and factor that into the notification condition here
             createNotificationIfSuitableConditions(weatherData, daysSince, context)
         }
     }

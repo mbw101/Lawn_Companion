@@ -25,13 +25,11 @@ class AppGlobalReceiver : BroadcastReceiver() {
         const val NOTIFICATION_ID = "notification_id"
     }
 
-    override fun onReceive(context: Context?, intent: Intent?) {
-        if (context != null && intent != null) {
-            NotificationManagerCompat.from(context).cancel(NotificationHelper.CUT_NOTIFICATION_ID)
+    override fun onReceive(context: Context, intent: Intent) {
+        NotificationManagerCompat.from(context).cancel(NotificationHelper.CUT_NOTIFICATION_ID)
 
-            val cutEntry = buildEntry(context)
-            addEntryToDatabase(context, cutEntry)
-        }
+        val cutEntry = buildEntry(context)
+        addEntryToDatabase(context, cutEntry)
     }
 
     private fun addEntryToDatabase(context: Context, cutEntry: CutEntry) {
