@@ -52,94 +52,83 @@ class CutDatabaseTest {
         Assert.assertEquals(cutEntryDao.getNumEntries(), 3)
     }
 
-//    @Test
-//    @Throws(Exception::class)
-//    fun insertAndFindByMonthName() = runBlocking {
-//        cutEntryDao.insertAll(CutEntry("4:36pm", 17, "September", 9),
-//            CutEntry("4:36pm", 28, "September", 9),
-//            CutEntry("4:36pm", 5, "October", 10))
-//
-//        var returnedEntries = cutEntryDao.findByMonthName("October")
-//        runBlocking {
-//            returnedEntries.collect { entries ->
-//                Assert.assertEquals(entries.size, 1)
-//            }
-//        }
-//
-//        returnedEntries = cutEntryDao.findByMonthName("September")
-//        runBlocking {
-//            returnedEntries.collect { entries ->
-//                Assert.assertEquals(entries.size, 2)
-//            }
-//        }
-//    }
-//
-//    @Test
-//    @Throws(Exception::class)
-//    fun insertAndFindByMonthNum() {
-//        cutEntryDao.insertAll(CutEntry("4:36pm", 17, "September", 9),
-//            CutEntry("4:36pm", 28, "September", 9),
-//            CutEntry("4:36pm", 5, "October", 10))
-//
-//        var returnedEntries = cutEntryDao.findByMonthNum(10)
-//        runBlocking {
-//            returnedEntries.collect { entries ->
-//                Assert.assertEquals(entries.size, 1)
-//            }
-//        }
-//
-//        returnedEntries = cutEntryDao.findByMonthNum(9)
-//        runBlocking {
-//            returnedEntries.collect { entries ->
-//                Assert.assertEquals(entries.size, 2)
-//            }
-//        }
-//    }
-//
-//    @Test
-//    @Throws(Exception::class)
-//    fun testFindLastCut() {
-//        cutEntryDao.insertAll(CutEntry("4:36pm", 17, "September", 9),
-//            CutEntry("4:36pm", 5, "October", 10),
-//            CutEntry("4:36pm", 28, "September", 9),
-//            CutEntry("4:36pm", 1, "October", 10))
-//
-//        val returnedEntry = cutEntryDao.getLastCut()
-//        returnedEntry.collect { entry ->
-//            Assert.assertEquals(entry.month_name, "October")
-//            Assert.assertEquals(entry.day_number, 5)
-//        }
-//    }
-//
-//    @Test
-//    @Throws(Exception::class)
-//    fun testDeleteCut() {
-//        cutEntryDao.insertAll(CutEntry("4:36pm", 17, "September", 9),
-//            CutEntry("4:36pm", 5, "October", 10),
-//            CutEntry("4:36pm", 28, "September", 9),
-//            CutEntry("4:36pm", 1, "October", 10))
-//
-//        // delete both the october cuts and check each time afterwards
-//        cutEntryDao.deleteCuts(CutEntry("4:36pm", 1, "October", 10))
-//        var returnedEntry = cutEntryDao.getLastCut()
-//        runBlocking {
-//            returnedEntry.collect { entry ->
-//                Assert.assertEquals(entry.month_name, "October")
-//            }
-//        }
-//
-//        cutEntryDao.deleteCuts(CutEntry("4:36pm", 5, "October", 10))
-//        returnedEntry = cutEntryDao.getLastCut()
-//        runBlocking {
-//            returnedEntry.collect { entry ->
-//                Assert.assertEquals(entry.month_name, "September")
-//            }
-//        }
-//
-//        // check size after deleting
-//        val remainingEntries = cutEntryDao.getAllCuts()
-//        Assert.assertEquals(cutEntryDao.getNumEntries(), 2)
-//    }
+    @Test
+    @Throws(Exception::class)
+    fun insertAndFindByMonthName() = runBlocking {
+        cutEntryDao.insertAll(CutEntry("4:36pm", 17, "September", 9),
+            CutEntry("4:36pm", 28, "September", 9),
+            CutEntry("4:36pm", 5, "October", 10))
+
+        var returnedEntries: List<CutEntry>? = null
+        runBlocking {
+            returnedEntries = cutEntryDao.findByMonthName("October")
+            Assert.assertEquals(returnedEntries!!.size, 1)
+        }
+
+        runBlocking {
+            returnedEntries = cutEntryDao.findByMonthName("September")
+            Assert.assertEquals(returnedEntries!!.size, 2)
+        }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun insertAndFindByMonthNum() {
+        runBlocking {
+            cutEntryDao.insertAll(CutEntry("4:36pm", 17, "September", 9),
+                CutEntry("4:36pm", 28, "September", 9),
+                CutEntry("4:36pm", 5, "October", 10))
+
+            var returnedEntries = cutEntryDao.findByMonthNum(10)
+            Assert.assertEquals(returnedEntries!!.size, 1)
+
+            returnedEntries = cutEntryDao.findByMonthNum(9)
+            Assert.assertEquals(returnedEntries!!.size, 2)
+        }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testFindLastCut() {
+        runBlocking {
+            cutEntryDao.insertAll(
+                CutEntry("4:36pm", 17, "September", 9),
+                CutEntry("4:36pm", 5, "October", 10),
+                CutEntry("4:36pm", 28, "September", 9),
+                CutEntry("4:36pm", 1, "October", 10)
+            )
+
+            val returnedEntry = cutEntryDao.getLastCut()
+            Assert.assertEquals(returnedEntry!!.month_name, "October")
+            Assert.assertEquals(returnedEntry!!.day_number, 5)
+        }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testDeleteCut() {
+        runBlocking {
+            cutEntryDao.insertAll(
+                CutEntry("4:36pm", 17, "September", 9),
+                CutEntry("4:36pm", 5, "October", 10),
+                CutEntry("4:36pm", 28, "September", 9),
+                CutEntry("4:36pm", 1, "October", 10)
+            )
+
+            // delete both the october cuts and check each time afterwards
+            cutEntryDao.deleteCuts(CutEntry("4:36pm", 1, "October", 10))
+            var returnedEntry = cutEntryDao.getLastCut()
+            Assert.assertEquals(returnedEntry!!.month_name, "October")
+
+            cutEntryDao.deleteCuts(CutEntry("4:36pm", 5, "October", 10))
+            returnedEntry = cutEntryDao.getLastCut()
+            Assert.assertEquals(returnedEntry!!.month_name, "September")
+
+            // check size after deleting
+            val remainingEntries = cutEntryDao.getAllCuts()
+            Assert.assertEquals(cutEntryDao.getNumEntries(), 2)
+        }
+    }
 
     @Test
     @Throws(Exception::class)

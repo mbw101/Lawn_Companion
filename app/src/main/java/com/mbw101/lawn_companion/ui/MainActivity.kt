@@ -1,15 +1,21 @@
 package com.mbw101.lawn_companion.ui
 
+import android.Manifest
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationManager
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -18,6 +24,8 @@ import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.notifications.AlarmReceiver
 import com.mbw101.lawn_companion.notifications.AlarmScheduler
 import com.mbw101.lawn_companion.notifications.NotificationHelper
+import com.mbw101.lawn_companion.utils.Constants
+import com.mbw101.lawn_companion.utils.LocationUtils
 import java.util.*
 
 
@@ -33,6 +41,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var settingsIcon: ImageView
     private lateinit var refreshIcon: ImageView
     private lateinit var titleTextView: TextView
+    lateinit var locationManager: LocationManager
+    var locationGps: Location? = null
 
     companion object {
         lateinit var addCutFAB: FloatingActionButton
@@ -74,6 +84,23 @@ class MainActivity : AppCompatActivity() {
         // TODO: Call an AlarmManager that uses a receiver that does the checking daily for new cuts
         // TODO: Then, if the condition where it's in need of a cut (either weather or time sake), call "send notification" in the receiver
         setupNotificationAlarmManager()
+
+        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            return
+        }
+
+        // only run this piece of code if they do not have an entry in the location database, OR if
+        // they requested to add or modify a location in the preferences.
+        val newGpsLocation = LocationUtils.getLastKnownLocation(this)
+        if (newGpsLocation != null) {
+            locationGps = newGpsLocation
+            Log.d(Constants.TAG, "GPS: Long: ${locationGps!!.longitude}, Lat: ${locationGps!!.latitude}")
+        }
     }
 
     /***

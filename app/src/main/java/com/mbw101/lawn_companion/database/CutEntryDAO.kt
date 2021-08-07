@@ -24,23 +24,23 @@ interface CutEntryDAO {
     fun getNumEntries(): Int
 
     @Query("SELECT * FROM cuts_table WHERE month_name = :month")
-    fun findByMonthName(month: String): LiveData<List<CutEntry>>
+    suspend fun findByMonthName(month: String): List<CutEntry>?
 
     @Query("SELECT * FROM cuts_table WHERE month_num = :month_num")
-    fun findByMonthNum(month_num: Int): LiveData<List<CutEntry>>
+    suspend fun findByMonthNum(month_num: Int): List<CutEntry>?
 
     // (returns a single Cut Entry)
     @Query("SELECT * FROM cuts_table WHERE month_name = :month AND day_number = :day")
-    fun getSpecificCut(month: String, day: Int): LiveData<CutEntry>
+    suspend fun getSpecificCut(month: String, day: Int): CutEntry?
 
     @Query("SELECT * FROM cuts_table ORDER BY month_num DESC, day_number DESC LIMIT 1")
-    fun getLastCut(): LiveData<CutEntry> // returns a single Cut Entry
+    suspend fun getLastCut(): CutEntry? // returns a single Cut Entry
 
     @Query("SELECT * FROM cuts_table ORDER BY month_num DESC, day_number DESC LIMIT 1")
     suspend fun getLastCutSync(): CutEntry? // returns a single Cut Entry (synchronously) for the broadcast receiver
 
     @Query("SELECT * FROM cuts_table ORDER BY millis DESC LIMIT 1")
-    fun getLastCutMillis(): LiveData<CutEntry> // returns a single Cut Entry by utilizing the millis member
+    suspend fun getLastCutMillis(): CutEntry? // returns a single Cut Entry by utilizing the millis member
 
     // TODO: Implement this query in the future when I implement Date objects into the database
 //    @Query("SELECT * FROM cuts_table WHERE date = :targetDate")

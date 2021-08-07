@@ -1,11 +1,14 @@
 package com.mbw101.lawn_companion.notifications
 
+import android.Manifest
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.util.Log
+import androidx.core.app.ActivityCompat
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.CutEntry
 import com.mbw101.lawn_companion.database.CutEntryRepository
@@ -41,12 +44,22 @@ class AlarmReceiver : BroadcastReceiver() {
     }
 
     private fun performNotificationSetup(preferences: ApplicationPrefs, context: Context) {
+        // check for location permissions
+        if (hasLocationPermissions(context)) {
+            return
+        }
+
         if (notificationsAreEnabled(preferences) && isInCuttingSeason(preferences)) {
             val repository =
                 CutEntryRepository(DatabaseBuilder.getInstance(context).cutEntryDao())
 
             runNotificationCoroutineWork(repository, preferences, context)
         }
+    }
+
+    private fun hasLocationPermissions(context: Context): Boolean {
+        return (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
     }
 
     private fun notificationsAreEnabled(preferences: ApplicationPrefs): Boolean {
@@ -73,7 +86,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
                 // only run through the notification logic and call the api if we have right connection type
                 if (connectionTypeMatchesPreferences(preferences, context)) {
-                    val weatherHttpResponse: Response<WeatherResponse> = callWeatherAPI()
+                    val weatherHttpResponse: Response<WeatherResponse> = callWeatherAPI(context)
                     performNotificationLogic(lastCut, weatherHttpResponse, context)
                 }
                 else {
@@ -119,14 +132,27 @@ class AlarmReceiver : BroadcastReceiver() {
         return activeNetwork?.isConnectedOrConnecting == true
     }
 
-    private suspend fun callWeatherAPI(): Response<WeatherResponse> {
+    private suspend fun callWeatherAPI(context: Context): Response<WeatherResponse> {
         val retrofit = Retrofit.Builder()
             .baseUrl(WeatherService.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         val weatherService = retrofit.create(WeatherService::class.java)
         // TODO: Replace these coordinates with the real location coordinates of the user
-        return weatherService.getWeather(43.531054f, -80.230215f)
+        val (lat, long) = getCoordinates(context)
+        return weatherService.getWeather(lat, long)
+    }
+
+    private fun getCoordinates(context: Context): Pair<Float, Float> {
+        var lat = 0.0f
+        var long = 0.0f
+
+        // TODO: debug, remove later
+        if (lat == 0.0f && long == 0.0f) {
+            lat = 43.531054f
+            long = -80.230215f
+        }
+        return Pair(lat, long)
     }
 
     private suspend fun retrieveLastCutFromDB(repository: CutEntryRepository): CutEntry? {
@@ -142,7 +168,6 @@ class AlarmReceiver : BroadcastReceiver() {
             return
         }
 
-        // TODO: Figure out how to incorporate this weather data (use isSuitable functions)
         val weatherData = weatherHttpResponse.body()
         if (lastCut == null) {
             // just suggest an appropriate cut (given weather  conditions) anytime since there is no cut registered

@@ -75,6 +75,9 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.preference:preference:1.1.1'
 
+    // location
+    implementation 'com.google.android.gms:play-services:11.6.0'
+
     // navigation
     implementation "androidx.viewpager2:viewpager2:1.0.0"
     implementation 'androidx.navigation:navigation-fragment:2.3.0-ktx'
