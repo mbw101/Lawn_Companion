@@ -57,7 +57,8 @@
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:background="@drawable/ic_baseline_refresh_32"
-                android:contentDescription="@string/refresh_icon" />
+                android:contentDescription="@string/refresh_icon"
+                android:visibility="invisible" />
         </RelativeLayout>
 
     </androidx.appcompat.widget.Toolbar>

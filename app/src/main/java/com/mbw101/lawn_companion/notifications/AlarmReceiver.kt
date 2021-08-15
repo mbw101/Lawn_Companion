@@ -13,6 +13,7 @@ import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.AppDatabaseBuilder
 import com.mbw101.lawn_companion.database.CutEntry
 import com.mbw101.lawn_companion.database.CutEntryRepository
+import com.mbw101.lawn_companion.database.LawnLocationRepository
 import com.mbw101.lawn_companion.utils.ApplicationPrefs
 import com.mbw101.lawn_companion.utils.Constants
 import com.mbw101.lawn_companion.utils.UtilFunctions
@@ -149,19 +150,28 @@ class AlarmReceiver : BroadcastReceiver() {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         val weatherService = retrofit.create(WeatherService::class.java)
-        // TODO: Replace these coordinates with the real location coordinates of the user
         val (lat, long) = getCoordinates(context)
         return weatherService.getWeather(lat, long)
     }
 
-    private fun getCoordinates(context: Context): Pair<Float, Float> {
-        var lat = 0.0f
-        var long = 0.0f
+    private suspend fun getCoordinates(context: Context): Pair<Double, Double> {
+        var lat = 0.0
+        var long = 0.0
+
+        val dao = AppDatabaseBuilder.getInstance(context).lawnLocationDao()
+        val repository = LawnLocationRepository(dao)
+
+        if (repository.hasALocationSaved()) {
+            val lawnLocation = repository.getLocation()
+            lat = lawnLocation!!.latitude
+            long = lawnLocation.longitude
+            Log.d(Constants.TAG, "Got $lawnLocation from DB!")
+        }
 
         // TODO: debug, remove later
-        if (lat == 0.0f && long == 0.0f) {
-            lat = 43.531054f
-            long = -80.230215f
+        if (lat == 0.0 && long == 0.0) {
+            lat = 43.531054
+            long = -80.230215
         }
         return Pair(lat, long)
     }
@@ -180,6 +190,7 @@ class AlarmReceiver : BroadcastReceiver() {
         }
 
         val weatherData = weatherHttpResponse.body()
+        Log.d(Constants.TAG, weatherData.toString())
         if (lastCut == null) {
             // just suggest an appropriate cut (given weather  conditions) anytime since there is no cut registered
             createNotificationIfSuitableConditions(weatherData, DEFAULT_DAYS_SINCE, context)

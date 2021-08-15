@@ -47,9 +47,6 @@ class TestAddCutScreen {
     fun testDropdownMenus() {
         onView(withId(R.id.monthDropdownMenu)).perform(click())
         onData(allOf(`is`(instanceOf(String::class.java)), `is`("February"))).perform(click())
-
-        // TODO: try values that we know shouldn't work and assert that they fail
-//        onView(withId(R.id.dayDropdownMenu)).check(matches(withSpinnerText(containsString("30"))))
     }
 
     @Test

@@ -94,7 +94,7 @@ class HomeFragment : Fragment() {
         // set correct salutation
         salutationTextView.text = getSalutation()
         setupListeners()
-        getWeather()
+        //getWeather()
     }
 
     private fun getWeather() {
@@ -105,7 +105,7 @@ class HomeFragment : Fragment() {
 
         val weatherService = retrofit.create(WeatherService::class.java)
         var coroutineJob = CoroutineScope(Dispatchers.IO).launch {
-            val httpResponse = weatherService.getWeather(43.531054f, -80.230215f)
+            val httpResponse = weatherService.getWeather(43.531054, -80.230215)
 
             withContext(Dispatchers.Main) {
                 if (httpResponse.isSuccessful) {

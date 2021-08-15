@@ -11,10 +11,10 @@ Date: 2021-08-15
 interface LawnLocationDAO {
 
     @Query("SELECT * FROM location_table LIMIT 1")
-    fun getFirstLocation(): LawnLocation?
+    fun getFirstLocation(): LawnLocation
 
     @Query("SELECT * FROM location_table")
-    fun getAllLocations(): List<LawnLocation>?
+    fun getAllLocations(): List<LawnLocation>
 
     // insertion queries
     @Insert(onConflict = OnConflictStrategy.REPLACE)

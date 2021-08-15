@@ -13,7 +13,6 @@ import android.util.Log
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
@@ -87,8 +86,6 @@ class MainActivity : AppCompatActivity() {
         // create notification channel
         createNotificationChannel(this)
 
-        // TODO: Call an AlarmManager that uses a receiver that does the checking daily for new cuts
-        // TODO: Then, if the condition where it's in need of a cut (either weather or time sake), call "send notification" in the receiver
         setupNotificationAlarmManager()
 
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -173,11 +170,6 @@ class MainActivity : AppCompatActivity() {
             launchSettings()
         }
 
-        refreshIcon.setOnClickListener {
-            Toast.makeText(this, "Refreshing...", Toast.LENGTH_SHORT).show()
-            refresh()
-        }
-
         // FAB listener
         addCutFAB.setOnClickListener {
             launchAddCutScreen()
@@ -196,14 +188,6 @@ class MainActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun refresh() {
-        // TODO: Refresh both the main screen and the cut log
-        // refresh fragment (which calls onCreateView)
-//        val transaction: FragmentTransaction = requireFragmentManager().beginTransaction()
-//        transaction.setReorderingAllowed (false)
-//        transaction.detach(g).attach(this).commitAllowingStateLoss()
-    }
-
     override fun onBackPressed() {
         val homeItem: MenuItem = bottomNav.menu.getItem(0)
 
@@ -213,11 +197,5 @@ class MainActivity : AppCompatActivity() {
         } else {
             finish()
         }
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-        // TODO: Change text on main screen if allowed/disabled
     }
 }
