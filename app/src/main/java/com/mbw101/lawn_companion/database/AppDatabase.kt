@@ -9,7 +9,8 @@ Created by Malcolm Wright
 Date: 2021-05-22
  */
 
-@Database(entities = [CutEntry::class], version = 1)
-abstract class CutEntryDatabase : RoomDatabase() {
+@Database(entities = [CutEntry::class, LawnLocation::class], version = 1, exportSchema = false)
+abstract class AppDatabase : RoomDatabase() {
     abstract fun cutEntryDao(): CutEntryDAO
+    abstract fun lawnLocationDao(): LawnLocationDAO
 }

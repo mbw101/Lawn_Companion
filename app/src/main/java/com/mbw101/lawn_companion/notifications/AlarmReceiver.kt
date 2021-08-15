@@ -10,15 +10,16 @@ import android.net.NetworkInfo
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import com.mbw101.lawn_companion.R
+import com.mbw101.lawn_companion.database.AppDatabaseBuilder
 import com.mbw101.lawn_companion.database.CutEntry
 import com.mbw101.lawn_companion.database.CutEntryRepository
-import com.mbw101.lawn_companion.database.DatabaseBuilder
 import com.mbw101.lawn_companion.utils.ApplicationPrefs
 import com.mbw101.lawn_companion.utils.Constants
 import com.mbw101.lawn_companion.utils.UtilFunctions
 import com.mbw101.lawn_companion.weather.WeatherResponse
 import com.mbw101.lawn_companion.weather.WeatherService
 import com.mbw101.lawn_companion.weather.isCurrentWeatherSuitable
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import retrofit2.Response
@@ -51,15 +52,21 @@ class AlarmReceiver : BroadcastReceiver() {
 
         if (notificationsAreEnabled(preferences) && isInCuttingSeason(preferences)) {
             val repository =
-                CutEntryRepository(DatabaseBuilder.getInstance(context).cutEntryDao())
+                CutEntryRepository(AppDatabaseBuilder.getInstance(context).cutEntryDao())
 
             runNotificationCoroutineWork(repository, preferences, context)
         }
     }
 
     private fun hasLocationPermissions(context: Context): Boolean {
-        return (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+        return (ActivityCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED)
     }
 
     private fun notificationsAreEnabled(preferences: ApplicationPrefs): Boolean {
@@ -81,22 +88,24 @@ class AlarmReceiver : BroadcastReceiver() {
     ) {
         runBlocking {
             // starts a new coroutine, so we can access the DB concurrently without blocking the current thread (UI)
-            launch {
+            launch (Dispatchers.IO) {
                 val lastCut: CutEntry? = retrieveLastCutFromDB(repository)
 
                 // only run through the notification logic and call the api if we have right connection type
                 if (connectionTypeMatchesPreferences(preferences, context)) {
                     val weatherHttpResponse: Response<WeatherResponse> = callWeatherAPI(context)
                     performNotificationLogic(lastCut, weatherHttpResponse, context)
-                }
-                else {
+                } else {
                     Log.d(Constants.TAG, "Connection type does not match preferences!")
                 }
             }
         }
     }
 
-    private fun connectionTypeMatchesPreferences(preferences: ApplicationPrefs, context: Context): Boolean {
+    private fun connectionTypeMatchesPreferences(
+        preferences: ApplicationPrefs,
+        context: Context
+    ): Boolean {
         if (!hasInternetConnection(context)) {
             Log.d(Constants.TAG, "Has no internet connection!")
             return false
@@ -120,14 +129,16 @@ class AlarmReceiver : BroadcastReceiver() {
     }
 
     private fun isUsingDataConnection(context: Context): Boolean {
-        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         return connectivityManager.isActiveNetworkMetered
     }
 
     private fun hasInternetConnection(context: Context): Boolean {
         // determines whether the user has an internet connection
         // TODO: Incorporate a branch for Android 10 using https://developer.android.com/reference/android/net/ConnectivityManager.NetworkCallback
-        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetwork: NetworkInfo? = connectivityManager.activeNetworkInfo
         return activeNetwork?.isConnectedOrConnecting == true
     }
@@ -172,8 +183,7 @@ class AlarmReceiver : BroadcastReceiver() {
         if (lastCut == null) {
             // just suggest an appropriate cut (given weather  conditions) anytime since there is no cut registered
             createNotificationIfSuitableConditions(weatherData, DEFAULT_DAYS_SINCE, context)
-        }
-        else {
+        } else {
             // calculate the time since last cut until now
             val daysSince = findDaysSince(lastCut)
             createNotificationIfSuitableConditions(weatherData, daysSince, context)
@@ -190,7 +200,10 @@ class AlarmReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun hasSuitableConditionsForCutNotification(weatherData: WeatherResponse?, daysSince: Int): Boolean {
+    private fun hasSuitableConditionsForCutNotification(
+        weatherData: WeatherResponse?,
+        daysSince: Int
+    ): Boolean {
         // go through many checks and include the weather for determining the right time for a cut
         if (daysSince < MINIMUM_DAYS_SINCE) return false
         // check weather conditions
@@ -202,7 +215,10 @@ class AlarmReceiver : BroadcastReceiver() {
 
     private fun findDaysSince(lastCut: CutEntry): Int {
         val cutDate = Calendar.getInstance()
-        cutDate.set(Calendar.MONTH, lastCut.month_number - 1) // month values start at 0 for Calendar
+        cutDate.set(
+            Calendar.MONTH,
+            lastCut.month_number - 1
+        ) // month values start at 0 for Calendar
         cutDate.set(Calendar.DAY_OF_MONTH, lastCut.day_number)
         return UtilFunctions.getNumDaysSince(cutDate)
     }

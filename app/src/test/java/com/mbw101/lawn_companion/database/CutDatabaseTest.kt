@@ -16,13 +16,13 @@ import org.robolectric.annotation.Config
 @Config(sdk = [28])
 class CutDatabaseTest {
 
-    private lateinit var db: CutEntryDatabase
+    private lateinit var db: AppDatabase
     private lateinit var cutEntryDao: CutEntryDAO
 
     @Before
     fun setUp() {
         val context: Context = ApplicationProvider.getApplicationContext<Context>()
-        db = Room.inMemoryDatabaseBuilder(context, CutEntryDatabase::class.java)
+        db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
             .allowMainThreadQueries()
             .build()
         cutEntryDao = db.cutEntryDao()

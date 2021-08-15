@@ -9,13 +9,13 @@ Lawn Companion
 Created by Malcolm Wright
 Date: 2021-05-29
  */
-object DatabaseBuilder {
+object AppDatabaseBuilder {
 
-    private var INSTANCE: CutEntryDatabase? = null
+    private var INSTANCE: AppDatabase? = null
 
-    fun getInstance(context: Context): CutEntryDatabase {
+    fun getInstance(context: Context): AppDatabase {
         if (INSTANCE == null) {
-            synchronized(CutEntryDatabase::class) {
+            synchronized(AppDatabase::class) {
                 INSTANCE = buildRoomDB(context)
             }
         }
@@ -25,7 +25,7 @@ object DatabaseBuilder {
     private fun buildRoomDB(context: Context) =
         Room.databaseBuilder(
             context.applicationContext,
-            CutEntryDatabase::class.java,
+            AppDatabase::class.java,
             Constants.DATABASE_NAME
         ).build()
 

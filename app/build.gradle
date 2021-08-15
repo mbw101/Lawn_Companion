@@ -106,7 +106,7 @@ dependencies {
     // testing
 
     // JUnit
-    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'junit:junit:4.12'
     testImplementation 'androidx.test:rules:1.2.0'
     testImplementation 'androidx.test:core:1.2.0'
     testImplementation "org.robolectric:robolectric:4.2.1"

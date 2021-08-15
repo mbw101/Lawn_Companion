@@ -21,11 +21,17 @@ import androidx.navigation.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mbw101.lawn_companion.R
+import com.mbw101.lawn_companion.database.AppDatabaseBuilder
+import com.mbw101.lawn_companion.database.LawnLocation
+import com.mbw101.lawn_companion.database.LawnLocationRepository
 import com.mbw101.lawn_companion.notifications.AlarmReceiver
 import com.mbw101.lawn_companion.notifications.AlarmScheduler
 import com.mbw101.lawn_companion.notifications.NotificationHelper
 import com.mbw101.lawn_companion.utils.Constants
 import com.mbw101.lawn_companion.utils.LocationUtils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.util.*
 
 
@@ -96,11 +102,32 @@ class MainActivity : AppCompatActivity() {
 
         // only run this piece of code if they do not have an entry in the location database, OR if
         // they requested to add or modify a location in the preferences.
-        val newGpsLocation = LocationUtils.getLastKnownLocation(this)
-        if (newGpsLocation != null) {
-            locationGps = newGpsLocation
-            Log.d(Constants.TAG, "GPS: Long: ${locationGps!!.longitude}, Lat: ${locationGps!!.latitude}")
+        val repository: LawnLocationRepository = setupDB()
+        val context = this
+        runBlocking {
+            launch (Dispatchers.IO) {
+                if (!repository.hasALocationSaved()) {
+                    val newGpsLocation = LocationUtils.getLastKnownLocation(context)
+                    if (newGpsLocation != null) {
+                        locationGps = newGpsLocation
+                        Log.d(
+                            Constants.TAG,
+                            "GPS: Long: ${locationGps!!.longitude}, Lat: ${locationGps!!.latitude}"
+                        )
+
+                        // add location
+                        repository.addLocation(
+                            LawnLocation(locationGps!!.latitude, locationGps!!.longitude)
+                        )
+                    }
+                }
+            }
         }
+    }
+
+    private fun setupDB(): LawnLocationRepository {
+        val dao = AppDatabaseBuilder.getInstance(this).lawnLocationDao()
+        return LawnLocationRepository(dao)
     }
 
     /***

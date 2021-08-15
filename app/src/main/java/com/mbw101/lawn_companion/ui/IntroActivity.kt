@@ -57,7 +57,7 @@ class IntroActivity : FragmentActivity() {
     private fun init() {
         preferenceManager = ApplicationPrefs()
         // DEBUG STATEMENT, always ensures intro activity is ran
-//        preferenceManager.setNotFirstTime(false)
+        //preferenceManager.setNotFirstTime(false)
         if (preferenceManager.isNotFirstTime()) { // we want to automatically go into Main
             launchMainActivity()
         }

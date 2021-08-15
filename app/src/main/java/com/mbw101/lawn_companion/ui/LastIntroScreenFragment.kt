@@ -51,7 +51,7 @@ class LastIntroScreenFragment : Fragment(), View.OnClickListener {
             // permission was not granted
             (ContextCompat.checkSelfPermission(activity.applicationContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) -> {
                 requestLocationPermission(activity)
-                false
+                true
             }
 
             else -> {
@@ -65,14 +65,14 @@ class LastIntroScreenFragment : Fragment(), View.OnClickListener {
     private fun requestLocationPermission(activity: Activity) {
         // see if we need to show an explanation
         if (ActivityCompat.shouldShowRequestPermissionRationale
-                (activity, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                (activity, Manifest.permission.ACCESS_COARSE_LOCATION)) {
 
             // Show an explanation to the user
             showLocationPermissionDialog()
         } else {
             // No explanation needed, we can request the permission.
             requestPermissions(
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
                 MY_PERMISSIONS_REQUEST_LOCATION
             )
         }
