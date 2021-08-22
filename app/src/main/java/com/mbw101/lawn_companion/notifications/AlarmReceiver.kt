@@ -1,19 +1,13 @@
 package com.mbw101.lawn_companion.notifications
 
-import android.Manifest
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.util.Log
-import androidx.core.app.ActivityCompat
 import com.mbw101.lawn_companion.R
-import com.mbw101.lawn_companion.database.AppDatabaseBuilder
-import com.mbw101.lawn_companion.database.CutEntry
-import com.mbw101.lawn_companion.database.CutEntryRepository
-import com.mbw101.lawn_companion.database.LawnLocationRepository
+import com.mbw101.lawn_companion.database.*
 import com.mbw101.lawn_companion.utils.ApplicationPrefs
 import com.mbw101.lawn_companion.utils.Constants
 import com.mbw101.lawn_companion.utils.UtilFunctions
@@ -46,8 +40,8 @@ class AlarmReceiver : BroadcastReceiver() {
     }
 
     private fun performNotificationSetup(preferences: ApplicationPrefs, context: Context) {
-        // check for location permissions
-        if (hasLocationPermissions(context)) {
+        // check if a location is saved in db
+        if (!hasLocationSaved(context)) {
             return
         }
 
@@ -59,15 +53,21 @@ class AlarmReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun hasLocationPermissions(context: Context): Boolean {
-        return (ActivityCompat.checkSelfPermission(
-            context,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED)
+    private fun hasLocationSaved(context: Context): Boolean {
+        val repository = setupLawnLocationRepository(context)
+        return checkIfLocationExists(repository)
+    }
+
+    private fun checkIfLocationExists(repository: LawnLocationRepository): Boolean {
+        var locationExists = false
+
+        runBlocking {
+            launch (Dispatchers.IO) {
+                locationExists = repository.hasALocationSaved()
+            }
+        }
+
+        return locationExists
     }
 
     private fun notificationsAreEnabled(preferences: ApplicationPrefs): Boolean {
@@ -82,23 +82,18 @@ class AlarmReceiver : BroadcastReceiver() {
         return preferences.isDataUseEnabled()
     }
 
-    private fun runNotificationCoroutineWork(
-        repository: CutEntryRepository,
-        preferences: ApplicationPrefs,
-        context: Context
-    ) {
-        runBlocking {
-            // starts a new coroutine, so we can access the DB concurrently without blocking the current thread (UI)
-            launch (Dispatchers.IO) {
-                val lastCut: CutEntry? = retrieveLastCutFromDB(repository)
+    private fun runNotificationCoroutineWork(repository: CutEntryRepository, preferences: ApplicationPrefs, context: Context)
+    = runBlocking {
+        // starts a new coroutine, so we can access the DB concurrently without blocking the current thread (UI)
+        launch (Dispatchers.IO) {
+            val lastCut: CutEntry? = retrieveLastCutFromDB(repository)
 
-                // only run through the notification logic and call the api if we have right connection type
-                if (connectionTypeMatchesPreferences(preferences, context)) {
-                    val weatherHttpResponse: Response<WeatherResponse> = callWeatherAPI(context)
-                    performNotificationLogic(lastCut, weatherHttpResponse, context)
-                } else {
-                    Log.d(Constants.TAG, "Connection type does not match preferences!")
-                }
+            // only run through the notification logic and call the api if we have right connection type
+            if (connectionTypeMatchesPreferences(preferences, context)) {
+                val weatherHttpResponse: Response<WeatherResponse> = callWeatherAPI(context)
+                performNotificationLogic(lastCut, weatherHttpResponse, context)
+            } else {
+                Log.d(Constants.TAG, "Connection type does not match preferences!")
             }
         }
     }
@@ -137,7 +132,6 @@ class AlarmReceiver : BroadcastReceiver() {
 
     private fun hasInternetConnection(context: Context): Boolean {
         // determines whether the user has an internet connection
-        // TODO: Incorporate a branch for Android 10 using https://developer.android.com/reference/android/net/ConnectivityManager.NetworkCallback
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetwork: NetworkInfo? = connectivityManager.activeNetworkInfo
@@ -155,24 +149,15 @@ class AlarmReceiver : BroadcastReceiver() {
     }
 
     private suspend fun getCoordinates(context: Context): Pair<Double, Double> {
-        var lat = 0.0
-        var long = 0.0
+        val lat: Double
+        val long: Double
 
-        val dao = AppDatabaseBuilder.getInstance(context).lawnLocationDao()
-        val repository = LawnLocationRepository(dao)
+        val repository = setupLawnLocationRepository(context)
 
-        if (repository.hasALocationSaved()) {
-            val lawnLocation = repository.getLocation()
-            lat = lawnLocation!!.latitude
-            long = lawnLocation.longitude
-            Log.d(Constants.TAG, "Got $lawnLocation from DB!")
-        }
-
-        // TODO: debug, remove later
-        if (lat == 0.0 && long == 0.0) {
-            lat = 43.531054
-            long = -80.230215
-        }
+        val lawnLocation = repository.getLocation()
+        lat = lawnLocation.latitude
+        long = lawnLocation.longitude
+        Log.d(Constants.TAG, "Got $lawnLocation from DB!")
         return Pair(lat, long)
     }
 

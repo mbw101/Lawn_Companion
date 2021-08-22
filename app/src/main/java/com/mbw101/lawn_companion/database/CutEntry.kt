@@ -22,7 +22,4 @@ data class CutEntry (
     @ColumnInfo(name="month_num") val month_number: Int,
 
     @ColumnInfo(name = "millis") val millis: Long = System.currentTimeMillis()
-
-    // TODO: Implement converters, so we can add Date objects into database
-//    @ColumnInfo(name = "date") val cutDate: Date?
 )

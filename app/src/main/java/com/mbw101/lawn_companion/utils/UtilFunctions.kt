@@ -16,7 +16,7 @@ object UtilFunctions {
      * Returns true if the COARSE location permission has been granted
      */
     fun hasLocationPermissions(): Boolean {
-        return (ContextCompat.checkSelfPermission(MyApplication.applicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
+        return (ContextCompat.checkSelfPermission(MyApplication.applicationContext(), Manifest.permission.ACCESS_FINE_LOCATION)
             == PackageManager.PERMISSION_GRANTED)
     }
 

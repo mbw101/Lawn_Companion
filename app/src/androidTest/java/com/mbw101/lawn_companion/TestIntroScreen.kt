@@ -17,7 +17,6 @@ import org.junit.runner.RunWith
 class TestIntroScreen {
     @get:Rule
     val introActivityRule: ActivityTestRule<IntroActivity> = ActivityTestRule(IntroActivity::class.java)
-//    val activityRule = ActivityScenarioRule(IntroActivity::class.java)
 
     @Test
     // using next button

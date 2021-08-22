@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.mbw101.lawn_companion">
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -16,6 +16,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Lawn_Companion">
+        <activity android:name=".ui.SaveLocationActivity"></activity>
         <activity
             android:name=".ui.AddCutActivity"
             android:label="@string/addCutTitle"
@@ -34,16 +35,10 @@
         </activity>
         <activity
             android:name=".ui.SettingsActivity"
-            android:theme="@style/myPreferencesTheme"
-            android:parentActivityName=".ui.MainActivity"/>
-
-        <!-- Used for when the user presses the action button on the cut notification -->
-        <receiver android:name=".notifications.AppGlobalReceiver"/>
-
-        <!-- Used for creating the notification when the receiver is called (by the alarm manager)  -->
-        <receiver android:name=".notifications.AlarmReceiver" />
-
-        <!-- Used for receiving when the phone restarts, so the notification can be set again-->
+            android:parentActivityName=".ui.MainActivity"
+            android:theme="@style/myPreferencesTheme" /> <!-- Used for when the user presses the action button on the cut notification -->
+        <receiver android:name=".notifications.AppGlobalReceiver" /> <!-- Used for creating the notification when the receiver is called (by the alarm manager) -->
+        <receiver android:name=".notifications.AlarmReceiver" /> <!-- Used for receiving when the phone restarts, so the notification can be set again -->
         <receiver android:name=".notifications.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

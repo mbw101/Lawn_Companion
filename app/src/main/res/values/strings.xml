@@ -23,8 +23,26 @@
 
     <!-- 4th screen/location permission part -->
     <string name="askForLocationMessage">
-    But first, Lawn Companion needs your location
-    to access local weather periodically.
+    But first, Lawn Companion needs to save the location of your lawn, so it can gather
+        accurate weather data.
+    </string>
+
+    <!--  5th screen - Saves the lawn location  -->
+    <string name="fifthScreenTitle">
+        Can Lawn Companion save your current location, so it can use it for accurate weather data?
+    </string>
+
+    <string name="fifthScreenContent">
+        Lawn Companion saves your location locally, so it can retrieve the current weather forecast for your city (and lawn) no
+        matter where you are located! You can adjust this location at any moment in the settings.
+    </string>
+
+    <string name="fifthScreenAccept">
+        Yes, I am home
+    </string>
+
+    <string name="fifthScreenDeny">
+        No, I am not home
     </string>
 
     <!-- Main activity strings -->
@@ -84,6 +102,13 @@
     <string name="cuttingSeasonOver">
     The cutting season is over! Check back closer to cutting season, or you
     can manually turn it on in settings.
+    </string>
+
+    <!--    Strings for when a lawn location hasn't been made-->
+    <string name="noLawnLocationMessage">There is no current lawn location saved. Add a location to receive notifications.</string>
+
+    <string name="createLawnLocationButton">
+        Create a lawn location
     </string>
 
     <!-- Add new cut activity strings -->
