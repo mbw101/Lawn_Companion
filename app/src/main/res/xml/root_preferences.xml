@@ -27,14 +27,15 @@
             app:summaryOff="@string/data_summary_on"
             app:title="@string/weatherDataAccessTitle" />
 
+        <Preference android:title="@string/createLawnLocationButton"
+            android:summary="@string/createNewLocationSummary"/>
+
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/aboutGroupTitle">
 
         <Preference android:title="Version"
-            android:summary="@string/app_version">
-
-        </Preference>
+            android:summary="@string/app_version" />
 
 
     </PreferenceCategory>

@@ -8,8 +8,10 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
@@ -130,6 +132,10 @@ class MainActivity : AppCompatActivity() {
         addCutFAB.setOnClickListener {
             launchAddCutScreen()
         }
+
+        refreshIcon.setOnClickListener {
+            refreshActivity()
+        }
     }
 
     private fun launchSettings() {
@@ -142,6 +148,17 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this@MainActivity, AddCutActivity::class.java)
         startActivity(intent)
         finish()
+    }
+
+    private fun refreshActivity() {
+        Toast.makeText(this, "Refreshing...", Toast.LENGTH_SHORT).show()
+//        val currentIntent = intent
+//        overridePendingTransition(0, 0);
+////        currentIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+//        finish();
+//        overridePendingTransition(0, 0);
+//        startActivity(currentIntent);
+        findViewById<ViewGroup>(android.R.id.content).invalidate();
     }
 
     override fun onBackPressed() {

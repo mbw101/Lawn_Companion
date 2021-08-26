@@ -1,8 +1,13 @@
 package com.mbw101.lawn_companion
 
+import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso
+import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
+import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
@@ -31,15 +36,6 @@ class TestSettingsScreen {
         Intents.init()
     }
 
-//    @Test
-//    // tests back buttons to see if main activity is shown
-//    fun testBackButton() {
-//        // hit back icon
-//        Espresso.onView(ViewMatchers.withId(R.id.backIcon)).perform(ViewActions.click())
-//        // test to see if main activity appeared on screen
-//        Intents.intended(IntentMatchers.hasComponent(MainActivity::class.java.name))
-//    }
-
     @Test
     // tests back buttons to see if main activity is shown
     fun testPhysicalBackButton() {
@@ -49,6 +45,20 @@ class TestSettingsScreen {
         Intents.intended(IntentMatchers.hasComponent(MainActivity::class.java.name))
     }
 
+    @Test
+    fun testCreateNewLawnLocationVisibility() {
+        tapCreateLawnLocationPreference()
+        TestMainScreen.ensureSaveLocationActivityIsShown()
+    }
+
+    private fun tapCreateLawnLocationPreference() {
+        Espresso.onView(ViewMatchers.withId(androidx.preference.R.id.recycler_view))
+            .perform(
+                RecyclerViewActions.actionOnItem<RecyclerView.ViewHolder>(
+                    ViewMatchers.hasDescendant(withText(R.string.createNewLocationSummary)),
+                    ViewActions.click()
+                ))
+    }
 
     @After
     fun release() {

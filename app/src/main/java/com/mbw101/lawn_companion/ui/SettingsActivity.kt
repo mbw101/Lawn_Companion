@@ -3,18 +3,21 @@ package com.mbw101.lawn_companion.ui
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.mbw101.lawn_companion.R
+import com.mbw101.lawn_companion.utils.Constants
 
 /**
 Lawn Companion
 Created by Malcolm Wright
 Date: 2021-05-15
  */
-class SettingsActivity : AppCompatActivity(){
+class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,6 +60,20 @@ class SettingsActivity : AppCompatActivity(){
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey)
+        }
+
+        override fun onPreferenceTreeClick(preference: Preference?): Boolean {
+            val preferenceTitle: String = preference?.title as String
+            Log.d(Constants.TAG, "Preference title = $preferenceTitle")
+            if (preferenceTitle.contains("lawn location")) { // getString(R.string.
+                openSaveLocationActivity()
+            }
+            return super.onPreferenceTreeClick(preference)
+        }
+
+        private fun openSaveLocationActivity() {
+            val intent = Intent (activity, SaveLocationActivity::class.java)
+            activity?.startActivity(intent)
         }
     }
 }

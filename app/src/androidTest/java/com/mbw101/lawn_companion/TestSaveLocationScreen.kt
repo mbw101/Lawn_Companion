@@ -29,22 +29,29 @@ class TestSaveLocationScreen {
     @get:Rule
     val mainActivityTestRule: ActivityTestRule<SaveLocationActivity> = ActivityTestRule(SaveLocationActivity::class.java)
 
+    companion object {
+        fun ensureMainActivityIsShown() {
+            Intents.intended(IntentMatchers.hasComponent(MainActivity::class.java.name))
+        }
+    }
+
     @Before
     fun setup() {
         Intents.init()
     }
+
     @Test
     fun testDeny() {
         Espresso.onView(ViewMatchers.withId(R.id.denySaveLocationButton)).perform(ViewActions.click())
         // test to see if main activity appeared on screen
-        Intents.intended(IntentMatchers.hasComponent(MainActivity::class.java.name))
+        ensureMainActivityIsShown()
     }
 
     @Test
     fun testAccept() {
         Espresso.onView(ViewMatchers.withId(R.id.acceptSaveLocationButton)).perform(ViewActions.click())
         // test to see if main activity appeared on screen
-        Intents.intended(IntentMatchers.hasComponent(MainActivity::class.java.name))
+        ensureMainActivityIsShown()
     }
 
     @After

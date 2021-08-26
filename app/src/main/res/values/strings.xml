@@ -174,7 +174,6 @@
     <string name="notificationDesc">Can be used if there\'s abnormal weather or you
     would like to postpone use.</string>
 
-    <!-- TODO: Implement the frequency later in development -->
     <string name="desiredCutFrequency">Desired Cut Frequency</string>
     <string name="lowestOptionFrequency">5 days</string>
     <string name="highestOptionFrequency">14 days</string>
@@ -184,7 +183,9 @@
     <string name="data_summary_on">Weather will only be fetched while on Wi-Fi
     </string>
     <string name="data_summary_off">Weather will be fetched while on Wi-Fi or data</string>
-    <!--    <string name="dataAccessDesc">Can be used to disable weather access when on data</string>-->
+
+    <string name="createNewLocationTitle">Create a new lawn location</string>
+    <string name="createNewLocationSummary">Removes the existing lawn location if one exists and creates a new lawn location</string>
 
     <string name="versionNumber">Version 0.1</string>
 

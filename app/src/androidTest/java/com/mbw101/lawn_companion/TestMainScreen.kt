@@ -55,6 +55,12 @@ class TestMainScreen {
     @get:Rule var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION,
     android.Manifest.permission.ACCESS_COARSE_LOCATION)
 
+    companion object {
+        fun ensureSaveLocationActivityIsShown() {
+            intended(hasComponent(SaveLocationActivity::class.java.name))
+        }
+    }
+
     @Before
     fun setup() {
         Intents.init()
@@ -135,29 +141,20 @@ class TestMainScreen {
         onView(withId(R.id.home)).perform(click()).check(matches(isDisplayed())) // open home fragment and test visibility
     }
 
-    // test switching permissions off
     @Test
     fun testTurningOffCutSeason() {
-        onView(withId(R.id.home)).perform(click()).check(matches(isDisplayed())) // open home fragment and test visibility
-
-        onView(withId(R.id.mainMessageTextView)).check(matches(
-            withText(containsString("No cuts have been made yet. Add a new cut to get started!"))))
+        onView(withId(R.id.home)).perform(click()).check(matches(isDisplayed())) // removes the permissions text
+        mainTextViewContainsText("No cuts have been made yet. Add a new cut to get started!")
 
         // navigate to settings screen
         onView(withId(R.id.settingsIcon)).perform(click())
 
         // turns off the cutting season in the settings
-        onView(withId(androidx.preference.R.id.recycler_view))
-            .perform(
-                RecyclerViewActions.actionOnItem<RecyclerView.ViewHolder>(hasDescendant(withText(R.string.cuttingSeasonTitle)),
-                click()))
+        pressCuttingSeasonPreference()
 
         // navigate using back button
         pressBack()
-
-        // Compare the text on main text view with "cutting season is turned off"
-        onView(withId(R.id.mainMessageTextView))
-            .check(matches(withText(containsString("cutting season"))))
+        mainTextViewContainsText("cutting season") // ensure we are in cutting season
 
         // Then, navigate back to turn on the cutting season again
 
@@ -165,70 +162,68 @@ class TestMainScreen {
         onView(withId(R.id.settingsIcon)).perform(click())
 
         // turns off the cutting season in the settings
-        onView(withId(androidx.preference.R.id.recycler_view))
-            .perform(
-                RecyclerViewActions.actionOnItem<RecyclerView.ViewHolder>(hasDescendant(withText(R.string.cuttingSeasonTitle)),
-                    click()))
+        pressCuttingSeasonPreference()
 
         // navigate using back button
         pressBack()
 
         // Compare the text on main text view with "cutting season is turned off"
-        onView(withId(R.id.mainMessageTextView))
-            .check(matches(withText(containsString("No cuts have been made yet. Add a new cut to get started!"))))
+        mainTextViewContainsText("No cuts have been made yet. Add a new cut to get started!")
     }
 
     @Test
     fun testTurningOffCutSeasonWithLocationSaved() {
         removeExistingLocation()
 
-        onView(withId(R.id.home)).perform(click()).check(matches(isDisplayed())) // open home fragment and test visibility
+        onView(withId(R.id.home)).perform(click()).check(matches(isDisplayed())) // removes the permissions text
 
-        onView(withId(R.id.mainMessageTextView)).check(matches(
-            withText(containsString("There is no current lawn location saved. Add a location to receive notifications"))))
+        mainTextViewContainsText("There is no current lawn location saved. Add a location to receive notifications")
 
         onView(withId(R.id.createLawnLocationButton)).perform(click())
 
-        // check save location is shown
-        intended(hasComponent(SaveLocationActivity::class.java.name))
+        ensureSaveLocationActivityIsShown()
 
         onView(withId(R.id.acceptSaveLocationButton)).perform(click())
 
-        onView(withId(R.id.mainMessageTextView)).check(matches(
-            withText(containsString("No cuts have been made yet. Add a new cut to get started!"))))
+        mainTextViewContainsText("No cuts have been made yet. Add a new cut to get started!")
 
         // navigate to settings screen
         onView(withId(R.id.settingsIcon)).perform(click())
 
-        // turns off the cutting season in the settings
-        onView(withId(androidx.preference.R.id.recycler_view))
-            .perform(
-                RecyclerViewActions.actionOnItem<RecyclerView.ViewHolder>(hasDescendant(withText(R.string.cuttingSeasonTitle)),
-                    click()))
+        pressCuttingSeasonPreference() // turns it off
 
         pressBack()
 
         // Compare the text on main text view with "cutting season is turned off"
-        onView(withId(R.id.mainMessageTextView))
-            .check(matches(withText(containsString("cutting season"))))
+        mainTextViewContainsText("cutting season")
 
         // navigate to settings screen
         onView(withId(R.id.settingsIcon)).perform(click())
 
-        // turns off the cutting season in the settings
-        onView(withId(androidx.preference.R.id.recycler_view))
-            .perform(
-                RecyclerViewActions.actionOnItem<RecyclerView.ViewHolder>(hasDescendant(withText(R.string.cuttingSeasonTitle)),
-                    click()))
+        pressCuttingSeasonPreference() // turns season back on
 
         // navigate using back button
         pressBack()
 
         // Compare the text on main text view with "cutting season is turned off"
-        onView(withId(R.id.mainMessageTextView))
-            .check(matches(withText(containsString("No cuts have been made yet. Add a new cut to get started!"))))
+        mainTextViewContainsText("No cuts have been made yet. Add a new cut to get started!")
 
         addTestLocationBack()
+    }
+
+    private fun mainTextViewContainsText(textToTest: String) {
+        onView(withId(R.id.mainMessageTextView))
+            .check(matches(withText(containsString(textToTest))))
+    }
+
+    private fun pressCuttingSeasonPreference() {
+        onView(withId(androidx.preference.R.id.recycler_view))
+            .perform(
+                RecyclerViewActions.actionOnItem<RecyclerView.ViewHolder>(
+                    hasDescendant(withText(R.string.cuttingSeasonTitle)),
+                    click()
+                )
+            )
     }
 
     @Test
@@ -237,9 +232,7 @@ class TestMainScreen {
 
         onView(withId(R.id.home)).perform(click()) // press home to update text
 
-        // test main text too
-        onView(withId(R.id.mainMessageTextView)).check(matches(
-            withText(containsString("There is no current lawn location saved. Add a location to receive notifications."))))
+        mainTextViewContainsText("There is no current lawn location saved. Add a location to receive notifications.")
 
         // test button text
         onView(withId(R.id.createLawnLocationButton)).check(matches(isCompletelyDisplayed()))
@@ -263,6 +256,29 @@ class TestMainScreen {
         runBlocking {
             lawnLocationRepository.addLocation(LawnLocation(42.2, 42.3))
         }
+    }
+
+    @Test
+    fun testRefreshButton() {
+        ensureRefreshWorksWithHomeFrag()
+        ensureRefreshWorksWithLog()
+
+    }
+
+    private fun ensureRefreshWorksWithLog() {
+        onView(withId(R.id.cutLog)).perform(click()).check(matches(isDisplayed()))
+        tapRefresh()
+        onView(withId(R.id.cutLogConstraintLayout)).check(matches(isDisplayed()))
+    }
+
+    private fun ensureRefreshWorksWithHomeFrag() {
+        onView(withId(R.id.homeConstraintLayout)).check(matches(isDisplayed()))
+        tapRefresh()
+        onView(withId(R.id.home)).perform(click()).check(matches(isDisplayed()))
+    }
+
+    private fun tapRefresh() {
+        onView(withId(R.id.refreshIcon)).perform(click())
     }
 
     @After
