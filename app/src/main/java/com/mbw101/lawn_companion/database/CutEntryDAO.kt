@@ -19,6 +19,9 @@ interface CutEntryDAO {
     @Query("SELECT * FROM cuts_table ORDER BY month_num ASC, day_number ASC")
     fun getAllCutsSorted(): LiveData<List<CutEntry>>
 
+    @Query("SELECT * FROM cuts_table ORDER BY month_num ASC, day_number ASC")
+    fun getAllCutsSortedAsync(): List<CutEntry>
+
     // This query should get the # of entries in the cuts table
     @Query("SELECT COUNT(*) FROM cuts_table")
     fun getNumEntries(): Int
@@ -37,13 +40,19 @@ interface CutEntryDAO {
     suspend fun getLastCut(): CutEntry? // returns a single Cut Entry
 
     @Query("SELECT * FROM cuts_table ORDER BY month_num DESC, day_number DESC LIMIT 1")
-    suspend fun getLastCutSync(): CutEntry? // returns a single Cut Entry (synchronously) for the broadcast receiver
+    suspend fun getLastCutAsync(): CutEntry? // returns a single Cut Entry (synchronously) for the broadcast receiver
 
     @Query("SELECT * FROM cuts_table ORDER BY millis DESC LIMIT 1")
     suspend fun getLastCutMillis(): CutEntry? // returns a single Cut Entry by utilizing the millis member
 
     @Query("SELECT * FROM cuts_table WHERE year = :year")
     suspend fun getEntriesFromSpecificYear(year: Int): List<CutEntry>
+
+    @Query("SELECT * FROM cuts_table WHERE year = :year ORDER BY month_num ASC, day_number ASC")
+    suspend fun getEntriesFromSpecificYearSortedAsync(year: Int): List<CutEntry>
+
+    @Query("SELECT * FROM cuts_table WHERE year = :year ORDER BY month_num DESC, day_number DESC")
+    suspend fun getLastEntryFromSpecificYear(year: Int): CutEntry?
 
     // insertion queries
     @Insert(onConflict = OnConflictStrategy.REPLACE)

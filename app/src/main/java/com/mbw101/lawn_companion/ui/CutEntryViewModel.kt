@@ -30,5 +30,6 @@ class CutEntryViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun getSortedCuts() = repository.getSortedCuts()
+    suspend fun getEntriesFromSpecificYearSorted(year: Int) = repository.getCutsByYearSorted(year)
     suspend fun deleteCuts(vararg cuts: CutEntry) = repository.deleteCuts(*cuts)
 }

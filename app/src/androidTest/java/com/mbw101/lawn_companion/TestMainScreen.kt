@@ -8,7 +8,7 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.contrib.RecyclerViewActions
+import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItem
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
@@ -58,6 +58,10 @@ class TestMainScreen {
     companion object {
         fun ensureSaveLocationActivityIsShown() {
             intended(hasComponent(SaveLocationActivity::class.java.name))
+        }
+
+        fun tapRefresh() {
+            onView(withId(R.id.refreshIcon)).perform(click())
         }
     }
 
@@ -185,6 +189,8 @@ class TestMainScreen {
 
         onView(withId(R.id.acceptSaveLocationButton)).perform(click())
 
+        Thread.sleep(2500)
+
         mainTextViewContainsText("No cuts have been made yet. Add a new cut to get started!")
 
         // navigate to settings screen
@@ -219,7 +225,7 @@ class TestMainScreen {
     private fun pressCuttingSeasonPreference() {
         onView(withId(androidx.preference.R.id.recycler_view))
             .perform(
-                RecyclerViewActions.actionOnItem<RecyclerView.ViewHolder>(
+                actionOnItem<RecyclerView.ViewHolder>(
                     hasDescendant(withText(R.string.cuttingSeasonTitle)),
                     click()
                 )
@@ -262,7 +268,6 @@ class TestMainScreen {
     fun testRefreshButton() {
         ensureRefreshWorksWithHomeFrag()
         ensureRefreshWorksWithLog()
-
     }
 
     private fun ensureRefreshWorksWithLog() {
@@ -277,12 +282,9 @@ class TestMainScreen {
         onView(withId(R.id.home)).perform(click()).check(matches(isDisplayed()))
     }
 
-    private fun tapRefresh() {
-        onView(withId(R.id.refreshIcon)).perform(click())
-    }
-
     @After
     fun release() {
         Intents.release()
     }
 }
+

@@ -17,7 +17,7 @@ Created by Malcolm Wright
 Date: May 16th, 2021
  */
 
-class ChildRecyclerAdapter(cutEntries: List<CutEntry>, // add custom interface
+class ChildRecyclerAdapter(cutEntries: List<CutEntry>,
                            var onItemClickListener: OnItemClickListener) :
     RecyclerView.Adapter<ChildRecyclerAdapter.ChildCustomViewHolder>() {
     var entries: List<CutEntry> = cutEntries
@@ -27,17 +27,6 @@ class ChildRecyclerAdapter(cutEntries: List<CutEntry>, // add custom interface
         var cutEntryDayTextView: TextView = v.findViewById(R.id.cutEntryDayTextView)
         var cutEntryMessageTextView: TextView = v.findViewById(R.id.cutEntryMessageTextView)
         var cutTimeTextView: TextView = v.findViewById(R.id.cutTimeTextView)
-    }
-
-    // TODO: Will be used for sections that do not have cuts yet
-    class PlaceholderViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        var cutEntryMessageTextView: TextView = v.findViewById(R.id.cutEntryMessageTextView)
-
-        init {
-            // initialize components of each individual cut entry row
-            cutEntryMessageTextView.text =
-                MyApplication.applicationContext().getString(R.string.noCutMade)
-        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChildCustomViewHolder {

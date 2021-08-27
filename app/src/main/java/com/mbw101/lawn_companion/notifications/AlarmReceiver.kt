@@ -148,7 +148,7 @@ class AlarmReceiver : BroadcastReceiver() {
         return weatherService.getWeather(lat, long)
     }
 
-    private suspend fun getCoordinates(context: Context): Pair<Double, Double> {
+    private fun getCoordinates(context: Context): Pair<Double, Double> {
         val lat: Double
         val long: Double
 

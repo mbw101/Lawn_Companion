@@ -17,7 +17,7 @@ Date: May 16th, 2021
 class MainRecyclerAdaptor(clickListener: OnItemClickListener):  RecyclerView.Adapter<MainRecyclerAdaptor.CustomViewHolder>() {
 
     // add custom interface
-    var onItemClickListener: OnItemClickListener = clickListener
+    private var onItemClickListener: OnItemClickListener = clickListener
     private var sectionList = mutableListOf<MonthSection>()
 
     class CustomViewHolder(v: View) : RecyclerView.ViewHolder(v){

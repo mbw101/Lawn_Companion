@@ -33,7 +33,16 @@ class TestUtil {
         // but it fails when calculating from March 1st to June 18th.
         date1.set(2021, Calendar.MARCH, 1) // Jan 1st, 2021
         date2.set(2021, Calendar.JUNE, 18) // June 18th, 2021
-//        assertEquals(UtilFunctions.getNumDaysBetween(date1, date2), 109)
+    }
+
+    @Test
+    fun testNewYearDateCalculations() {
+        val date1: Calendar = Calendar.getInstance()
+        val date2: Calendar = Calendar.getInstance()
+
+        date1.set(2020, Calendar.DECEMBER, 30) // Jan 1st, 2021
+        date2.set(2021, Calendar.JANUARY, 3) // June 18th, 2021
+        assertEquals(UtilFunctions.getNumDaysBetween(date1, date2), 4)
     }
 
     @Test

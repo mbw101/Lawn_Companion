@@ -55,7 +55,8 @@ object AlarmScheduler {
         val today = getInstance(Locale.getDefault())
         if (shouldNotifyToday(dayOfWeek, today, datetimeToAlarm)) { // schedules the alarm if so
             // repeat the alarm every 7 days (1 week)
-            alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP,
+            // setInexactRepeating saves battery life compared to setRepeating (synchronizes multiple notifications)
+            alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP,
                 datetimeToAlarm.timeInMillis, 60 * 1000, alarmIntent) // (1000 * 60 * 60 * 24 * 7).toLong()
             return
         }

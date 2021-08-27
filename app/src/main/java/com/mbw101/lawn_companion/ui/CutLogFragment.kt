@@ -16,7 +16,10 @@ import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.CutEntry
 import com.mbw101.lawn_companion.utils.Constants
 import com.mbw101.lawn_companion.utils.UtilFunctions
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.util.*
 
 
 /**
@@ -62,7 +65,7 @@ class CutLogFragment : Fragment(), OnItemClickListener {
             return hashMap
         }
 
-        private fun createEmptyMonthHashMap(): java.util.HashMap<Int, List<CutEntry>> {
+        private fun createEmptyMonthHashMap(): HashMap<Int, List<CutEntry>> {
             val hashMap: java.util.HashMap<Int, List<CutEntry>> = HashMap()
 
             // map each month to empty list to start
@@ -131,14 +134,13 @@ class CutLogFragment : Fragment(), OnItemClickListener {
     }
 
     private fun setupViewModel() {
-        // set up view model with fragment
-        viewModel.getSortedCuts().observe(viewLifecycleOwner, { entries -> //update RecyclerView later
-            // get each months data using the repository
-            setupCutEntries(entries)
-
-            // call setSections
-            mainRecyclerAdaptor.setSections(monthSections)
-        })
+        runBlocking {
+            launch (Dispatchers.IO) {
+                val sortedEntriesFromCurrentYear = viewModel.getEntriesFromSpecificYearSorted(UtilFunctions.getCurrentYear())
+                setupCutEntries(sortedEntriesFromCurrentYear)
+                mainRecyclerAdaptor.setSections(monthSections)
+            }
+        }
     }
 
     /**
