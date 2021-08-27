@@ -8,6 +8,7 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
+import androidx.test.rule.GrantPermissionRule
 import com.mbw101.lawn_companion.ui.MainActivity
 import com.mbw101.lawn_companion.ui.SaveLocationActivity
 import org.junit.After
@@ -28,6 +29,10 @@ class TestSaveLocationScreen {
 
     @get:Rule
     val mainActivityTestRule: ActivityTestRule<SaveLocationActivity> = ActivityTestRule(SaveLocationActivity::class.java)
+
+    @get:Rule
+    var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION,
+        android.Manifest.permission.ACCESS_COARSE_LOCATION)
 
     companion object {
         fun ensureMainActivityIsShown() {

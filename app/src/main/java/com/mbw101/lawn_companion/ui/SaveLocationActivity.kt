@@ -3,6 +3,7 @@ package com.mbw101.lawn_companion.ui
 import android.content.Context
 import android.content.Intent
 import android.location.Location
+import android.location.LocationListener
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -23,13 +24,12 @@ Created by Malcolm Wright
 Date: 2021-08-15
  */
 
-class SaveLocationActivity : AppCompatActivity() {
+class SaveLocationActivity : AppCompatActivity(), LocationListener {
 
     private lateinit var denySaveButton: Button
     private lateinit var acceptSaveButton: Button
     private lateinit var lawnLocationRepository: LawnLocationRepository
     var locationGps: Location? = null
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,25 +59,27 @@ class SaveLocationActivity : AppCompatActivity() {
         }
 
         acceptSaveButton.setOnClickListener {
-            createCoroutineForDB(this)
+            LocationUtils.requestLocation(this, this)
+            // TODO: adjust main activity text on home frag
             launchMainActivity()
         }
     }
 
-    private fun createCoroutineForDB(context: Context) = runBlocking {
+    private fun createCoroutineForDB(context: Context, location: Location) = runBlocking {
         launch (Dispatchers.IO) {
-            performDatabaseWork(context)
+            performDatabaseWork(context, location)
         }
     }
 
-    private suspend fun performDatabaseWork(context: Context) {
+    private suspend fun performDatabaseWork(context: Context, location: Location) {
         if (!lawnLocationRepository.hasALocationSaved()) {
-            val newGpsLocation = LocationUtils.getLastKnownLocation(context)
-            saveGpsLocationIfExists(newGpsLocation)
+            saveGpsLocationIfExists(location)
         }
     }
 
     private suspend fun saveGpsLocationIfExists(newGpsLocation: Location?) {
+        // this is always null due to call from LocationUtils.getLastKnownLocation
+        // locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
         if (newGpsLocation != null) {
             locationGps = newGpsLocation
             Log.d(
@@ -96,4 +98,13 @@ class SaveLocationActivity : AppCompatActivity() {
         startActivity(intent)
         finish()
     }
+
+    override fun onLocationChanged(location: Location) {
+        Log.d(Constants.TAG, "Location = $location")
+        createCoroutineForDB(this, location)
+    }
+
+    override fun onProviderEnabled(provider: String) {}
+    override fun onProviderDisabled(provider: String) {}
+    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
 }

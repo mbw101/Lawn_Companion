@@ -5,9 +5,11 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
+import android.location.LocationListener
 import android.location.LocationManager
 import android.util.Log
 import androidx.core.app.ActivityCompat
+import com.google.android.gms.location.LocationCallback
 
 /**
 Lawn Companion
@@ -17,6 +19,7 @@ Date: 2021-07-30
 
 object LocationUtils {
     private lateinit var locationManager: LocationManager
+    private lateinit var locationCallback: LocationCallback
 
     @SuppressLint("MissingPermission")
     fun getLastKnownLocation(context: Context): Location? {
@@ -31,6 +34,13 @@ object LocationUtils {
         }
         Log.d(Constants.TAG, "Has no gps provider!")
         return null
+    }
+
+
+    @SuppressLint("MissingPermission")
+    fun requestLocation(context: Context, locationListener: LocationListener) {
+        setupLocationManager(context)
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5.0f, locationListener);
     }
 
     private fun setupLocationManager(context: Context) {

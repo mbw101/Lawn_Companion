@@ -172,7 +172,7 @@ class TestMainScreen {
     }
 
     @Test
-    fun testTurningOffCutSeasonWithLocationSaved() {
+    fun testTurningOffCutSeasonWithoutLocationSaved() {
         removeExistingLocation()
 
         onView(withId(R.id.home)).perform(click()).check(matches(isDisplayed())) // removes the permissions text
