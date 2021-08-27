@@ -5,6 +5,7 @@ import com.mbw101.lawn_companion.database.CutEntry
 import com.mbw101.lawn_companion.ui.AddCutActivity
 import com.mbw101.lawn_companion.ui.CutLogFragment
 import com.mbw101.lawn_companion.utils.Constants
+import com.mbw101.lawn_companion.utils.UtilFunctions
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -26,27 +27,27 @@ class CutEntryTests {
         // no entries in other months
         return listOf(
             // January
-            CutEntry("4:36pm", 25, "January", 1),
-            CutEntry("4:36pm", 25, "January", 1),
-            CutEntry("4:36pm", 25, "January", 1),
+            CutEntry("4:36pm", 25, "January", 1, UtilFunctions.getCurrentYear()),
+            CutEntry("4:36pm", 25, "January", 1, UtilFunctions.getCurrentYear()),
+            CutEntry("4:36pm", 25, "January", 1, UtilFunctions.getCurrentYear()),
 
             // February
-            CutEntry("4:36pm", 25, "February", 2),
-            CutEntry("4:36pm", 25, "February", 2),
+            CutEntry("4:36pm", 25, "February", 2, UtilFunctions.getCurrentYear()),
+            CutEntry("4:36pm", 25, "February", 2, UtilFunctions.getCurrentYear()),
 
             // March
-            CutEntry("4:36pm", 25, "March", 3),
+            CutEntry("4:36pm", 25, "March", 3, UtilFunctions.getCurrentYear()),
 //            CutEntry("4:36pm", 25, "March", 3),
 
             // april
-            CutEntry("4:36pm", 25, "april", 4),
-            CutEntry("4:36pm", 18, "april", 4),
-            CutEntry("4:36pm", 18, "april", 4),
-            CutEntry("4:36pm", 18, "april", 4),
+            CutEntry("4:36pm", 25, "april", 4, UtilFunctions.getCurrentYear()),
+            CutEntry("4:36pm", 18, "april", 4, UtilFunctions.getCurrentYear()),
+            CutEntry("4:36pm", 18, "april", 4, UtilFunctions.getCurrentYear()),
+            CutEntry("4:36pm", 18, "april", 4, UtilFunctions.getCurrentYear()),
 
             //may
-            CutEntry("4:36pm", 25, "may", 5),
-            CutEntry("4:36pm", 21, "may", 5)
+            CutEntry("4:36pm", 25, "may", 5, UtilFunctions.getCurrentYear()),
+            CutEntry("4:36pm", 21, "may", 5, UtilFunctions.getCurrentYear())
         )
     }
 

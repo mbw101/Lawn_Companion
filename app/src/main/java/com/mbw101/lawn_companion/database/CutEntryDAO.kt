@@ -42,6 +42,9 @@ interface CutEntryDAO {
     @Query("SELECT * FROM cuts_table ORDER BY millis DESC LIMIT 1")
     suspend fun getLastCutMillis(): CutEntry? // returns a single Cut Entry by utilizing the millis member
 
+    @Query("SELECT * FROM cuts_table WHERE year = :year")
+    suspend fun getEntriesFromSpecificYear(year: Int): List<CutEntry>
+
     // insertion queries
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg cuts: CutEntry)

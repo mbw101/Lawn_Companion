@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.runner.AndroidJUnit4
+import com.mbw101.lawn_companion.utils.UtilFunctions
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert
@@ -31,10 +32,10 @@ class CutDatabaseTest {
     @Test
     @Throws(Exception::class)
     fun testNumEntries() = runBlocking {
-        cutEntryDao.insertAll(CutEntry("4:36pm", 17, "September", 9),
-            CutEntry("4:36pm", 5, "October", 10),
-            CutEntry("4:36pm", 28, "September", 9),
-            CutEntry("4:36pm", 1, "October", 10))
+        cutEntryDao.insertAll(CutEntry("4:36pm", 17, "September", 9, UtilFunctions.getCurrentYear()),
+            CutEntry("4:36pm", 5, "October", 10, UtilFunctions.getCurrentYear()),
+            CutEntry("4:36pm", 28, "September", 9, UtilFunctions.getCurrentYear()),
+            CutEntry("4:36pm", 1, "October", 10, UtilFunctions.getCurrentYear()))
 
         Assert.assertEquals(cutEntryDao.getNumEntries(), 4)
     }
@@ -43,9 +44,9 @@ class CutDatabaseTest {
     @Throws(Exception::class)
     //  Tests the get all cuts by adding 3 CutEntries and ensuring a list with 3 entries are returned
     fun insertAndGetAllCuts() = runBlocking {
-        cutEntryDao.insertAll(CutEntry("4:36pm", 17, "September", 9),
-            CutEntry("4:36pm", 28, "September", 9),
-            CutEntry("4:36pm", 5, "October", 10))
+        cutEntryDao.insertAll(CutEntry("4:36pm", 17, "September", 9, UtilFunctions.getCurrentYear()),
+            CutEntry("4:36pm", 28, "September", 9, UtilFunctions.getCurrentYear()),
+            CutEntry("4:36pm", 5, "October", 10, UtilFunctions.getCurrentYear()))
 
         val returnedList = cutEntryDao.getAllCuts()
 
@@ -55,9 +56,9 @@ class CutDatabaseTest {
     @Test
     @Throws(Exception::class)
     fun insertAndFindByMonthName() = runBlocking {
-        cutEntryDao.insertAll(CutEntry("4:36pm", 17, "September", 9),
-            CutEntry("4:36pm", 28, "September", 9),
-            CutEntry("4:36pm", 5, "October", 10))
+        cutEntryDao.insertAll(CutEntry("4:36pm", 17, "September", 9, UtilFunctions.getCurrentYear()),
+            CutEntry("4:36pm", 28, "September", 9, UtilFunctions.getCurrentYear()),
+            CutEntry("4:36pm", 5, "October", 10, UtilFunctions.getCurrentYear()))
 
         var returnedEntries: List<CutEntry>? = null
         runBlocking {
@@ -75,9 +76,9 @@ class CutDatabaseTest {
     @Throws(Exception::class)
     fun insertAndFindByMonthNum() {
         runBlocking {
-            cutEntryDao.insertAll(CutEntry("4:36pm", 17, "September", 9),
-                CutEntry("4:36pm", 28, "September", 9),
-                CutEntry("4:36pm", 5, "October", 10))
+            cutEntryDao.insertAll(CutEntry("4:36pm", 17, "September", 9, UtilFunctions.getCurrentYear()),
+                CutEntry("4:36pm", 28, "September", 9, UtilFunctions.getCurrentYear()),
+                CutEntry("4:36pm", 5, "October", 10, UtilFunctions.getCurrentYear()))
 
             var returnedEntries = cutEntryDao.findByMonthNum(10)
             Assert.assertEquals(returnedEntries!!.size, 1)
@@ -92,15 +93,41 @@ class CutDatabaseTest {
     fun testFindLastCut() {
         runBlocking {
             cutEntryDao.insertAll(
-                CutEntry("4:36pm", 17, "September", 9),
-                CutEntry("4:36pm", 5, "October", 10),
-                CutEntry("4:36pm", 28, "September", 9),
-                CutEntry("4:36pm", 1, "October", 10)
+                CutEntry("4:36pm", 17, "September", 9, UtilFunctions.getCurrentYear()),
+                CutEntry("4:36pm", 5, "October", 10, UtilFunctions.getCurrentYear()),
+                CutEntry("4:36pm", 28, "September", 9, UtilFunctions.getCurrentYear()),
+                CutEntry("4:36pm", 1, "October", 10, UtilFunctions.getCurrentYear())
             )
 
             val returnedEntry = cutEntryDao.getLastCut()
             Assert.assertEquals(returnedEntry!!.month_name, "October")
-            Assert.assertEquals(returnedEntry!!.day_number, 5)
+            Assert.assertEquals(returnedEntry.day_number, 5)
+        }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testFindAllCutsWithYear() {
+        runBlocking {
+            cutEntryDao.insertAll(
+                CutEntry("4:36pm", 17, "September", 9, UtilFunctions.getCurrentYear()),
+                CutEntry("4:36pm", 5, "October", 10, UtilFunctions.getCurrentYear()),
+                CutEntry("4:36pm", 28, "September", 9, UtilFunctions.getCurrentYear()),
+                CutEntry("4:36pm", 1, "October", 10, UtilFunctions.getCurrentYear())
+            )
+
+            var entriesFromCurrentYear = cutEntryDao.getEntriesFromSpecificYear(UtilFunctions.getCurrentYear())
+            Assert.assertEquals(entriesFromCurrentYear.size, 4)
+
+            cutEntryDao.insertAll(
+                CutEntry("4:36pm", 28, "September", 9, 2020),
+                CutEntry("4:36pm", 1, "October", 10, 2020)
+            )
+
+            entriesFromCurrentYear = cutEntryDao.getEntriesFromSpecificYear(2020)
+            Assert.assertEquals(entriesFromCurrentYear.size, 2)
+            entriesFromCurrentYear = cutEntryDao.getEntriesFromSpecificYear(2019)
+            Assert.assertEquals(entriesFromCurrentYear.isEmpty(), true)
         }
     }
 
@@ -109,18 +136,18 @@ class CutDatabaseTest {
     fun testDeleteCut() {
         runBlocking {
             cutEntryDao.insertAll(
-                CutEntry("4:36pm", 17, "September", 9),
-                CutEntry("4:36pm", 5, "October", 10),
-                CutEntry("4:36pm", 28, "September", 9),
-                CutEntry("4:36pm", 1, "October", 10)
+                CutEntry("4:36pm", 17, "September", 9, UtilFunctions.getCurrentYear()),
+                CutEntry("4:36pm", 5, "October", 10, UtilFunctions.getCurrentYear()),
+                CutEntry("4:36pm", 28, "September", 9, UtilFunctions.getCurrentYear()),
+                CutEntry("4:36pm", 1, "October", 10, UtilFunctions.getCurrentYear())
             )
 
             // delete both the october cuts and check each time afterwards
-            cutEntryDao.deleteCuts(CutEntry("4:36pm", 1, "October", 10))
+            cutEntryDao.deleteCuts(CutEntry("4:36pm", 1, "October", 10, UtilFunctions.getCurrentYear()))
             var returnedEntry = cutEntryDao.getLastCut()
             Assert.assertEquals(returnedEntry!!.month_name, "October")
 
-            cutEntryDao.deleteCuts(CutEntry("4:36pm", 5, "October", 10))
+            cutEntryDao.deleteCuts(CutEntry("4:36pm", 5, "October", 10, UtilFunctions.getCurrentYear()))
             returnedEntry = cutEntryDao.getLastCut()
             Assert.assertEquals(returnedEntry!!.month_name, "September")
 
@@ -133,10 +160,10 @@ class CutDatabaseTest {
     @Test
     @Throws(Exception::class)
     fun testDeleteAllCuts() = runBlocking {
-        cutEntryDao.insertAll(CutEntry("4:36pm", 17, "September", 9),
-            CutEntry("4:36pm", 5, "October", 10),
-            CutEntry("4:36pm", 28, "September", 9),
-            CutEntry("4:36pm", 1, "October", 10))
+        cutEntryDao.insertAll(CutEntry("4:36pm", 17, "September", 9, UtilFunctions.getCurrentYear()),
+            CutEntry("4:36pm", 5, "October", 10, UtilFunctions.getCurrentYear()),
+            CutEntry("4:36pm", 28, "September", 9, UtilFunctions.getCurrentYear()),
+            CutEntry("4:36pm", 1, "October", 10, UtilFunctions.getCurrentYear()))
 
         // delete both the october cuts and check each time afterwards
         cutEntryDao.deleteAll()
