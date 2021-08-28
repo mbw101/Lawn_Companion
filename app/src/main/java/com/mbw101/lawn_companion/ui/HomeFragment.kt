@@ -16,6 +16,7 @@ import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.CutEntry
 import com.mbw101.lawn_companion.database.setupLawnLocationRepository
 import com.mbw101.lawn_companion.utils.ApplicationPrefs
+import com.mbw101.lawn_companion.utils.Constants
 import com.mbw101.lawn_companion.utils.UtilFunctions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -174,18 +175,20 @@ class HomeFragment : Fragment() {
     private fun getSalutation(): String {
         val cal: Calendar = Calendar.getInstance()
         Log.d("Lawn Companion", "Time: " + cal.get(Calendar.HOUR_OF_DAY))
+        val hourOfDay = cal.get(Calendar.HOUR_OF_DAY)
 
-        return when (cal.get(Calendar.HOUR_OF_DAY)) {
-            5, 6, 7, 8, 9, 10, 11 -> { // good morning
-                getString(R.string.goodMorning)
+         when (hourOfDay) {
+            in Constants.MORNING_HOUR_START_TIME..Constants.MORNING_HOUR_END_TIME -> {
+                return getString(R.string.goodMorning)
             }
-
-            12, 13, 14, 15, 16, 17 -> { // good afternoon
-                getString(R.string.goodAfternoon)
+            in Constants.AFTERNOON_HOUR_START_TIME..Constants.AFTERNOON_HOUR_END_TIME -> {
+                return getString(R.string.goodAfternoon)
             }
-
-            else -> { // good evening
-                getString(R.string.goodNight)
+            in Constants.EVENING_HOUR_START_TIME..Constants.EVENING_HOUR_END_TIME -> {
+                return getString(R.string.goodEvening)
+            }
+            else -> { // between NIGHT_HOUR_START_TIME downTo Constants.NIGHT_HOUR_END_TIME
+                return getString(R.string.goodNight)
             }
         }
     }

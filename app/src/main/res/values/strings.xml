@@ -50,6 +50,7 @@
     <!-- Salutations -->
     <string name="goodMorning">Good Morning!</string>
     <string name="goodAfternoon">Good Afternoon!</string>
+    <string name="goodEvening">Good Evening!</string>
     <string name="goodNight">Good Night!</string>
 
     <string name="home">Home</string>
@@ -186,6 +187,17 @@
 
     <string name="createNewLocationTitle">Create a new lawn location</string>
     <string name="createNewLocationSummary">Removes the existing lawn location if one exists and creates a new lawn location</string>
+
+    <string name="notificationTimeOfDayCategoryTitle">Preferences for when notifications will be sent</string>
+    <string name="morningTimeOfDayTitle">Morning (5am-12pm)</string>
+    <string name="morningTimeOfDayKey">mornings</string>
+    <string name="afternoonTimeOfDayTitle">Afternoon (12pm-5pm)</string>
+    <string name="afternoonTimeOfDayKey">afternoons</string>
+    <string name="eveningTimeOfDayTitle">Evening (5pm-9pm)</string>
+    <string name="eveningTimeOfDayKey">evenings</string>
+    <string name="nightTimeOfDayTitle">Night (9pm-5am)</string>
+    <string name="nightTimeOfDayKey">nights</string>
+    <string name="timeOfDaySummary">Check weather and send notifications only during this time</string>
 
     <string name="versionNumber">Version 0.1</string>
 

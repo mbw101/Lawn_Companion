@@ -1,6 +1,6 @@
 package com.mbw101.lawn_companion
 
-import androidx.test.espresso.Espresso
+import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
@@ -49,8 +49,14 @@ class TestFirstUse {
         ensureSaveActivityIsShown()
         pressSaveLocation()
         Thread.sleep(1000)
+        pressHomeNavButton()
         ensureMainActivityIsShown()
         compareHappyExpectedOutputs()
+    }
+
+    private fun pressHomeNavButton() {
+        onView(ViewMatchers.withId(R.id.home)).perform(ViewActions.click())
+            .check(matches(isDisplayed()))
     }
 
     @Test
@@ -63,18 +69,18 @@ class TestFirstUse {
     }
 
     private fun pressNavButtons() {
-        Espresso.onView(ViewMatchers.withId(R.id.nextButton)).perform(ViewActions.click())
-        Espresso.onView(ViewMatchers.withId(R.id.nextButton)).perform(ViewActions.click())
-        Espresso.onView(ViewMatchers.withId(R.id.nextButton)).perform(ViewActions.click())
-        Espresso.onView(ViewMatchers.withId(R.id.getStartedButton)).perform(ViewActions.click())
+        onView(ViewMatchers.withId(R.id.nextButton)).perform(ViewActions.click())
+        onView(ViewMatchers.withId(R.id.nextButton)).perform(ViewActions.click())
+        onView(ViewMatchers.withId(R.id.nextButton)).perform(ViewActions.click())
+        onView(ViewMatchers.withId(R.id.getStartedButton)).perform(ViewActions.click())
     }
 
     private fun pressSaveLocation() {
-        Espresso.onView(ViewMatchers.withId(R.id.acceptSaveLocationButton)).perform(ViewActions.click())
+        onView(ViewMatchers.withId(R.id.acceptSaveLocationButton)).perform(ViewActions.click())
     }
 
     private fun pressDenySaveLocation() {
-        Espresso.onView(ViewMatchers.withId(R.id.denySaveLocationButton)).perform(ViewActions.click())
+        onView(ViewMatchers.withId(R.id.denySaveLocationButton)).perform(ViewActions.click())
     }
 
     private fun ensureSaveActivityIsShown() {
@@ -86,35 +92,35 @@ class TestFirstUse {
     }
 
     private fun compareHappyExpectedOutputs() {
-        Espresso.onView(ViewMatchers.withId(R.id.mainMessageTextView)).check(
+        onView(ViewMatchers.withId(R.id.mainMessageTextView)).check(
             matches(
                 isCompletelyDisplayed()
             )
         )
-        Espresso.onView(ViewMatchers.withId(R.id.mainMessageTextView)).check(matches(
+        onView(ViewMatchers.withId(R.id.mainMessageTextView)).check(matches(
             ViewMatchers.withText(CoreMatchers.containsString("No cuts have been made yet. Add a new cut to get started!"))
         ))
-        Espresso.onView(ViewMatchers.withId(R.id.openPermissionsButton)).check(
+        onView(ViewMatchers.withId(R.id.openPermissionsButton)).check(
             matches(not(isDisplayed()))
         )
-        Espresso.onView(ViewMatchers.withId(R.id.createLawnLocationButton)).check(
+        onView(ViewMatchers.withId(R.id.createLawnLocationButton)).check(
             matches(not(isDisplayed()))
         )
     }
 
     private fun compareNoLocationExpectedOutputs() {
-        Espresso.onView(ViewMatchers.withId(R.id.mainMessageTextView)).check(
+        onView(ViewMatchers.withId(R.id.mainMessageTextView)).check(
             matches(
                 isCompletelyDisplayed()
             )
         )
-        Espresso.onView(ViewMatchers.withId(R.id.openPermissionsButton)).check(
+        onView(ViewMatchers.withId(R.id.openPermissionsButton)).check(
             matches(not(isDisplayed()))
         )
-        Espresso.onView(ViewMatchers.withId(R.id.mainMessageTextView)).check(matches(
+        onView(ViewMatchers.withId(R.id.mainMessageTextView)).check(matches(
             ViewMatchers.withText(CoreMatchers.containsString("There is no current lawn location saved. Add a location to receive notifications."))
         ))
-        Espresso.onView(ViewMatchers.withId(R.id.createLawnLocationButton)).check(
+        onView(ViewMatchers.withId(R.id.createLawnLocationButton)).check(
             matches(isCompletelyDisplayed())
         )
     }

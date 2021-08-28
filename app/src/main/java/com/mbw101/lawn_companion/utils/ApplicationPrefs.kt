@@ -2,7 +2,9 @@ package com.mbw101.lawn_companion.utils
 
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
+import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.ui.MyApplication
+import java.util.*
 
 /**
 Lawn Companion
@@ -26,17 +28,55 @@ class ApplicationPrefs {
     // functions for the preference screen
     // these functions will use getDefaultSharedPreferences, so we can't use mPreferences
     fun isInCuttingSeason(): Boolean {
-        val preferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(MyApplication.applicationContext())
-        return preferences.getBoolean("inSeason", true)
+        return getBooleanPreferenceFromSharedPrefs("inSeason")
     }
 
     fun isNotificationsEnabled(): Boolean {
-        val preferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(MyApplication.applicationContext())
-        return preferences.getBoolean("notificationSwitch", true)
+        return getBooleanPreferenceFromSharedPrefs("notificationSwitch")
     }
 
     fun isDataUseEnabled(): Boolean {
+        return getBooleanPreferenceFromSharedPrefs("useData")
+    }
+
+    fun isInTimeOfDay(): Boolean {
+        val cal = Calendar.getInstance()
+        val hourOfDay = cal.get(Calendar.HOUR_OF_DAY)
+        when (hourOfDay) {
+            in Constants.MORNING_HOUR_START_TIME..Constants.MORNING_HOUR_END_TIME -> {
+                return areMorningsSelected()
+            }
+            in Constants.AFTERNOON_HOUR_START_TIME..Constants.AFTERNOON_HOUR_END_TIME -> {
+                return areAfternoonsSelected()
+            }
+            in Constants.EVENING_HOUR_START_TIME..Constants.EVENING_HOUR_END_TIME -> {
+                return areEveningsSelected()
+            }
+            else -> { // between NIGHT_HOUR_START_TIME downTo Constants.NIGHT_HOUR_END_TIME
+                return areNightsSelected()
+            }
+        }
+    }
+
+    fun areMorningsSelected(): Boolean {
+        return getBooleanPreferenceFromSharedPrefs(MyApplication.applicationContext().getString(R.string.morningTimeOfDayKey))
+    }
+
+    fun areAfternoonsSelected(): Boolean {
+        return getBooleanPreferenceFromSharedPrefs(MyApplication.applicationContext().getString(R.string.afternoonTimeOfDayKey))
+    }
+
+    fun areEveningsSelected(): Boolean {
+        return getBooleanPreferenceFromSharedPrefs(MyApplication.applicationContext().getString(R.string.eveningTimeOfDayKey))
+    }
+
+    fun areNightsSelected(): Boolean {
+        return getBooleanPreferenceFromSharedPrefs(MyApplication.applicationContext().getString(R.string.nightTimeOfDayKey))
+    }
+
+    private fun getBooleanPreferenceFromSharedPrefs(preferenceKey: String): Boolean {
         val preferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(MyApplication.applicationContext())
-        return preferences.getBoolean("useData", true)
+        val defaultBooleanPreferenceValue = true
+        return preferences.getBoolean(preferenceKey, defaultBooleanPreferenceValue)
     }
 }

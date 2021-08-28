@@ -26,4 +26,16 @@ object Constants {
         NOVEMBER(11),
         DECEMBER(12),
     }
+
+    const val MORNING_HOUR_START_TIME = 5 // am
+    const val MORNING_HOUR_END_TIME = 11
+
+    const val AFTERNOON_HOUR_START_TIME = 12
+    const val AFTERNOON_HOUR_END_TIME = 16 // 4 pm
+
+    const val EVENING_HOUR_START_TIME = 17
+    const val EVENING_HOUR_END_TIME = 20 // 8 pm
+
+    const val NIGHT_HOUR_START_TIME = 21 // 9pm
+    const val NIGHT_HOUR_END_TIME = 4  // 4am
 }

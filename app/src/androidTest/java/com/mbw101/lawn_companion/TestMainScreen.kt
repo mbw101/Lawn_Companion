@@ -46,6 +46,7 @@ Date: 2021-06-13
 class TestMainScreen {
     private val goodMorning = "Good Morning!"
     private val goodAfternoon = "Good Afternoon!"
+    private val goodEvening = "Good Evening!"
     private val goodNight = "Good Night!"
     private lateinit var lawnLocationRepository: LawnLocationRepository
 
@@ -87,22 +88,21 @@ class TestMainScreen {
 
     private fun calculateExpectedMessage(): String {
         val cal: Calendar = Calendar.getInstance()
-        // Get time and get coresponding message
-        val expectedVal = when (cal.get(Calendar.HOUR_OF_DAY)) {
-            5, 6, 7, 8, 9, 10, 11 -> { // good morning
+        // Get time and get corresponding message
+        val hourOfDay = cal.get(Calendar.HOUR_OF_DAY)
+
+        return when (hourOfDay) {
+            in Constants.MORNING_HOUR_START_TIME..Constants.MORNING_HOUR_END_TIME -> {
                 goodMorning
             }
-
-            12, 13, 14, 15, 16, 17 -> { // good afternoon
+            in Constants.AFTERNOON_HOUR_START_TIME..Constants.AFTERNOON_HOUR_END_TIME -> {
                 goodAfternoon
             }
-
-            else -> { // good evening
-                goodNight
+            in Constants.EVENING_HOUR_START_TIME..Constants.EVENING_HOUR_END_TIME -> {
+                goodEvening
             }
+            else -> goodNight // between NIGHT_HOUR_START_TIME downTo Constants.NIGHT_HOUR_END_TIME
         }
-
-        return expectedVal
     }
 
     @Test
