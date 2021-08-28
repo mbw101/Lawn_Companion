@@ -167,6 +167,7 @@
     <string name="cuttingSeasonTitle">Enable/disable cutting season</string>
     <string name="cuttingSeasonDesc">Manual override the default cutting season. Stops all
     notifications and weather checking. Useful for abnormal weather conditions or pausing app functionality</string>
+    <string name="cuttingSeasonKey">inSeason</string>
 
     <string name="notificationsTitle">Notifications</string>
     <string name="notification_summary_on">Notifications will be sent
@@ -174,6 +175,7 @@
     <string name="notification_summary_off">Notifications will not be sent</string>
     <string name="notificationDesc">Can be used if there\'s abnormal weather or you
     would like to postpone use.</string>
+    <string name="notificationPreferenceKey">notificationSwitch</string>
 
     <string name="desiredCutFrequency">Desired Cut Frequency</string>
     <string name="lowestOptionFrequency">5 days</string>
@@ -184,6 +186,7 @@
     <string name="data_summary_on">Weather will only be fetched while on Wi-Fi
     </string>
     <string name="data_summary_off">Weather will be fetched while on Wi-Fi or data</string>
+    <string name="dataPreferenceKey">useData</string>
 
     <string name="createNewLocationTitle">Create a new lawn location</string>
     <string name="createNewLocationSummary">Removes the existing lawn location if one exists and creates a new lawn location</string>

@@ -28,15 +28,15 @@ class ApplicationPrefs {
     // functions for the preference screen
     // these functions will use getDefaultSharedPreferences, so we can't use mPreferences
     fun isInCuttingSeason(): Boolean {
-        return getBooleanPreferenceFromSharedPrefs("inSeason")
+        return getBooleanPreferenceFromSharedPrefs(MyApplication.applicationContext().getString(R.string.cuttingSeasonKey))
     }
 
     fun isNotificationsEnabled(): Boolean {
-        return getBooleanPreferenceFromSharedPrefs("notificationSwitch")
+        return getBooleanPreferenceFromSharedPrefs(MyApplication.applicationContext().getString(R.string.notificationPreferenceKey))
     }
 
     fun isDataUseEnabled(): Boolean {
-        return getBooleanPreferenceFromSharedPrefs("useData")
+        return getBooleanPreferenceFromSharedPrefs(MyApplication.applicationContext().getString(R.string.dataPreferenceKey))
     }
 
     fun isInTimeOfDay(): Boolean {

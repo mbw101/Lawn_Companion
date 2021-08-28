@@ -40,17 +40,24 @@ class AlarmReceiver : BroadcastReceiver() {
     }
 
     private fun performNotificationSetup(preferences: ApplicationPrefs, context: Context) {
+        if (!preferencesHaveHappyConditions(preferences)) return
+
         // check if a location is saved in db
         if (!hasLocationSaved(context)) {
             return
         }
 
-        if (notificationsAreEnabled(preferences) && isInCuttingSeason(preferences)) {
-            val repository =
-                CutEntryRepository(AppDatabaseBuilder.getInstance(context).cutEntryDao())
+        val repository =
+            CutEntryRepository(AppDatabaseBuilder.getInstance(context).cutEntryDao())
+        runNotificationCoroutineWork(repository, preferences, context)
+    }
 
-            runNotificationCoroutineWork(repository, preferences, context)
-        }
+    private fun preferencesHaveHappyConditions(preferences: ApplicationPrefs): Boolean {
+        if (!preferences.isInTimeOfDay()
+            || !notificationsAreEnabled(preferences)
+            || !isInCuttingSeason(preferences)
+        ) return false
+        return true
     }
 
     private fun hasLocationSaved(context: Context): Boolean {
