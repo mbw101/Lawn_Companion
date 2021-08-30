@@ -60,18 +60,17 @@ class SaveLocationActivity : AppCompatActivity(), LocationListener {
 
         acceptSaveButton.setOnClickListener {
             LocationUtils.requestLocation(this, this)
-            // TODO: adjust main activity text on home frag
             launchMainActivity()
         }
     }
 
     private fun createCoroutineForDB(context: Context, location: Location) = runBlocking {
         launch (Dispatchers.IO) {
-            performDatabaseWork(context, location)
+            performDatabaseWork(location)
         }
     }
 
-    private suspend fun performDatabaseWork(context: Context, location: Location) {
+    private suspend fun performDatabaseWork(location: Location) {
         if (!lawnLocationRepository.hasALocationSaved()) {
             saveGpsLocationIfExists(location)
         }

@@ -215,7 +215,7 @@
     <!-- Notification strings -->
     <string name="markAsCut">Mark as cut</string>
     <string name="skip">Skip</string>
-    <string name="cutSuggestionMessage">Hey, it\'s a great time to cut your lawn today!</string>
+    <string name="cutSuggestionMessage">Hey, it\'s a great time to cut your lawn!</string>
     <string name="rainOnCutDayMessage">Hey, rain is expected near your next cutting day, so today would be a better time for a cut!</string>
     <string name="badWeatherOnCutDayMessage">Hey, bad weather is expected near your next cutting day, so today would be a better
         time for a cut!</string>

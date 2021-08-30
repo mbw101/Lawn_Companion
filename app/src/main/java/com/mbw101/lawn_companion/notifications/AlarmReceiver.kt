@@ -41,11 +41,13 @@ class AlarmReceiver : BroadcastReceiver() {
 
     private fun performNotificationSetup(preferences: ApplicationPrefs, context: Context) {
         if (!preferencesHaveHappyConditions(preferences)) return
+        Log.d(Constants.TAG, "Meets happy path conditions!")
 
         // check if a location is saved in db
         if (!hasLocationSaved(context)) {
             return
         }
+        Log.d(Constants.TAG, "Has a lawn location saved in the DB!")
 
         val repository =
             CutEntryRepository(AppDatabaseBuilder.getInstance(context).cutEntryDao())
@@ -56,7 +58,10 @@ class AlarmReceiver : BroadcastReceiver() {
         if (!preferences.isInTimeOfDay()
             || !notificationsAreEnabled(preferences)
             || !isInCuttingSeason(preferences)
-        ) return false
+        ) {
+            Log.d(Constants.TAG, "The happy conditions have not been met! Check settings configuration!")
+            return false
+        }
         return true
     }
 
@@ -208,10 +213,20 @@ class AlarmReceiver : BroadcastReceiver() {
         daysSince: Int
     ): Boolean {
         // go through many checks and include the weather for determining the right time for a cut
-        if (daysSince < MINIMUM_DAYS_SINCE) return false
-        // check weather conditions
-        if (weatherData == null) return false
-        if (!isCurrentWeatherSuitable(weatherData.current)) return false
+        if (daysSince < MINIMUM_DAYS_SINCE) {
+            Log.d(Constants.TAG, "The minimum days since last cut has NOT been surpassed yet!")
+            return false
+        }
+
+        if (weatherData == null) {
+            Log.d(Constants.TAG, "The weather data is null!")
+            return false
+        }
+
+        if (!isCurrentWeatherSuitable(weatherData.current)) {
+            Log.d(Constants.TAG, "The Current weather data is NOT suitable for a cut!")
+            return false
+        }
 
         return true // daysSince >= 7
     }
