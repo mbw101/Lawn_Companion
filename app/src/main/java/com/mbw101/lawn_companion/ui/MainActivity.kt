@@ -1,5 +1,8 @@
 package com.mbw101.lawn_companion.ui
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
@@ -7,10 +10,15 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mbw101.lawn_companion.R
+import com.mbw101.lawn_companion.notifications.AlarmReceiver
+import com.mbw101.lawn_companion.notifications.AlarmScheduler
+import com.mbw101.lawn_companion.notifications.NotificationHelper
+import java.util.*
 
 
 /**
@@ -28,6 +36,29 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         lateinit var addCutFAB: FloatingActionButton
+
+        fun setupNotificationAlarmManager() {
+            // Pass in the pending intent
+            val intent = Intent(MyApplication.applicationContext(), AlarmReceiver::class.java)
+            val pendingIntent = PendingIntent.getBroadcast(
+                MyApplication.applicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT
+            )
+            val alarmManager: AlarmManager =
+                MyApplication.applicationContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+            // set notification
+            AlarmScheduler.scheduleAlarm(
+                Calendar.getInstance().get(Calendar.DAY_OF_WEEK),
+                pendingIntent, alarmManager)
+        }
+
+        fun createNotificationChannel(context: Context) {
+            NotificationHelper.createNotificationChannel(
+                context,
+                NotificationManagerCompat.IMPORTANCE_DEFAULT, true,
+                context.getString(R.string.app_name), "Notification channel"
+            )
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,6 +67,13 @@ class MainActivity : AppCompatActivity() {
 
         init()
         setListeners()
+
+        // create notification channel
+        createNotificationChannel(this)
+
+        // TODO: Call an AlarmManager that uses a receiver that does the checking daily for new cuts
+        // TODO: Then, if the condition where it's in need of a cut (either weather or time sake), call "send notification" in the receiver
+        setupNotificationAlarmManager()
     }
 
     /***
@@ -49,8 +87,6 @@ class MainActivity : AppCompatActivity() {
         refreshIcon = findViewById(R.id.refreshIcon)
         titleTextView = findViewById(R.id.titleTextView)
         addCutFAB = findViewById(R.id.addCutFAB)
-
-        setListeners()
     }
 
     private fun setListeners() {

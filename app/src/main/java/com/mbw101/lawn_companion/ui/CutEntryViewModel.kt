@@ -29,7 +29,10 @@ class CutEntryViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
+<<<<<<< HEAD
     fun getCuts() = repository.getCuts()
+=======
+>>>>>>> develop
     fun getSortedCuts() = repository.getSortedCuts()
     suspend fun deleteCuts(vararg cuts: CutEntry) = repository.deleteCuts(*cuts)
 }

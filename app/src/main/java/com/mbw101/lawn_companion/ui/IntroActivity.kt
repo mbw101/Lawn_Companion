@@ -3,7 +3,6 @@ package com.mbw101.lawn_companion.ui
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.Button
@@ -87,19 +86,20 @@ class IntroActivity : FragmentActivity() {
 
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                Log.e("Selected_Page", position.toString())
-
-                // hide/show components based on the current screen
-                if (position == 3) { // location part of intro
-                    nextButton.visibility = View.INVISIBLE
-                    tabLayout.visibility = View.INVISIBLE
-                }
-                else {
-                    nextButton.visibility = View.VISIBLE
-                    tabLayout.visibility = View.VISIBLE
-                }
+                displayCorrectComponents(position)
             }
         })
+    }
+
+    private fun displayCorrectComponents(position: Int) {
+        // hide/show components based on the current screen
+        if (position == 3) { // location part of intro
+            nextButton.visibility = View.INVISIBLE
+            tabLayout.visibility = View.INVISIBLE
+        } else {
+            nextButton.visibility = View.VISIBLE
+            tabLayout.visibility = View.VISIBLE
+        }
     }
 
     /***

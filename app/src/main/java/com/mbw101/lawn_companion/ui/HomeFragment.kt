@@ -15,7 +15,19 @@ import androidx.fragment.app.viewModels
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.CutEntry
 import com.mbw101.lawn_companion.utils.ApplicationPrefs
+<<<<<<< HEAD
 import com.mbw101.lawn_companion.utils.UtilFunctions
+=======
+import com.mbw101.lawn_companion.utils.Constants
+import com.mbw101.lawn_companion.utils.UtilFunctions
+import com.mbw101.lawn_companion.weather.WeatherService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+>>>>>>> develop
 import java.util.*
 
 
@@ -44,23 +56,41 @@ class HomeFragment : Fragment() {
             val latestCut = entries.last()
 
             // month numbers in Calendar start at 0
+<<<<<<< HEAD
             if (currentDate.get(Calendar.MONTH) == (latestCut.month_num - 1) &&
+=======
+            if (currentDate.get(Calendar.MONTH) == (latestCut.month_number - 1) &&
+>>>>>>> develop
                 currentDate.get(Calendar.DAY_OF_MONTH) == latestCut.day_number) {
                 return MyApplication.applicationContext().getString(R.string.alreadyCutMessage)
             }
             else {
                 // determine the date of last cut using last entry in list
                 val cal = Calendar.getInstance()
+<<<<<<< HEAD
                 cal.set(Calendar.MONTH, latestCut.month_num - 1) // month numbers in Calendar start at 0
+=======
+                cal.set(Calendar.MONTH, latestCut.month_number - 1) // month numbers in Calendar start at 0
+>>>>>>> develop
                 cal.set(Calendar.DAY_OF_MONTH, latestCut.day_number)
 
                 // TODO: Implement the user's preference for how long they require a cut (replace the 1 week value -> 7 days)
                 val numDaysSince = UtilFunctions.getNumDaysSince(cal)
                 return if (numDaysSince > 7) {
                     MyApplication.applicationContext().getString(R.string.passedIntervalMessage)
+<<<<<<< HEAD
                 } else {
                     MyApplication.applicationContext().getString(R.string.daysSinceLastCut, numDaysSince)
                 }
+=======
+                }
+                else if (numDaysSince > 1) { // days will be multiple
+                    MyApplication.applicationContext().getString(R.string.daysSinceLastCut, numDaysSince)
+                }
+                else { // a single day (so not "days")
+                    MyApplication.applicationContext().getString(R.string.singleDaySinceLastCut, numDaysSince)
+                }
+>>>>>>> develop
             }
         }
     }
@@ -82,6 +112,35 @@ class HomeFragment : Fragment() {
         // set correct salutation
         salutationTextView.text = getSalutation()
         setupListeners()
+        getWeather()
+    }
+
+    private fun getWeather() {
+        val retrofit = Retrofit.Builder()
+            .baseUrl(WeatherService.BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        val weatherService = retrofit.create(WeatherService::class.java)
+        var coroutineJob = CoroutineScope(Dispatchers.IO).launch {
+            val httpResponse = weatherService.getWeather(43.531054f, -80.230215f)
+
+            withContext(Dispatchers.Main) {
+                if (httpResponse.isSuccessful) {
+                    val weatherData = httpResponse.body()
+                    if (weatherData != null) {
+                        Log.d(Constants.TAG, "Current weather = ${weatherData.current}")
+                        Log.d(Constants.TAG, "Daily forecast list = ${weatherData.daily}")
+
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkPermissions() // check if permissions have been updated when app is reopened
     }
 
     override fun onResume() {

@@ -22,9 +22,15 @@
 
         <SwitchPreferenceCompat
             app:key="useData"
+<<<<<<< HEAD
             android:defaultValue="false"
             app:summaryOff="@string/data_summary_off"
             app:summaryOn="@string/data_summary_on"
+=======
+            android:defaultValue="true"
+            app:summaryOn="@string/data_summary_off"
+            app:summaryOff="@string/data_summary_on"
+>>>>>>> develop
             app:title="@string/weatherDataAccessTitle" />
 
     </PreferenceCategory>

@@ -30,15 +30,28 @@ android {
     }
 
     buildTypes {
+        // add the API key from the gradle.properties file
+        buildTypes.each {
+            it.buildConfigField "String", "OPEN_WEATHER_MAP_API_KEY", open_weather_map_api_key
+        }
+
         debug {
             versionNameSuffix "DEBUG"
             resValue "string", "app_version",
                     "${defaultConfig.versionName} - ${versionNameSuffix}"
+            // add the API key from the gradle.properties file
+            buildTypes.each {
+                it.buildConfigField "String", "OPEN_WEATHER_MAP_API_KEY", open_weather_map_api_key
+            }
         }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             resValue "string", "app_version", "${defaultConfig.versionName}"
+            // add the API key from the gradle.properties file
+            buildTypes.each {
+                it.buildConfigField "String", "OPEN_WEATHER_MAP_API_KEY", open_weather_map_api_key
+            }
         }
     }
     compileOptions {
@@ -77,6 +90,19 @@ dependencies {
     testImplementation "androidx.arch.core:core-testing:2.1.0"
     testImplementation "androidx.room:room-testing:2.3.0"
 
+<<<<<<< HEAD
+=======
+    // worker
+    def work_version = "2.5.0"
+    implementation "androidx.work:work-runtime-ktx:$work_version"
+
+    // api
+    implementation 'com.squareup.retrofit2:retrofit:2.7.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.7.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.3.1'
+    implementation 'com.google.code.gson:gson:2.8.5'
+
+>>>>>>> develop
     // testing
 
     // JUnit
@@ -86,6 +112,10 @@ dependencies {
     testImplementation "org.robolectric:robolectric:4.2.1"
     testImplementation 'androidx.test.ext:junit:1.1.0'
     androidTestUtil 'androidx.test:orchestrator:1.1.0'
+<<<<<<< HEAD
+=======
+    //testImplementation 'org.mockito:mockito-core:2.23.0'
+>>>>>>> develop
 
     // espresso
     androidTestImplementation 'androidx.test:runner:1.1.0'

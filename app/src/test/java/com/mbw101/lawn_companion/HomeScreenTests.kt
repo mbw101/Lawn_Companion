@@ -36,7 +36,11 @@ class HomeScreenTests {
             currentDate.get(Calendar.MONTH)+1))
 
         // take into account calendar to calculate the correct days since this cut
+<<<<<<< HEAD
         expectedString = "No need to cut the lawn! An entry has been made today already."
+=======
+        expectedString = "No need to cut the lawn! An entry has been made today."
+>>>>>>> develop
         assertEquals(HomeFragment.getDescriptionMessage(list), expectedString)
 
         // test 1 cut in the list (within the 7 day interval)
@@ -46,8 +50,12 @@ class HomeScreenTests {
         list.clear()
         list.add(CutEntry("4:36pm", newDate.get(Calendar.DAY_OF_MONTH), "January",
             newDate.get(Calendar.MONTH)+1))
+<<<<<<< HEAD
         // TODO: Remove 's' from message if equal to 1
         expectedString = "1 days since last cut"
+=======
+        expectedString = "1 day since last cut"
+>>>>>>> develop
         assertEquals(HomeFragment.getDescriptionMessage(list), expectedString)
 
         // test another day within the 7 days

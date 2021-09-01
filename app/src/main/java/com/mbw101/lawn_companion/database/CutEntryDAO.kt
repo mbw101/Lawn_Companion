@@ -36,6 +36,12 @@ interface CutEntryDAO {
     @Query("SELECT * FROM cuts_table ORDER BY month_num DESC, day_number DESC LIMIT 1")
     fun getLastCut(): LiveData<CutEntry> // returns a single Cut Entry
 
+<<<<<<< HEAD
+=======
+    @Query("SELECT * FROM cuts_table ORDER BY month_num DESC, day_number DESC LIMIT 1")
+    suspend fun getLastCutSync(): CutEntry? // returns a single Cut Entry (synchronously) for the broadcast receiver
+
+>>>>>>> develop
     @Query("SELECT * FROM cuts_table ORDER BY millis DESC LIMIT 1")
     fun getLastCutMillis(): LiveData<CutEntry> // returns a single Cut Entry by utilizing the millis member
 

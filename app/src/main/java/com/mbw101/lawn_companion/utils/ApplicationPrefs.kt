@@ -39,6 +39,9 @@ class ApplicationPrefs {
         val preferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(MyApplication.applicationContext())
         return preferences.getBoolean("useData", true)
     }
+<<<<<<< HEAD
 
     // TODO: Add functions for desiredCutDate in shared preferences
+=======
+>>>>>>> develop
 }
