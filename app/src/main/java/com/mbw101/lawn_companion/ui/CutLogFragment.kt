@@ -16,7 +16,10 @@ import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.CutEntry
 import com.mbw101.lawn_companion.utils.Constants
 import com.mbw101.lawn_companion.utils.UtilFunctions
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.util.*
 
 
 /**
@@ -40,34 +43,16 @@ class CutLogFragment : Fragment(), OnItemClickListener {
             val tempList = mutableListOf<CutEntry>()
             var previousMonth = 1
             var currentMonth: Int
-<<<<<<< HEAD
-            val hashMap: java.util.HashMap<Int, List<CutEntry>> = HashMap()
-
-            // map each month to empty list to start
-            for (i in 1..12) {
-                hashMap[i] = emptyList()
-            }
-
-            // loop through all the entries
-            for (cut in entries) {
-                currentMonth = cut.month_num
-=======
             val hashMap: java.util.HashMap<Int, List<CutEntry>> = createEmptyMonthHashMap()
 
             for (cut in entries) {
                 currentMonth = cut.month_number
->>>>>>> develop
 
                 // map all those entries to previous month and clear tempList
                 if (currentMonth != previousMonth) {
                     hashMap[previousMonth] = tempList.toList()
                     tempList.clear()
                 }
-<<<<<<< HEAD
-
-                // add to the list
-=======
->>>>>>> develop
                 tempList.add(cut)
 
                 // set previous
@@ -80,9 +65,7 @@ class CutLogFragment : Fragment(), OnItemClickListener {
             return hashMap
         }
 
-<<<<<<< HEAD
-=======
-        private fun createEmptyMonthHashMap(): java.util.HashMap<Int, List<CutEntry>> {
+        private fun createEmptyMonthHashMap(): HashMap<Int, List<CutEntry>> {
             val hashMap: java.util.HashMap<Int, List<CutEntry>> = HashMap()
 
             // map each month to empty list to start
@@ -92,7 +75,6 @@ class CutLogFragment : Fragment(), OnItemClickListener {
             return hashMap
         }
 
->>>>>>> develop
         fun setupMonthSections(hashMap: HashMap<Int, List<CutEntry>>): List<MonthSection> {
             val currentYear = UtilFunctions.getCurrentYear()
             println(hashMap)
@@ -112,13 +94,6 @@ class CutLogFragment : Fragment(), OnItemClickListener {
                 MonthSection("Dec $currentYear", hashMap[Constants.Month.DECEMBER.monthNum] ?: emptyList())
             )
         }
-<<<<<<< HEAD
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-=======
->>>>>>> develop
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -141,11 +116,7 @@ class CutLogFragment : Fragment(), OnItemClickListener {
         mainRecyclerView.addItemDecoration(itemDecoration)
 
         setupListeners()
-<<<<<<< HEAD
-        setupViewmodel()
-=======
         setupViewModel()
->>>>>>> develop
     }
 
     private fun setupListeners() {
@@ -162,31 +133,14 @@ class CutLogFragment : Fragment(), OnItemClickListener {
         })
     }
 
-<<<<<<< HEAD
-    private fun setupViewmodel() {
-=======
     private fun setupViewModel() {
->>>>>>> develop
-        // set up view model with fragment
-        viewModel.getSortedCuts().observe(viewLifecycleOwner, { entries -> //update RecyclerView later
-            // get each months data using the repository
-            setupCutEntries(entries)
-<<<<<<< HEAD
-
-            // call setSections
-            mainRecyclerAdaptor.setSections(monthSections)
-        })
-    }
-
-    private fun refresh() {
-        // TODO: Refresh the list of data with DAO whenever they navigate to the cut log fragment
-
-=======
-
-            // call setSections
-            mainRecyclerAdaptor.setSections(monthSections)
-        })
->>>>>>> develop
+        runBlocking {
+            launch (Dispatchers.IO) {
+                val sortedEntriesFromCurrentYear = viewModel.getEntriesFromSpecificYearSorted(UtilFunctions.getCurrentYear())
+                setupCutEntries(sortedEntriesFromCurrentYear)
+                mainRecyclerAdaptor.setSections(monthSections)
+            }
+        }
     }
 
     /**

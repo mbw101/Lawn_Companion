@@ -3,6 +3,7 @@ package com.mbw101.lawn_companion
 import androidx.test.runner.AndroidJUnit4
 import com.mbw101.lawn_companion.database.CutEntry
 import com.mbw101.lawn_companion.ui.HomeFragment
+import com.mbw101.lawn_companion.utils.UtilFunctions
 import junit.framework.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -32,15 +33,13 @@ class HomeScreenTests {
         assertEquals(HomeFragment.getDescriptionMessage(list.toList()), expectedString)
 
         // test 1 cut in the list (with cut on the same day)
-        list.add(CutEntry("4:36pm", currentDate.get(Calendar.DAY_OF_MONTH), "January",
-            currentDate.get(Calendar.MONTH)+1))
+        list.add(CutEntry(
+            "4:36pm", currentDate.get(Calendar.DAY_OF_MONTH), "January",
+            currentDate.get(Calendar.MONTH)+1, UtilFunctions.getCurrentYear()
+        ))
 
         // take into account calendar to calculate the correct days since this cut
-<<<<<<< HEAD
-        expectedString = "No need to cut the lawn! An entry has been made today already."
-=======
         expectedString = "No need to cut the lawn! An entry has been made today."
->>>>>>> develop
         assertEquals(HomeFragment.getDescriptionMessage(list), expectedString)
 
         // test 1 cut in the list (within the 7 day interval)
@@ -48,37 +47,40 @@ class HomeScreenTests {
         newDate.add(Calendar.DAY_OF_YEAR, -1) // set to 1 day ago
 
         list.clear()
-        list.add(CutEntry("4:36pm", newDate.get(Calendar.DAY_OF_MONTH), "January",
-            newDate.get(Calendar.MONTH)+1))
-<<<<<<< HEAD
-        // TODO: Remove 's' from message if equal to 1
-        expectedString = "1 days since last cut"
-=======
+        list.add(CutEntry(
+            "4:36pm", newDate.get(Calendar.DAY_OF_MONTH), "January",
+            newDate.get(Calendar.MONTH)+1, UtilFunctions.getCurrentYear()
+        ))
         expectedString = "1 day since last cut"
->>>>>>> develop
         assertEquals(HomeFragment.getDescriptionMessage(list), expectedString)
 
         // test another day within the 7 days
         list.clear()
         newDate.add(Calendar.DAY_OF_YEAR, -2) // set to 3 days ago
-        list.add(CutEntry("4:36pm", newDate.get(Calendar.DAY_OF_MONTH), "January",
-            newDate.get(Calendar.MONTH)+1))
+        list.add(CutEntry(
+            "4:36pm", newDate.get(Calendar.DAY_OF_MONTH), "January",
+            newDate.get(Calendar.MONTH)+1, UtilFunctions.getCurrentYear()
+        ))
         expectedString = "3 days since last cut"
         assertEquals(HomeFragment.getDescriptionMessage(list), expectedString)
 
         // test a date outside the 7 interval
         newDate.add(Calendar.DAY_OF_YEAR, -11) // set to 14 day ago (3 + 11)
         list.clear()
-        list.add(CutEntry("4:36pm", newDate.get(Calendar.DAY_OF_MONTH), "January",
-            newDate.get(Calendar.MONTH)+1))
+        list.add(CutEntry(
+            "4:36pm", newDate.get(Calendar.DAY_OF_MONTH), "January",
+            newDate.get(Calendar.MONTH)+1, UtilFunctions.getCurrentYear()
+        ))
         expectedString = "Your last cut has surpassed the cutting interval. You will likely need a cut."
         assertEquals(HomeFragment.getDescriptionMessage(list), expectedString)
 
         // test a crazy date outside the 7 interval
         newDate.add(Calendar.DAY_OF_YEAR, -10000)
         list.clear()
-        list.add(CutEntry("4:36pm", newDate.get(Calendar.DAY_OF_MONTH), "January",
-            newDate.get(Calendar.MONTH)+1))
+        list.add(CutEntry(
+            "4:36pm", newDate.get(Calendar.DAY_OF_MONTH), "January",
+            newDate.get(Calendar.MONTH)+1, UtilFunctions.getCurrentYear()
+        ))
         expectedString = "Your last cut has surpassed the cutting interval. You will likely need a cut."
         assertEquals(HomeFragment.getDescriptionMessage(list), expectedString)
     }

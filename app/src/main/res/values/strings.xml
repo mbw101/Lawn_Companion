@@ -23,8 +23,26 @@
 
     <!-- 4th screen/location permission part -->
     <string name="askForLocationMessage">
-    But first, Lawn Companion needs your location
-    to access local weather periodically.
+    But first, Lawn Companion needs to save the location of your lawn, so it can gather
+        accurate weather data.
+    </string>
+
+    <!--  5th screen - Saves the lawn location  -->
+    <string name="fifthScreenTitle">
+        Can Lawn Companion save your current location, so it can use it for accurate weather data?
+    </string>
+
+    <string name="fifthScreenContent">
+        Lawn Companion saves your location locally, so it can retrieve the current weather forecast for your city (and lawn) no
+        matter where you are located! You can adjust this location at any moment in the settings.
+    </string>
+
+    <string name="fifthScreenAccept">
+        Yes, I am home
+    </string>
+
+    <string name="fifthScreenDeny">
+        No, I am not home
     </string>
 
     <!-- Main activity strings -->
@@ -32,6 +50,7 @@
     <!-- Salutations -->
     <string name="goodMorning">Good Morning!</string>
     <string name="goodAfternoon">Good Afternoon!</string>
+    <string name="goodEvening">Good Evening!</string>
     <string name="goodNight">Good Night!</string>
 
     <string name="home">Home</string>
@@ -42,13 +61,10 @@
     %1$d days since last cut
     </string>
 
-<<<<<<< HEAD
-=======
     <string name="singleDaySinceLastCut">
     %1$d day since last cut
     </string>
 
->>>>>>> develop
     <!-- Description for when the lawn has passed the ideal cutting interval-->
     <string name="passedIntervalMessage">
         Your last cut has surpassed the cutting interval. You will likely
@@ -87,6 +103,13 @@
     <string name="cuttingSeasonOver">
     The cutting season is over! Check back closer to cutting season, or you
     can manually turn it on in settings.
+    </string>
+
+    <!--    Strings for when a lawn location hasn't been made-->
+    <string name="noLawnLocationMessage">There is no current lawn location saved. Add a location to receive notifications.</string>
+
+    <string name="createLawnLocationButton">
+        Create a lawn location
     </string>
 
     <!-- Add new cut activity strings -->
@@ -144,6 +167,7 @@
     <string name="cuttingSeasonTitle">Enable/disable cutting season</string>
     <string name="cuttingSeasonDesc">Manual override the default cutting season. Stops all
     notifications and weather checking. Useful for abnormal weather conditions or pausing app functionality</string>
+    <string name="cuttingSeasonKey">inSeason</string>
 
     <string name="notificationsTitle">Notifications</string>
     <string name="notification_summary_on">Notifications will be sent
@@ -151,8 +175,8 @@
     <string name="notification_summary_off">Notifications will not be sent</string>
     <string name="notificationDesc">Can be used if there\'s abnormal weather or you
     would like to postpone use.</string>
+    <string name="notificationPreferenceKey">notificationSwitch</string>
 
-    <!-- TODO: Implement the frequency later in development -->
     <string name="desiredCutFrequency">Desired Cut Frequency</string>
     <string name="lowestOptionFrequency">5 days</string>
     <string name="highestOptionFrequency">14 days</string>
@@ -162,7 +186,21 @@
     <string name="data_summary_on">Weather will only be fetched while on Wi-Fi
     </string>
     <string name="data_summary_off">Weather will be fetched while on Wi-Fi or data</string>
-    <!--    <string name="dataAccessDesc">Can be used to disable weather access when on data</string>-->
+    <string name="dataPreferenceKey">useData</string>
+
+    <string name="createNewLocationTitle">Create a new lawn location</string>
+    <string name="createNewLocationSummary">Removes the existing lawn location if one exists and creates a new lawn location</string>
+
+    <string name="notificationTimeOfDayCategoryTitle">Preferences for when notifications will be sent</string>
+    <string name="morningTimeOfDayTitle">Morning (5am-12pm)</string>
+    <string name="morningTimeOfDayKey">mornings</string>
+    <string name="afternoonTimeOfDayTitle">Afternoon (12pm-5pm)</string>
+    <string name="afternoonTimeOfDayKey">afternoons</string>
+    <string name="eveningTimeOfDayTitle">Evening (5pm-9pm)</string>
+    <string name="eveningTimeOfDayKey">evenings</string>
+    <string name="nightTimeOfDayTitle">Night (9pm-5am)</string>
+    <string name="nightTimeOfDayKey">nights</string>
+    <string name="timeOfDaySummary">Check weather and send notifications only during this time</string>
 
     <string name="versionNumber">Version 0.1</string>
 
@@ -177,7 +215,7 @@
     <!-- Notification strings -->
     <string name="markAsCut">Mark as cut</string>
     <string name="skip">Skip</string>
-    <string name="cutSuggestionMessage">Hey, it\'s a great time to cut your lawn today!</string>
+    <string name="cutSuggestionMessage">Hey, it\'s a great time to cut your lawn!</string>
     <string name="rainOnCutDayMessage">Hey, rain is expected near your next cutting day, so today would be a better time for a cut!</string>
     <string name="badWeatherOnCutDayMessage">Hey, bad weather is expected near your next cutting day, so today would be a better
         time for a cut!</string>
@@ -190,6 +228,6 @@
 
     <!--    Dialog strings-->
     <string name="permissionDialogTitle">Access to background location</string>
-    <string name="permissionDialogContent">Lawn Companion needs your background location to access local weather periodically!</string>
+    <string name="permissionDialogContent">Lawn Companion needs to access your location, so your lawn location can be saved!</string>
 
 </resources>

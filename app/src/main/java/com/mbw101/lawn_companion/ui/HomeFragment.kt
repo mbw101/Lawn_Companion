@@ -14,26 +14,20 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.CutEntry
+import com.mbw101.lawn_companion.database.setupLawnLocationRepository
 import com.mbw101.lawn_companion.utils.ApplicationPrefs
-<<<<<<< HEAD
-import com.mbw101.lawn_companion.utils.UtilFunctions
-=======
 import com.mbw101.lawn_companion.utils.Constants
 import com.mbw101.lawn_companion.utils.UtilFunctions
-import com.mbw101.lawn_companion.weather.WeatherService
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
->>>>>>> develop
+import kotlinx.coroutines.runBlocking
 import java.util.*
 
 
 class HomeFragment : Fragment() {
 
     private lateinit var openPermissions: Button
+    private lateinit var createLawnLocationButton: Button
     private lateinit var mainTextView: TextView
     private lateinit var salutationTextView: TextView
     private val viewModel: CutEntryViewModel by viewModels()
@@ -56,33 +50,20 @@ class HomeFragment : Fragment() {
             val latestCut = entries.last()
 
             // month numbers in Calendar start at 0
-<<<<<<< HEAD
-            if (currentDate.get(Calendar.MONTH) == (latestCut.month_num - 1) &&
-=======
             if (currentDate.get(Calendar.MONTH) == (latestCut.month_number - 1) &&
->>>>>>> develop
                 currentDate.get(Calendar.DAY_OF_MONTH) == latestCut.day_number) {
                 return MyApplication.applicationContext().getString(R.string.alreadyCutMessage)
             }
             else {
                 // determine the date of last cut using last entry in list
                 val cal = Calendar.getInstance()
-<<<<<<< HEAD
-                cal.set(Calendar.MONTH, latestCut.month_num - 1) // month numbers in Calendar start at 0
-=======
                 cal.set(Calendar.MONTH, latestCut.month_number - 1) // month numbers in Calendar start at 0
->>>>>>> develop
                 cal.set(Calendar.DAY_OF_MONTH, latestCut.day_number)
 
                 // TODO: Implement the user's preference for how long they require a cut (replace the 1 week value -> 7 days)
                 val numDaysSince = UtilFunctions.getNumDaysSince(cal)
                 return if (numDaysSince > 7) {
                     MyApplication.applicationContext().getString(R.string.passedIntervalMessage)
-<<<<<<< HEAD
-                } else {
-                    MyApplication.applicationContext().getString(R.string.daysSinceLastCut, numDaysSince)
-                }
-=======
                 }
                 else if (numDaysSince > 1) { // days will be multiple
                     MyApplication.applicationContext().getString(R.string.daysSinceLastCut, numDaysSince)
@@ -90,7 +71,6 @@ class HomeFragment : Fragment() {
                 else { // a single day (so not "days")
                     MyApplication.applicationContext().getString(R.string.singleDaySinceLastCut, numDaysSince)
                 }
->>>>>>> develop
             }
         }
     }
@@ -104,80 +84,88 @@ class HomeFragment : Fragment() {
 
     private fun init(view: View) {
         openPermissions = view.findViewById(R.id.openPermissionsButton)
+        createLawnLocationButton = view.findViewById(R.id.createLawnLocationButton)
         mainTextView = view.findViewById(R.id.mainMessageTextView)
         salutationTextView = view.findViewById(R.id.salutationTextView)
-        // shows the permissions button based on current permissions
-        checkPermissions()
 
-        // set correct salutation
-        salutationTextView.text = getSalutation()
+        checkPermissionsOrIfLocationSaved()
+        setCorrectSalutation()
         setupListeners()
-        getWeather()
     }
 
-    private fun getWeather() {
-        val retrofit = Retrofit.Builder()
-            .baseUrl(WeatherService.BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        val weatherService = retrofit.create(WeatherService::class.java)
-        var coroutineJob = CoroutineScope(Dispatchers.IO).launch {
-            val httpResponse = weatherService.getWeather(43.531054f, -80.230215f)
-
-            withContext(Dispatchers.Main) {
-                if (httpResponse.isSuccessful) {
-                    val weatherData = httpResponse.body()
-                    if (weatherData != null) {
-                        Log.d(Constants.TAG, "Current weather = ${weatherData.current}")
-                        Log.d(Constants.TAG, "Daily forecast list = ${weatherData.daily}")
-
-                    }
-                }
-            }
-        }
+    private fun setCorrectSalutation() {
+        salutationTextView.text = getSalutation()
     }
 
     override fun onResume() {
         super.onResume()
-        checkPermissions() // check if permissions have been updated when app is reopened
-    }
-
-    override fun onResume() {
-        super.onResume()
-        checkPermissions() // check if permissions have been updated when app is reopened
+        checkPermissionsOrIfLocationSaved() // check if permissions have been updated when app is reopened
     }
 
     private fun setupListeners() {
         openPermissions.setOnClickListener {
-            openPermissions()
+            openPermissionSettings()
         }
+        createLawnLocationButton.setOnClickListener {
+            openSaveLocationActivity()
+        }
+    }
+
+    private fun openSaveLocationActivity() {
+        val intent = Intent(activity, SaveLocationActivity::class.java)
+        startActivity(intent)
     }
 
     /***
      * Shows the correct UI elements
      * based on permissions and preferences
      */
-    private fun checkPermissions() {
+    private fun checkPermissionsOrIfLocationSaved() {
         val preferences = ApplicationPrefs()
 
         // look at if they turned on/off cutting season
         if (!preferences.isInCuttingSeason()) {
             mainTextView.text = getString(R.string.cuttingSeasonOver)
+            openPermissions.visibility = View.INVISIBLE
+            createLawnLocationButton.visibility = View.INVISIBLE
         }
         else {
-            // shows the permissions button based on current permissions
-            openPermissions.visibility = when (UtilFunctions.hasLocationPermissions()) {
-                true -> {
-                    setupViewModel()
-                    View.INVISIBLE
-                }
-                false -> {
-                    mainTextView.text = getString(R.string.needsPermissionString)
-                    View.VISIBLE
-                }
+            // this might be causing the bug with app crashing since it's in a different thread than UI but
+            // will be used for updating the UI
+            val hasLocationSavedInDB = createCoroutineToCheckIfLocationIsSaved()
+            if (hasLocationSavedInDB) {
+                setupViewModel()
+                openPermissions.visibility = View.INVISIBLE
+                createLawnLocationButton.visibility = View.INVISIBLE
+            }
+            else if (!UtilFunctions.hasLocationPermissions() && !hasLocationSavedInDB) {
+                mainTextView.text = getString(R.string.needsPermissionString)
+                createLawnLocationButton.visibility = View.INVISIBLE
+                openPermissions.visibility = View.VISIBLE
+            }
+            else if (!hasLocationSavedInDB) {
+                // show button + text
+                mainTextView.text = getString(R.string.noLawnLocationMessage)
+                createLawnLocationButton.visibility = View.VISIBLE
             }
         }
+    }
+
+    private fun createCoroutineToCheckIfLocationIsSaved(): Boolean {
+        var hasLocationSaved = false
+
+        runBlocking {
+            launch (Dispatchers.IO) {
+                hasLocationSaved = checkIfLocationSaved()
+            }
+        }
+
+        return hasLocationSaved
+    }
+
+    private suspend fun checkIfLocationSaved(): Boolean {
+        val lawnLocationRepository = setupLawnLocationRepository(MyApplication.applicationContext())
+        return lawnLocationRepository.hasALocationSaved()
     }
 
     /***
@@ -187,18 +175,20 @@ class HomeFragment : Fragment() {
     private fun getSalutation(): String {
         val cal: Calendar = Calendar.getInstance()
         Log.d("Lawn Companion", "Time: " + cal.get(Calendar.HOUR_OF_DAY))
+        val hourOfDay = cal.get(Calendar.HOUR_OF_DAY)
 
-        return when (cal.get(Calendar.HOUR_OF_DAY)) {
-            5, 6, 7, 8, 9, 10, 11 -> { // good morning
-                getString(R.string.goodMorning)
+         when (hourOfDay) {
+            in Constants.MORNING_HOUR_START_TIME..Constants.MORNING_HOUR_END_TIME -> {
+                return getString(R.string.goodMorning)
             }
-
-            12, 13, 14, 15, 16, 17 -> { // good afternoon
-                getString(R.string.goodAfternoon)
+            in Constants.AFTERNOON_HOUR_START_TIME..Constants.AFTERNOON_HOUR_END_TIME -> {
+                return getString(R.string.goodAfternoon)
             }
-
-            else -> { // good evening
-                getString(R.string.goodNight)
+            in Constants.EVENING_HOUR_START_TIME..Constants.EVENING_HOUR_END_TIME -> {
+                return getString(R.string.goodEvening)
+            }
+            else -> { // between NIGHT_HOUR_START_TIME downTo Constants.NIGHT_HOUR_END_TIME
+                return getString(R.string.goodNight)
             }
         }
     }
@@ -207,13 +197,13 @@ class HomeFragment : Fragment() {
     private fun setupViewModel() {
         // set up view model with fragment
         viewModel.getSortedCuts().observe(viewLifecycleOwner, { entries -> //update RecyclerView later
-            // set up text on home frag
+            // set up text on home frag depending on if a location is saved or not
             mainTextView.text = getDescriptionMessage(entries)
         })
     }
 
     // Show permissions screen for app in settings
-    private fun openPermissions() {
+    private fun openPermissionSettings() {
         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         val uri: Uri = Uri.fromParts("package", MyApplication.applicationContext().packageName, null)

@@ -42,7 +42,6 @@ object AlarmScheduler {
         // set up a Calendar object for the alarm's time
         val datetimeToAlarm = getInstance(Locale.getDefault())
         datetimeToAlarm.timeInMillis = System.currentTimeMillis()
-        // TODO: Implement a setting where they can choose when they'd like notifications
         datetimeToAlarm.set(HOUR_OF_DAY, datetimeToAlarm.get(HOUR_OF_DAY)) // set as 9am for now
         datetimeToAlarm.set(MINUTE, datetimeToAlarm.get(MINUTE))
         datetimeToAlarm.set(SECOND, 0)
@@ -54,17 +53,11 @@ object AlarmScheduler {
         // checks if alarm should be schedule today
         val today = getInstance(Locale.getDefault())
         if (shouldNotifyToday(dayOfWeek, today, datetimeToAlarm)) { // schedules the alarm if so
-            // repeat the alarm every 7 days (1 week)
-            alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP,
+            // setInexactRepeating saves battery life compared to setRepeating (synchronizes multiple notifications)
+            alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP,
                 datetimeToAlarm.timeInMillis, 60 * 1000, alarmIntent) // (1000 * 60 * 60 * 24 * 7).toLong()
             return
         }
-
-        // otherwise, schedule alarm to repeat every week at that time by adding 1 week to it
-        // TODO: Figure out how we'd modify this if the weather isn't suitable
-//        datetimeToAlarm.roll(WEEK_OF_YEAR, 1)
-//        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP,
-//            datetimeToAlarm.timeInMillis, AlarmManager.INTERVAL_FIFTEEN_MINUTES, alarmIntent) // (1000 * 60 * 60 * 24 * 7).toLong()
     }
 
     // Determines if the Alarm should be scheduled for today.

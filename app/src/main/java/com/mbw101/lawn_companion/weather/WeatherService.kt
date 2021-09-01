@@ -19,6 +19,6 @@ interface WeatherService {
     }
 
     @GET("/data/2.5/onecall") // /data/2.5/weather
-    suspend fun getWeather(@Query("lat") lat: Float, @Query("lon") lon: Float, @Query("appid") apiID: String = BuildConfig.OPEN_WEATHER_MAP_API_KEY,
+    suspend fun getWeather(@Query("lat") lat: Double, @Query("lon") lon: Double, @Query("appid") apiID: String = BuildConfig.OPEN_WEATHER_MAP_API_KEY,
         @Query("units") unitsOfMeasurement: String = "metric"): Response<WeatherResponse> // Response<WeatherResponse>
 }

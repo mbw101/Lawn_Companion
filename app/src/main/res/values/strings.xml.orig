@@ -1,0 +1,246 @@
+<resources>
+    <string name="app_name">Lawn Companion</string>
+
+    <!-- Intro activity strings -->
+
+    <!-- 1st screen -->
+    <string name="welcomeMessage">Welcome to Lawn Companion!</string>
+    <string name="nextButtonText">Next</string>
+    <string name="getStartedText">Get Started</string>
+
+    <!-- 2nd screen -->
+    <string name="worryLess">Worry Less</string>
+    <string name="SecondIntroMessage">
+    Lawn Companion decides on the ideal time to
+    cut your lawn!
+    </string>
+
+    <!-- 3rd screen -->
+    <string name="saveTime">Save Time</string>
+    <string name="ThirdIntroMessage">
+    Lawn Companion takes the weather into account!
+    </string>
+
+    <!-- 4th screen/location permission part -->
+    <string name="askForLocationMessage">
+    But first, Lawn Companion needs to save the location of your lawn, so it can gather
+        accurate weather data.
+    </string>
+
+    <!--  5th screen - Saves the lawn location  -->
+    <string name="fifthScreenTitle">
+        Can Lawn Companion save your current location, so it can use it for accurate weather data?
+    </string>
+
+    <string name="fifthScreenContent">
+        Lawn Companion saves your location locally, so it can retrieve the current weather forecast for your city (and lawn) no
+        matter where you are located! You can adjust this location at any moment in the settings.
+    </string>
+
+    <string name="fifthScreenAccept">
+        Yes, I am home
+    </string>
+
+    <string name="fifthScreenDeny">
+        No, I am not home
+    </string>
+
+    <!-- Main activity strings -->
+
+    <!-- Salutations -->
+    <string name="goodMorning">Good Morning!</string>
+    <string name="goodAfternoon">Good Afternoon!</string>
+    <string name="goodEvening">Good Evening!</string>
+    <string name="goodNight">Good Night!</string>
+
+    <string name="home">Home</string>
+    <string name="cutLog">Cut Log</string>
+
+    <!-- Regular description -->
+    <string name="daysSinceLastCut">
+    %1$d days since last cut
+    </string>
+
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> origin/develop
+    <string name="singleDaySinceLastCut">
+    %1$d day since last cut
+    </string>
+
+<<<<<<< HEAD
+>>>>>>> develop
+=======
+>>>>>>> origin/develop
+    <!-- Description for when the lawn has passed the ideal cutting interval-->
+    <string name="passedIntervalMessage">
+        Your last cut has surpassed the cutting interval. You will likely
+        need a cut.
+    </string>
+
+    <!-- Initial message or no cuts -->
+    <string name="noCutMessage">
+    No cuts have been made yet. Add a new
+    cut to get started!
+    </string>
+
+    <!-- Permission denied strings -->
+    <string name="needsPermissionString">
+    Lawn Companion needs location permissions
+    because it needs to access local weather.
+    </string>
+    <string name="openPermissionsText">
+    Open Permissions
+    </string>
+
+    <!-- Cut has been made text -->
+    <string name="alreadyCutMessage">
+    No need to cut the lawn! An entry has
+    been made today.
+    </string>
+
+    <!-- No available connection (so the app can still be used gracefully) -->
+    <string name="noConnectionAvailable">
+    %2$d days since last cut. There will be
+    no notifications/weather fetching done until
+    a connection is made.
+    </string>
+
+    <!-- When the cutting season is over -->
+    <string name="cuttingSeasonOver">
+    The cutting season is over! Check back closer to cutting season, or you
+    can manually turn it on in settings.
+    </string>
+
+    <!--    Strings for when a lawn location hasn't been made-->
+    <string name="noLawnLocationMessage">There is no current lawn location saved. Add a location to receive notifications.</string>
+
+    <string name="createLawnLocationButton">
+        Create a lawn location
+    </string>
+
+    <!-- Add new cut activity strings -->
+    <string name="addCutTitle">
+    Add New Cut
+    </string>
+    <string name="enterMonthText">
+    Enter Month:
+    </string>
+    <string name="enterDayText">
+    Enter Day:
+    </string>
+    <string name="enterTimeText">
+    Enter Time:
+    </string>
+    <string name="addCutText">Add Cut</string>
+    <string name="futureCutsToastMessage">You cannot add future cuts!</string>
+
+    <!-- Months -->
+    <string name="january">January</string>
+    <string name="february">February</string>
+    <string name="march">March</string>
+    <string name="april">April</string>
+    <string name="may">May</string>
+    <string name="june">June</string>
+    <string name="july">July</string>
+    <string name="august">August</string>
+    <string name="september">September</string>
+    <string name="october">October</string>
+    <string name="november">November</string>
+    <string name="december">December</string>
+
+    <string-array name="months">
+        <item>January</item>
+        <item>February</item>
+        <item>March</item>
+        <item>April</item>
+        <item>May</item>
+        <item>June</item>
+        <item>July</item>
+        <item>August</item>
+        <item>September</item>
+        <item>October</item>
+        <item>November</item>
+        <item>December</item>
+    </string-array>
+
+    <!-- Day (Number) values -->
+
+    <!-- Settings activity strings -->
+    <string name="settingsTitle">Settings</string>
+    <string name="preferencesGroupTitle">Preferences</string>
+    <string name="aboutGroupTitle">About</string>
+
+    <string name="cuttingSeasonTitle">Enable/disable cutting season</string>
+    <string name="cuttingSeasonDesc">Manual override the default cutting season. Stops all
+    notifications and weather checking. Useful for abnormal weather conditions or pausing app functionality</string>
+    <string name="cuttingSeasonKey">inSeason</string>
+
+    <string name="notificationsTitle">Notifications</string>
+    <string name="notification_summary_on">Notifications will be sent
+    </string>
+    <string name="notification_summary_off">Notifications will not be sent</string>
+    <string name="notificationDesc">Can be used if there\'s abnormal weather or you
+    would like to postpone use.</string>
+    <string name="notificationPreferenceKey">notificationSwitch</string>
+
+    <string name="desiredCutFrequency">Desired Cut Frequency</string>
+    <string name="lowestOptionFrequency">5 days</string>
+    <string name="highestOptionFrequency">14 days</string>
+
+    <string name="dataAccessTitle">Data Saver</string>
+    <string name="weatherDataAccessTitle">Fetch weather while on data</string>
+    <string name="data_summary_on">Weather will only be fetched while on Wi-Fi
+    </string>
+    <string name="data_summary_off">Weather will be fetched while on Wi-Fi or data</string>
+    <string name="dataPreferenceKey">useData</string>
+
+    <string name="createNewLocationTitle">Create a new lawn location</string>
+    <string name="createNewLocationSummary">Removes the existing lawn location if one exists and creates a new lawn location</string>
+
+    <string name="notificationTimeOfDayCategoryTitle">Preferences for when notifications will be sent</string>
+    <string name="morningTimeOfDayTitle">Morning (5am-12pm)</string>
+    <string name="morningTimeOfDayKey">mornings</string>
+    <string name="afternoonTimeOfDayTitle">Afternoon (12pm-5pm)</string>
+    <string name="afternoonTimeOfDayKey">afternoons</string>
+    <string name="eveningTimeOfDayTitle">Evening (5pm-9pm)</string>
+    <string name="eveningTimeOfDayKey">evenings</string>
+    <string name="nightTimeOfDayTitle">Night (9pm-5am)</string>
+    <string name="nightTimeOfDayKey">nights</string>
+    <string name="timeOfDaySummary">Check weather and send notifications only during this time</string>
+
+    <string name="versionNumber">Version 0.1</string>
+
+    <!-- Cut log activity strings -->
+    <string name="completedCut">Completed Cut</string>
+    <string name="noCutMade">No Cuts Made</string>
+    <string name="alertTitle">Delete cut entry?</string>
+    <string name="alertMessage">This will delete the selected cut entry from the Cut Log!</string>
+    <string name="cancelOption">Cancel</string>
+    <string name="deleteOption">Delete</string>
+
+    <!-- Notification strings -->
+    <string name="markAsCut">Mark as cut</string>
+    <string name="skip">Skip</string>
+    <string name="cutSuggestionMessage">Hey, it\'s a great time to cut your lawn!</string>
+    <string name="rainOnCutDayMessage">Hey, rain is expected near your next cutting day, so today would be a better time for a cut!</string>
+    <string name="badWeatherOnCutDayMessage">Hey, bad weather is expected near your next cutting day, so today would be a better
+        time for a cut!</string>
+
+    <!-- Other strings -->
+    <string name="moreThanOneCutMessage">Only one cut is allowed on a single day!</string>
+    <string name="settings_icon">Settings icon</string>
+    <string name="refresh_icon">Refresh icon</string>
+    <string name="floating_action_button_for_adding_new_cuts">Floating action button for adding new cuts</string>
+
+    <!--    Dialog strings-->
+    <string name="permissionDialogTitle">Access to background location</string>
+<<<<<<< HEAD
+    <string name="permissionDialogContent">Lawn Companion needs your background location to access local weather periodically!</string>
+=======
+    <string name="permissionDialogContent">Lawn Companion needs to access your location, so your lawn location can be saved!</string>
+>>>>>>> origin/develop
+
+</resources>

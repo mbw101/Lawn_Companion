@@ -11,10 +11,7 @@ import android.widget.AdapterView.OnItemSelectedListener
 import androidx.appcompat.app.AppCompatActivity
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.CutEntry
-<<<<<<< HEAD
-=======
 import com.mbw101.lawn_companion.notifications.NotificationHelper
->>>>>>> develop
 import com.mbw101.lawn_companion.utils.Constants
 import com.mbw101.lawn_companion.utils.UtilFunctions
 import java.util.*
@@ -166,25 +163,7 @@ class AddCutActivity : AppCompatActivity() {
 
         // fill in the day values based on current month
         dayAdaptor.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line)
-<<<<<<< HEAD
-        dayDropdown.adapter = dayAdaptor
-
-        // set the default day value selected in the dropdown
-        val maxNumDays = cal.getActualMaximum(Calendar.DAY_OF_MONTH)
-        Log.d(Constants.TAG, "Max number of days = $maxNumDays")
-        Log.d(Constants.TAG, "Current month = ${cal.get(Calendar.MONTH)}")
-
-        val previousDay = cal.get(Calendar.DAY_OF_MONTH)-1
-
-        if (maxNumDays < previousDay) {
-            dayDropdown.setSelection(0)
-        }
-        else {
-            dayDropdown.setSelection(previousDay) // we need to reset the default selection each time
-        }
-=======
         return dayAdaptor
->>>>>>> develop
     }
 
     private fun setListeners() {
@@ -248,8 +227,12 @@ class AddCutActivity : AppCompatActivity() {
         // access the correct time from the selected time text view
         val cutTimeString = DateUtils.formatDateTime(this, cutTime.timeInMillis, DateUtils.FORMAT_SHOW_TIME)
         Log.d(Constants.TAG, "Time of cut: $cutTimeString")
-        val cutEntry = CutEntry(cutTimeString, dayDropdown.selectedItemPosition+1,
-            Constants.months[monthDropdown.selectedItemPosition], monthDropdown.selectedItemPosition+1)
+        val cutEntry = CutEntry(
+            cutTimeString,
+            dayDropdown.selectedItemPosition+1,
+            Constants.months[monthDropdown.selectedItemPosition],
+            monthDropdown.selectedItemPosition+1, UtilFunctions.getCurrentYear()
+        )
 
         cutEntryViewModel.addEntry(cutEntry)
     }
@@ -309,10 +292,6 @@ class AddCutActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-<<<<<<< HEAD
-        // show main activity
-=======
->>>>>>> develop
         launchMainActivity()
     }
 }

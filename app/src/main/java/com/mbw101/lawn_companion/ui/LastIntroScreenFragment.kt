@@ -35,63 +35,33 @@ class LastIntroScreenFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onClick(v: View?) {
-        // ask for location permissions
-        askPermissions()
+        askForLocationPermissions()
     }
 
-    private fun askPermissions() {
+    private fun askForLocationPermissions() {
         val result = activity?.let { thisActivity -> checkLocationPermissions(thisActivity) }
         Log.d(Constants.TAG, "Result from asking permission = ${result.toString()}")
+    }
+
+    private fun launchSaveLocationActivity() {
+        IntroActivity.preferenceManager.setNotFirstTime(true) // finished the intro of App, so we can save that
+        val intent = Intent(activity, SaveLocationActivity::class.java)
+        startActivity(intent)
     }
 
     // check for background location permissions
     private fun checkLocationPermissions(activity: Activity): Boolean {
         Log.d(Constants.TAG, "Asking for permissions!")
-<<<<<<< HEAD
-        when {
-            // permission was not granted
-            (ContextCompat.checkSelfPermission(activity.applicationContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) -> {
-
-                // see if we need to show an explanation
-                if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.ACCESS_COARSE_LOCATION)) {
-
-                    // Show an explanation to the user
-                    AlertDialog.Builder(context)
-                        .setTitle(getString(R.string.permissionDialogTitle))
-                        .setMessage(getString(R.string.permissionDialogContent))
-                        .setPositiveButton(android.R.string.ok) { _, i -> //Prompt the user once explanation has been shown
-                            // request perms again
-                            requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), MY_PERMISSIONS_REQUEST_LOCATION)
-                        }
-                        .setNegativeButton(android.R.string.cancel) { _, i -> //Prompt the user once explanation has been shown
-                            // launch main activity
-                            launchMainActivity()
-                        }
-                        .create()
-                        .show()
-                } else {
-                    // No explanation needed, we can request the permission.
-                    requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), MY_PERMISSIONS_REQUEST_LOCATION)
-                }
-
-                return false
-=======
         return when {
             // permission was not granted
-            (ContextCompat.checkSelfPermission(activity.applicationContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) -> {
+            (ContextCompat.checkSelfPermission(activity.applicationContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) -> {
                 requestLocationPermission(activity)
-                false
->>>>>>> develop
+                true
             }
 
             else -> {
                 Toast.makeText(activity, "Permission (already) Granted!", Toast.LENGTH_SHORT).show()
-                launchMainActivity()
-<<<<<<< HEAD
-                return true
-            }
-        }
-=======
+                launchSaveLocationActivity()
                 true
             }
         }
@@ -100,14 +70,14 @@ class LastIntroScreenFragment : Fragment(), View.OnClickListener {
     private fun requestLocationPermission(activity: Activity) {
         // see if we need to show an explanation
         if (ActivityCompat.shouldShowRequestPermissionRationale
-                (activity, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                (activity, Manifest.permission.ACCESS_FINE_LOCATION)) {
 
             // Show an explanation to the user
             showLocationPermissionDialog()
         } else {
             // No explanation needed, we can request the permission.
             requestPermissions(
-                arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 MY_PERMISSIONS_REQUEST_LOCATION
             )
         }
@@ -120,32 +90,32 @@ class LastIntroScreenFragment : Fragment(), View.OnClickListener {
             .setPositiveButton(android.R.string.ok) { _, i -> //Prompt the user once explanation has been shown
                 // request perms again
                 requestPermissions(
-                    arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                     MY_PERMISSIONS_REQUEST_LOCATION
                 )
+                Log.d(Constants.TAG, "ACCEPTED LOCATION PERMISSION")
+                launchSaveLocationActivity()
             }
             .setNegativeButton(android.R.string.cancel) { _, i -> //Prompt the user once explanation has been shown
-                // launch main activity
                 launchMainActivity()
             }
             .create()
             .show()
->>>>>>> develop
     }
 
     private fun launchMainActivity() {
         IntroActivity.preferenceManager.setNotFirstTime(true) // finished the intro of App, so we can save that
-        val intent = Intent (activity, MainActivity::class.java)
+        val intent = Intent(activity, MainActivity::class.java)
         activity?.startActivity(intent)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (requestCode == MY_PERMISSIONS_REQUEST_LOCATION) {
-            if (permissions[0] == Manifest.permission.ACCESS_COARSE_LOCATION && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (permissions[0] == Manifest.permission.ACCESS_FINE_LOCATION && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Log.d(Constants.TAG, "Location permission has been granted!")
-                launchMainActivity()
+                launchSaveLocationActivity()
             }
-            else if (permissions[0] == Manifest.permission.ACCESS_COARSE_LOCATION && grantResults[0] == PackageManager.PERMISSION_DENIED) {
+            else if (permissions[0] == Manifest.permission.ACCESS_FINE_LOCATION && grantResults[0] == PackageManager.PERMISSION_DENIED) {
                 Log.d(Constants.TAG, "Location permission has been denied!")
                 launchMainActivity()
             }

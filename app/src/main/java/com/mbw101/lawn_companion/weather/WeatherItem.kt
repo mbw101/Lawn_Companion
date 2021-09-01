@@ -5,8 +5,6 @@ Lawn Companion
 Created by Malcolm Wright
 Date: 2021-07-12
  */
-const val CLOUD_ID_BASE = 800
-const val HIGHEST_ACCEPTABLE_WEATHER_ID = 804
 val acceptableIds = listOf(721, 741, 800, 801, 802, 803, 804)
 
 data class WeatherItem(val icon: String = "",

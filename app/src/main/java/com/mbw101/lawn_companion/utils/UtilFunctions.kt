@@ -16,7 +16,7 @@ object UtilFunctions {
      * Returns true if the COARSE location permission has been granted
      */
     fun hasLocationPermissions(): Boolean {
-        return (ContextCompat.checkSelfPermission(MyApplication.applicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
+        return (ContextCompat.checkSelfPermission(MyApplication.applicationContext(), Manifest.permission.ACCESS_FINE_LOCATION)
             == PackageManager.PERMISSION_GRANTED)
     }
 
@@ -36,7 +36,7 @@ object UtilFunctions {
     }
 
     // returns the number of days between the two dates
-    private fun getNumDaysBetween(start: Calendar, end: Calendar): Int {
+    fun getNumDaysBetween(start: Calendar, end: Calendar): Int {
         // set hours and minutes to 0
         start.set(Calendar.HOUR_OF_DAY, 12)
         end.set(Calendar.HOUR_OF_DAY, 12)

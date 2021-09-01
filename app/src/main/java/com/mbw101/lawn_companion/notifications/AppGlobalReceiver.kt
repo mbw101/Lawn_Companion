@@ -5,10 +5,11 @@ import android.content.Context
 import android.content.Intent
 import android.text.format.DateUtils
 import androidx.core.app.NotificationManagerCompat
+import com.mbw101.lawn_companion.database.AppDatabaseBuilder
 import com.mbw101.lawn_companion.database.CutEntry
 import com.mbw101.lawn_companion.database.CutEntryRepository
-import com.mbw101.lawn_companion.database.DatabaseBuilder
 import com.mbw101.lawn_companion.utils.Constants
+import com.mbw101.lawn_companion.utils.UtilFunctions
 import kotlinx.coroutines.runBlocking
 import java.util.*
 
@@ -33,7 +34,7 @@ class AppGlobalReceiver : BroadcastReceiver() {
     }
 
     private fun addEntryToDatabase(context: Context, cutEntry: CutEntry) {
-        val dao = DatabaseBuilder.getInstance(context.applicationContext).cutEntryDao()
+        val dao = AppDatabaseBuilder.getInstance(context.applicationContext).cutEntryDao()
         val repository = CutEntryRepository(dao)
         runBlocking {
             repository.addCut(cutEntry)
@@ -50,7 +51,7 @@ class AppGlobalReceiver : BroadcastReceiver() {
         val monthNum = Calendar.getInstance().get(Calendar.MONTH) + 1
         return CutEntry(
             cutTimeString, Calendar.getInstance().get(Calendar.DAY_OF_MONTH),
-            Constants.months[monthNum - 1], monthNum
+            Constants.months[monthNum - 1], monthNum, UtilFunctions.getCurrentYear()
         )
     }
 }

@@ -1,0 +1,79 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory app:title="@string/preferencesGroupTitle">
+
+        <SwitchPreferenceCompat
+<<<<<<< HEAD
+            app:key="inSeason"
+=======
+            app:key="@string/cuttingSeasonKey"
+>>>>>>> origin/develop
+            android:defaultValue="true"
+            app:title="@string/cuttingSeasonTitle"
+            app:summary="@string/cuttingSeasonDesc"/>
+
+        <SwitchPreferenceCompat
+<<<<<<< HEAD
+            app:dependency="inSeason"
+            android:defaultValue="true"
+            app:key="notificationSwitch"
+=======
+            app:dependency="@string/cuttingSeasonKey"
+            android:defaultValue="true"
+            app:key="@string/notificationPreferenceKey"
+>>>>>>> origin/develop
+            app:summaryOff="@string/notification_summary_off"
+            app:summaryOn="@string/notification_summary_on"
+            app:title="@string/notificationsTitle" />
+
+<!--        <SeekBarPreference-->
+<!--            app:title="@string/desiredCutFrequency" />-->
+
+        <SwitchPreferenceCompat
+<<<<<<< HEAD
+            app:key="useData"
+<<<<<<< HEAD
+            android:defaultValue="false"
+            app:summaryOff="@string/data_summary_off"
+            app:summaryOn="@string/data_summary_on"
+=======
+            android:defaultValue="true"
+            app:summaryOn="@string/data_summary_off"
+            app:summaryOff="@string/data_summary_on"
+>>>>>>> develop
+=======
+            app:key="@string/dataPreferenceKey"
+            android:defaultValue="true"
+            app:summaryOn="@string/data_summary_off"
+            app:summaryOff="@string/data_summary_on"
+>>>>>>> origin/develop
+            app:title="@string/weatherDataAccessTitle" />
+
+        <Preference android:title="@string/createLawnLocationButton"
+            android:summary="@string/createNewLocationSummary"/>
+
+<!--        <CheckBoxPreference android-->
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/notificationTimeOfDayCategoryTitle">
+        <CheckBoxPreference android:title="@string/morningTimeOfDayTitle" android:defaultValue="true"
+            app:key="@string/morningTimeOfDayKey"/>
+        <CheckBoxPreference android:title="@string/afternoonTimeOfDayTitle" android:defaultValue="true"
+            app:key="@string/afternoonTimeOfDayKey"/>
+        <CheckBoxPreference android:title="@string/eveningTimeOfDayTitle" android:defaultValue="true"
+            app:key="@string/eveningTimeOfDayKey"/>
+        <CheckBoxPreference android:title="@string/nightTimeOfDayTitle"
+            app:key="@string/nightTimeOfDayKey" android:defaultValue="false"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/aboutGroupTitle">
+
+        <Preference android:title="Version"
+            android:summary="@string/app_version" />
+
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

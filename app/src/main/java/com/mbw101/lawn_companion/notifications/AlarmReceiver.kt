@@ -7,15 +7,14 @@ import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.util.Log
 import com.mbw101.lawn_companion.R
-import com.mbw101.lawn_companion.database.CutEntry
-import com.mbw101.lawn_companion.database.CutEntryRepository
-import com.mbw101.lawn_companion.database.DatabaseBuilder
+import com.mbw101.lawn_companion.database.*
 import com.mbw101.lawn_companion.utils.ApplicationPrefs
 import com.mbw101.lawn_companion.utils.Constants
 import com.mbw101.lawn_companion.utils.UtilFunctions
 import com.mbw101.lawn_companion.weather.WeatherResponse
 import com.mbw101.lawn_companion.weather.WeatherService
 import com.mbw101.lawn_companion.weather.isCurrentWeatherSuitable
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import retrofit2.Response
@@ -41,12 +40,46 @@ class AlarmReceiver : BroadcastReceiver() {
     }
 
     private fun performNotificationSetup(preferences: ApplicationPrefs, context: Context) {
-        if (notificationsAreEnabled(preferences) && isInCuttingSeason(preferences)) {
-            val repository =
-                CutEntryRepository(DatabaseBuilder.getInstance(context).cutEntryDao())
+        if (!preferencesHaveHappyConditions(preferences)) return
+        Log.d(Constants.TAG, "Meets happy path conditions!")
 
-            runNotificationCoroutineWork(repository, preferences, context)
+        // check if a location is saved in db
+        if (!hasLocationSaved(context)) {
+            return
         }
+        Log.d(Constants.TAG, "Has a lawn location saved in the DB!")
+
+        val repository =
+            CutEntryRepository(AppDatabaseBuilder.getInstance(context).cutEntryDao())
+        runNotificationCoroutineWork(repository, preferences, context)
+    }
+
+    private fun preferencesHaveHappyConditions(preferences: ApplicationPrefs): Boolean {
+        if (!preferences.isInTimeOfDay()
+            || !notificationsAreEnabled(preferences)
+            || !isInCuttingSeason(preferences)
+        ) {
+            Log.d(Constants.TAG, "The happy conditions have not been met! Check settings configuration!")
+            return false
+        }
+        return true
+    }
+
+    private fun hasLocationSaved(context: Context): Boolean {
+        val repository = setupLawnLocationRepository(context)
+        return checkIfLocationExists(repository)
+    }
+
+    private fun checkIfLocationExists(repository: LawnLocationRepository): Boolean {
+        var locationExists = false
+
+        runBlocking {
+            launch (Dispatchers.IO) {
+                locationExists = repository.hasALocationSaved()
+            }
+        }
+
+        return locationExists
     }
 
     private fun notificationsAreEnabled(preferences: ApplicationPrefs): Boolean {
@@ -61,29 +94,26 @@ class AlarmReceiver : BroadcastReceiver() {
         return preferences.isDataUseEnabled()
     }
 
-    private fun runNotificationCoroutineWork(
-        repository: CutEntryRepository,
-        preferences: ApplicationPrefs,
-        context: Context
-    ) {
-        runBlocking {
-            // starts a new coroutine, so we can access the DB concurrently without blocking the current thread (UI)
-            launch {
-                val lastCut: CutEntry? = retrieveLastCutFromDB(repository)
+    private fun runNotificationCoroutineWork(repository: CutEntryRepository, preferences: ApplicationPrefs, context: Context)
+    = runBlocking {
+        // starts a new coroutine, so we can access the DB concurrently without blocking the current thread (UI)
+        launch (Dispatchers.IO) {
+            val lastCut: CutEntry? = retrieveLastCutFromDB(repository)
 
-                // only run through the notification logic and call the api if we have right connection type
-                if (connectionTypeMatchesPreferences(preferences, context)) {
-                    val weatherHttpResponse: Response<WeatherResponse> = callWeatherAPI()
-                    performNotificationLogic(lastCut, weatherHttpResponse, context)
-                }
-                else {
-                    Log.d(Constants.TAG, "Connection type does not match preferences!")
-                }
+            // only run through the notification logic and call the api if we have right connection type
+            if (connectionTypeMatchesPreferences(preferences, context)) {
+                val weatherHttpResponse: Response<WeatherResponse> = callWeatherAPI(context)
+                performNotificationLogic(lastCut, weatherHttpResponse, context)
+            } else {
+                Log.d(Constants.TAG, "Connection type does not match preferences!")
             }
         }
     }
 
-    private fun connectionTypeMatchesPreferences(preferences: ApplicationPrefs, context: Context): Boolean {
+    private fun connectionTypeMatchesPreferences(
+        preferences: ApplicationPrefs,
+        context: Context
+    ): Boolean {
         if (!hasInternetConnection(context)) {
             Log.d(Constants.TAG, "Has no internet connection!")
             return false
@@ -107,26 +137,40 @@ class AlarmReceiver : BroadcastReceiver() {
     }
 
     private fun isUsingDataConnection(context: Context): Boolean {
-        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         return connectivityManager.isActiveNetworkMetered
     }
 
     private fun hasInternetConnection(context: Context): Boolean {
         // determines whether the user has an internet connection
-        // TODO: Incorporate a branch for Android 10 using https://developer.android.com/reference/android/net/ConnectivityManager.NetworkCallback
-        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetwork: NetworkInfo? = connectivityManager.activeNetworkInfo
         return activeNetwork?.isConnectedOrConnecting == true
     }
 
-    private suspend fun callWeatherAPI(): Response<WeatherResponse> {
+    private suspend fun callWeatherAPI(context: Context): Response<WeatherResponse> {
         val retrofit = Retrofit.Builder()
             .baseUrl(WeatherService.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         val weatherService = retrofit.create(WeatherService::class.java)
-        // TODO: Replace these coordinates with the real location coordinates of the user
-        return weatherService.getWeather(43.531054f, -80.230215f)
+        val (lat, long) = getCoordinates(context)
+        return weatherService.getWeather(lat, long)
+    }
+
+    private fun getCoordinates(context: Context): Pair<Double, Double> {
+        val lat: Double
+        val long: Double
+
+        val repository = setupLawnLocationRepository(context)
+
+        val lawnLocation = repository.getLocation()
+        lat = lawnLocation.latitude
+        long = lawnLocation.longitude
+        Log.d(Constants.TAG, "Got $lawnLocation from DB!")
+        return Pair(lat, long)
     }
 
     private suspend fun retrieveLastCutFromDB(repository: CutEntryRepository): CutEntry? {
@@ -142,13 +186,12 @@ class AlarmReceiver : BroadcastReceiver() {
             return
         }
 
-        // TODO: Figure out how to incorporate this weather data (use isSuitable functions)
         val weatherData = weatherHttpResponse.body()
+        Log.d(Constants.TAG, weatherData.toString())
         if (lastCut == null) {
             // just suggest an appropriate cut (given weather  conditions) anytime since there is no cut registered
             createNotificationIfSuitableConditions(weatherData, DEFAULT_DAYS_SINCE, context)
-        }
-        else {
+        } else {
             // calculate the time since last cut until now
             val daysSince = findDaysSince(lastCut)
             createNotificationIfSuitableConditions(weatherData, daysSince, context)
@@ -165,19 +208,35 @@ class AlarmReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun hasSuitableConditionsForCutNotification(weatherData: WeatherResponse?, daysSince: Int): Boolean {
+    private fun hasSuitableConditionsForCutNotification(
+        weatherData: WeatherResponse?,
+        daysSince: Int
+    ): Boolean {
         // go through many checks and include the weather for determining the right time for a cut
-        if (daysSince < MINIMUM_DAYS_SINCE) return false
-        // check weather conditions
-        if (weatherData == null) return false
-        if (!isCurrentWeatherSuitable(weatherData.current)) return false
+        if (daysSince < MINIMUM_DAYS_SINCE) {
+            Log.d(Constants.TAG, "The minimum days since last cut has NOT been surpassed yet!")
+            return false
+        }
+
+        if (weatherData == null) {
+            Log.d(Constants.TAG, "The weather data is null!")
+            return false
+        }
+
+        if (!isCurrentWeatherSuitable(weatherData.current)) {
+            Log.d(Constants.TAG, "The Current weather data is NOT suitable for a cut!")
+            return false
+        }
 
         return true // daysSince >= 7
     }
 
     private fun findDaysSince(lastCut: CutEntry): Int {
         val cutDate = Calendar.getInstance()
-        cutDate.set(Calendar.MONTH, lastCut.month_number - 1) // month values start at 0 for Calendar
+        cutDate.set(
+            Calendar.MONTH,
+            lastCut.month_number - 1
+        ) // month values start at 0 for Calendar
         cutDate.set(Calendar.DAY_OF_MONTH, lastCut.day_number)
         return UtilFunctions.getNumDaysSince(cutDate)
     }

@@ -3,9 +3,9 @@ package com.mbw101.lawn_companion.ui
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.mbw101.lawn_companion.database.AppDatabaseBuilder
 import com.mbw101.lawn_companion.database.CutEntry
 import com.mbw101.lawn_companion.database.CutEntryRepository
-import com.mbw101.lawn_companion.database.DatabaseBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -19,7 +19,7 @@ class CutEntryViewModel(application: Application) : AndroidViewModel(application
     private val repository: CutEntryRepository
 
     init {
-        val dao = DatabaseBuilder.getInstance(application).cutEntryDao()
+        val dao = AppDatabaseBuilder.getInstance(application).cutEntryDao()
         repository = CutEntryRepository(dao)
     }
 
@@ -29,10 +29,7 @@ class CutEntryViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-<<<<<<< HEAD
-    fun getCuts() = repository.getCuts()
-=======
->>>>>>> develop
     fun getSortedCuts() = repository.getSortedCuts()
+    suspend fun getEntriesFromSpecificYearSorted(year: Int) = repository.getCutsByYearSorted(year)
     suspend fun deleteCuts(vararg cuts: CutEntry) = repository.deleteCuts(*cuts)
 }

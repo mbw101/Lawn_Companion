@@ -109,34 +109,5 @@ class WeatherTests {
             0, feelsLikeTemp, 16.0, 1000, 0.0, 0, 0.0,
             0, listOf(weatherDescription), MIN_CUTTING_HUMIDITY, 0.0)
         assertEquals(isSingleDaySuitable(singleDayWeather), true)
-
-
-//        singleDayWeather = SingleDayWeather(0, 10000, 10000, temperature,
-//            feelsLikeTemp, 16, weatherDescription, HIGHEST_ACCEPTABLE_CHANCE_OF_RAIN, 0)
-    }
-
-    @Test
-    fun testWeatherApiCall() {
-//        val okHttpClient = OkHttpClient.Builder()
-//            .addInterceptor(APIInterceptor())
-//            .build()
-//        val client = Mockito.mock(OkHttpClient.Builder()
-//            .addInterceptor(APIInterceptor())
-//            .build())
-        
-        // TODO: Incorporate a logging interceptor
-//        val retrofit = Retrofit.Builder()
-//            .baseUrl(WeatherService.BASE_URL)
-//            .addConverterFactory(GsonConverterFactory.create())
-//            .client(okHttpClient)
-//            .build()
-
-        //val weatherService = retrofit.create(WeatherService::class.java)
-
-//        var coroutineJob = CoroutineScope(Dispatchers.IO).launch {
-//            val httpResponse = weatherService.getWeather(43.531054f, -80.230215f)
-//
-//            assertEquals(httpResponse.code(), 200)
-//        }
     }
 }

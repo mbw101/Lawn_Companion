@@ -60,7 +60,7 @@ object NotificationHelper {
         // TODO: Add the skip button in the future
 
         notificationBuilder.addAction(
-            R.drawable.indicator_selected, // TODO: Replace icon later
+            R.drawable.indicator_selected,
             context.getString(R.string.markAsCut),
             markCutPendingIntent)
 
@@ -70,10 +70,11 @@ object NotificationHelper {
 
     private fun getNotificationBuilder(context: Context, channelId: String, title: String, message: String, autoCancel: Boolean): NotificationCompat.Builder {
         return NotificationCompat.Builder(context, channelId).apply {
-            setSmallIcon(R.drawable.ic_baseline_home_24) // TODO: Replace with app logo later
+            setSmallIcon(R.drawable.ic_notificationiconoptimized)
             setContentTitle(title) // title for notification
             setContentText(message) // content
-            //            setStyle(NotificationCompat.BigTextStyle().bigText(bigText))
+            color = context.resources.getColor(R.color.medium_spring_green)
+//            setStyle(NotificationCompat.BigTextStyle().bigText(bigText))
             priority = NotificationCompat.PRIORITY_DEFAULT // default
             setAutoCancel(autoCancel) // auto cancels notification when taped
 

@@ -1,15 +1,19 @@
 package com.mbw101.lawn_companion.ui
 
+import android.Manifest
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -71,9 +75,15 @@ class MainActivity : AppCompatActivity() {
         // create notification channel
         createNotificationChannel(this)
 
-        // TODO: Call an AlarmManager that uses a receiver that does the checking daily for new cuts
-        // TODO: Then, if the condition where it's in need of a cut (either weather or time sake), call "send notification" in the receiver
         setupNotificationAlarmManager()
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            return
+        }
     }
 
     /***
@@ -91,7 +101,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun setListeners() {
         // bottom navigation listener
-
         bottomNav.setOnNavigationItemSelectedListener { item ->
             when(item.itemId) {
                 R.id.home -> {
@@ -119,14 +128,13 @@ class MainActivity : AppCompatActivity() {
             launchSettings()
         }
 
-        refreshIcon.setOnClickListener {
-            Toast.makeText(this, "Refreshing...", Toast.LENGTH_SHORT).show()
-            refresh()
-        }
-
         // FAB listener
         addCutFAB.setOnClickListener {
             launchAddCutScreen()
+        }
+
+        refreshIcon.setOnClickListener {
+            refreshActivity()
         }
     }
 
@@ -142,12 +150,15 @@ class MainActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun refresh() {
-        // TODO: Refresh both the main screen and the cut log
-        // refresh fragment (which calls onCreateView)
-//        val transaction: FragmentTransaction = requireFragmentManager().beginTransaction()
-//        transaction.setReorderingAllowed (false)
-//        transaction.detach(g).attach(this).commitAllowingStateLoss()
+    private fun refreshActivity() {
+        Toast.makeText(this, "Refreshing...", Toast.LENGTH_SHORT).show()
+//        val currentIntent = intent
+//        overridePendingTransition(0, 0);
+////        currentIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+//        finish();
+//        overridePendingTransition(0, 0);
+//        startActivity(currentIntent);
+        findViewById<ViewGroup>(android.R.id.content).invalidate();
     }
 
     override fun onBackPressed() {
@@ -159,11 +170,5 @@ class MainActivity : AppCompatActivity() {
         } else {
             finish()
         }
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-        // TODO: Change text on main screen if allowed/disabled
     }
 }
