@@ -35,6 +35,7 @@ class TestIntroScreen {
             ensureNextButtonIsShown()
             swipeLeft()
         }
+        swipeLeft()
         ensureGetStartedIsShown()
         for (i in 1..3) {
             swipeRight()
