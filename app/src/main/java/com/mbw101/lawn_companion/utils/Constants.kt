@@ -38,4 +38,10 @@ object Constants {
 
     const val NIGHT_HOUR_START_TIME = 21 // 9pm
     const val NIGHT_HOUR_END_TIME = 4  // 4am
+
+    // weather frequency constants
+    const val FIFTEEN_MINUTES = (15 * 60 * 1000)
+    const val THIRTY_MINUTES = 2 * FIFTEEN_MINUTES
+    const val ONE_HOUR = 2 * THIRTY_MINUTES
+    const val TWO_HOURS = 2 * ONE_HOUR
 }

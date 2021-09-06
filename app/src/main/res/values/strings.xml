@@ -191,6 +191,12 @@
     <string name="createNewLocationTitle">Create a new lawn location</string>
     <string name="createNewLocationSummary">Removes the existing lawn location if one exists and creates a new lawn location</string>
 
+    <string name="adjustWeatherCheckFrequencyTitle">Modify the frequency of weather checks</string>
+    <string name="adjustWeatherCheckFrequencySummary">The time between weather checks and potential cut notifications if the weather is suitable for cutting.</string>
+    <string name="weatherCheckFrequencyKey">weatherCheckFrequency</string>
+    <string name="weatherCheckFrequencyDefault">15 minutes</string>
+<!--    <string name="adjustWeatherCheckFrequencyTitle">Modify the frequency of weather checks</string>-->
+
     <string name="notificationTimeOfDayCategoryTitle">Preferences for when notifications will be sent</string>
     <string name="morningTimeOfDayTitle">Morning (5am-12pm)</string>
     <string name="morningTimeOfDayKey">mornings</string>

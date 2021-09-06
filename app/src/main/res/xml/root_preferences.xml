@@ -30,6 +30,15 @@
         <Preference android:title="@string/createLawnLocationButton"
             android:summary="@string/createNewLocationSummary"/>
 
+        <ListPreference
+            android:key="@string/weatherCheckFrequencyKey"
+            android:summary="@string/adjustWeatherCheckFrequencySummary"
+            android:title="@string/adjustWeatherCheckFrequencyTitle"
+            android:defaultValue="@string/weatherCheckFrequencyDefault"
+            android:entryValues="@array/weather_frequency_values"
+            android:entries="@array/weather_frequency_options"
+            />
+
 <!--        <CheckBoxPreference android-->
 
     </PreferenceCategory>

@@ -1,13 +1,23 @@
 package com.mbw101.lawn_companion
 
+import android.content.Context
+import android.support.test.InstrumentationRegistry
+import androidx.preference.ListPreference
+import androidx.preference.Preference
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso
+import androidx.test.espresso.Espresso.onData
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.swipeUp
+import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
+import androidx.test.espresso.matcher.PreferenceMatchers.withKey
+import androidx.test.espresso.matcher.RootMatchers.isDialog
+import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
@@ -18,6 +28,8 @@ import com.mbw101.lawn_companion.ui.SettingsActivity
 import com.mbw101.lawn_companion.utils.ApplicationPrefs
 import com.mbw101.lawn_companion.utils.Constants
 import junit.framework.Assert.assertEquals
+import org.hamcrest.CoreMatchers.*
+import org.hamcrest.Matchers
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -63,7 +75,7 @@ class TestSettingsScreen {
             .perform(
                 RecyclerViewActions.actionOnItem<RecyclerView.ViewHolder>(
                     hasDescendant(withText(R.string.createNewLocationSummary)),
-                    ViewActions.click()
+                    click()
                 ))
     }
 
@@ -86,6 +98,61 @@ class TestSettingsScreen {
         assertEquals(prefs.areNightsSelected(), false)
         tapNightsPreference()
         assertEquals(prefs.areNightsSelected(), true)
+    }
+
+    @Test
+    fun testWeatherFrequencyListPreference() {
+        // 15 minutes is selected as default
+        val prefs = ApplicationPrefs()
+
+        ensureWeatherFrequencyIsDisplayed()
+
+        tapWeatherFrequencyPreference()
+        pressItemInListPreferenceMenuWithString("15 minutes")
+        assertEquals(prefs.getWeatherCheckFrequency(), "15 minutes")
+        assertEquals(prefs.getWeatherCheckFrequencyInMillis(), Constants.FIFTEEN_MINUTES)
+        assertEquals(prefs.getWeatherCheckFrequencyInMillis(), (15 * 60 * 1000))
+
+        tapWeatherFrequencyPreference()
+        pressItemInListPreferenceMenuWithString("30 minutes")
+        assertEquals(prefs.getWeatherCheckFrequency(), "30 minutes")
+        assertEquals(prefs.getWeatherCheckFrequencyInMillis(), Constants.THIRTY_MINUTES)
+        assertEquals(prefs.getWeatherCheckFrequencyInMillis(), (30 * 60 * 1000))
+
+        tapWeatherFrequencyPreference()
+        pressItemInListPreferenceMenuWithString("1 hour")
+        assertEquals(prefs.getWeatherCheckFrequency(), "1 hour")
+        assertEquals(prefs.getWeatherCheckFrequencyInMillis(), Constants.ONE_HOUR)
+        assertEquals(prefs.getWeatherCheckFrequencyInMillis(), (60 * 60 * 1000))
+
+        tapWeatherFrequencyPreference()
+        pressItemInListPreferenceMenuWithString("2 hours")
+        assertEquals(prefs.getWeatherCheckFrequency(), "2 hours")
+        assertEquals(prefs.getWeatherCheckFrequencyInMillis(), Constants.TWO_HOURS)
+        assertEquals(prefs.getWeatherCheckFrequencyInMillis(), (120 * 60 * 1000))
+    }
+
+    private fun ensureWeatherFrequencyIsDisplayed() {
+        onView(withText(R.string.adjustWeatherCheckFrequencyTitle)).check(
+            matches(isDisplayed())
+        )
+    }
+
+    private fun pressItemInListPreferenceMenuWithString(text: String) {
+        onView(withText(text))
+            .inRoot(isDialog())
+            .check(matches(isDisplayed()))
+            .perform(click())
+    }
+
+    private fun tapWeatherFrequencyPreference() {
+        onView(withId(androidx.preference.R.id.recycler_view))
+            .perform(
+                RecyclerViewActions.actionOnItem<RecyclerView.ViewHolder>(
+                    hasDescendant(withText(R.string.adjustWeatherCheckFrequencyTitle)),
+                    click()
+                )
+            )
     }
 
     @Test
@@ -145,7 +212,7 @@ class TestSettingsScreen {
             .perform(
                 RecyclerViewActions.actionOnItem<RecyclerView.ViewHolder>(
                     hasDescendant(withText(title)),
-                    ViewActions.click()
+                    click()
                 )
             )
     }

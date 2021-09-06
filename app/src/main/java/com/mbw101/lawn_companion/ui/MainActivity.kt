@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
                 MyApplication.applicationContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
             // set notification
-            AlarmScheduler.scheduleAlarm(
+            AlarmScheduler.scheduleAlarmManager(
                 Calendar.getInstance().get(Calendar.DAY_OF_WEEK),
                 pendingIntent, alarmManager)
         }
@@ -152,13 +152,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun refreshActivity() {
         Toast.makeText(this, "Refreshing...", Toast.LENGTH_SHORT).show()
-//        val currentIntent = intent
-//        overridePendingTransition(0, 0);
-////        currentIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-//        finish();
-//        overridePendingTransition(0, 0);
-//        startActivity(currentIntent);
-        findViewById<ViewGroup>(android.R.id.content).invalidate();
+        findViewById<ViewGroup>(android.R.id.content).invalidate()
     }
 
     override fun onBackPressed() {

@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import com.mbw101.lawn_companion.R
+import com.mbw101.lawn_companion.utils.ApplicationPrefs
 import com.mbw101.lawn_companion.utils.Constants
 import java.util.*
 import java.util.Calendar.*
@@ -38,7 +39,7 @@ object AlarmScheduler {
     /**
      * Schedules a single alarm
      */
-    fun scheduleAlarm(dayOfWeek: Int, alarmIntent: PendingIntent?, alarmMgr: AlarmManager) {
+    fun scheduleAlarmManager(dayOfWeek: Int, alarmIntent: PendingIntent?, alarmMgr: AlarmManager) {
         // set up a Calendar object for the alarm's time
         val datetimeToAlarm = getInstance(Locale.getDefault())
         datetimeToAlarm.timeInMillis = System.currentTimeMillis()
@@ -54,8 +55,10 @@ object AlarmScheduler {
         val today = getInstance(Locale.getDefault())
         if (shouldNotifyToday(dayOfWeek, today, datetimeToAlarm)) { // schedules the alarm if so
             // setInexactRepeating saves battery life compared to setRepeating (synchronizes multiple notifications)
+            val prefs = ApplicationPrefs()
             alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP,
-                datetimeToAlarm.timeInMillis, 60 * 1000, alarmIntent) // (1000 * 60 * 60 * 24 * 7).toLong()
+                datetimeToAlarm.timeInMillis,
+                prefs.getWeatherCheckFrequencyInMillis().toLong(), alarmIntent)
             return
         }
     }
