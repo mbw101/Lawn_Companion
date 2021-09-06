@@ -156,6 +156,58 @@ class TestSettingsScreen {
     }
 
     @Test
+    fun testDesiredCutFrequency() {
+        // 1 week is the default
+        val DEFAULT_CUT_FREQUENCY_VALUE = 7
+        val prefs = ApplicationPrefs()
+
+        ensureDesiredCutIsDisplayed()
+
+        tapDesiredCutFrequency()
+        assertEquals(prefs.getDesiredCutFrequency(), DEFAULT_CUT_FREQUENCY_VALUE)
+
+        pressItemInListPreferenceMenuWithString("5 days")
+        assertEquals(prefs.getDesiredCutFrequency(), 5)
+
+        tapDesiredCutFrequency()
+        pressItemInListPreferenceMenuWithString("1 week")
+        assertEquals(prefs.getDesiredCutFrequency(), 7)
+
+        tapDesiredCutFrequency()
+        pressItemInListPreferenceMenuWithString("1.5 weeks (~10 days)")
+        assertEquals(prefs.getDesiredCutFrequency(), 10)
+
+        tapDesiredCutFrequency()
+        pressItemInListPreferenceMenuWithString("2 weeks")
+        assertEquals(prefs.getDesiredCutFrequency(), 14)
+
+        tapDesiredCutFrequency()
+        pressItemInListPreferenceMenuWithString("3 weeks")
+        assertEquals(prefs.getDesiredCutFrequency(), 21)
+
+        tapDesiredCutFrequency()
+        pressItemInListPreferenceMenuWithString("1 month")
+        assertEquals(prefs.getDesiredCutFrequency(), 30)
+    }
+
+    private fun ensureDesiredCutIsDisplayed() {
+        onView(withText(R.string.desiredCutFrequencyTitle)).check(
+            matches(isDisplayed())
+        )
+    }
+
+
+    private fun tapDesiredCutFrequency() {
+        onView(withId(androidx.preference.R.id.recycler_view))
+            .perform(
+                RecyclerViewActions.actionOnItem<RecyclerView.ViewHolder>(
+                    hasDescendant(withText(R.string.desiredCutFrequencyTitle)),
+                    click()
+                )
+            )
+    }
+
+    @Test
     fun testInTimeOfDayCheck() {
         // mornings, afternoons, and evenings are true by default while nights are false
         val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)

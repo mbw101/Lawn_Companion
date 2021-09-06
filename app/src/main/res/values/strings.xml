@@ -195,7 +195,11 @@
     <string name="adjustWeatherCheckFrequencySummary">The time between weather checks and potential cut notifications if the weather is suitable for cutting.</string>
     <string name="weatherCheckFrequencyKey">weatherCheckFrequency</string>
     <string name="weatherCheckFrequencyDefault">15 minutes</string>
-<!--    <string name="adjustWeatherCheckFrequencyTitle">Modify the frequency of weather checks</string>-->
+
+    <string name="desiredCutFrequencyTitle">Change the desired cut frequency</string>
+    <string name="desiredCutFrequencySummary">The time between the previous cut and the next cut. Sometimes, it won\'t be exact due to weather.</string>
+    <string name="desiredCutFrequencyKey">desiredCutFrequency</string>
+    <string name="desiredCutFrequencyDefault">7</string>
 
     <string name="notificationTimeOfDayCategoryTitle">Preferences for when notifications will be sent</string>
     <string name="morningTimeOfDayTitle">Morning (5am-12pm)</string>

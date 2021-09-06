@@ -16,6 +16,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.*
+import kotlin.concurrent.schedule
 
 /**
 Lawn Companion
@@ -56,7 +58,9 @@ class TestSaveLocationScreen {
     fun testAccept() {
         Espresso.onView(ViewMatchers.withId(R.id.acceptSaveLocationButton)).perform(ViewActions.click())
         // test to see if main activity appeared on screen
-        ensureMainActivityIsShown()
+        Timer().schedule(1000) {
+            ensureMainActivityIsShown()
+        }
     }
 
     @After

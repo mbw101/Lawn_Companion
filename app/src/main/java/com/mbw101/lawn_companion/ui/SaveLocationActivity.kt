@@ -1,12 +1,12 @@
 package com.mbw101.lawn_companion.ui
 
-import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.location.LocationListener
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.LawnLocation
@@ -17,6 +17,8 @@ import com.mbw101.lawn_companion.utils.LocationUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.util.*
+import kotlin.concurrent.schedule
 
 /**
 Lawn Companion
@@ -60,11 +62,15 @@ class SaveLocationActivity : AppCompatActivity(), LocationListener {
 
         acceptSaveButton.setOnClickListener {
             LocationUtils.requestLocation(this, this)
-            launchMainActivity()
+            Toast.makeText(this, "Saving lawn location...", Toast.LENGTH_LONG).show()
+
+            Timer().schedule(1000) {
+                launchMainActivity()
+            }   // do something after 1 second
         }
     }
 
-    private fun createCoroutineForDB(context: Context, location: Location) = runBlocking {
+    private fun createCoroutineForDB(location: Location) = runBlocking {
         launch (Dispatchers.IO) {
             performDatabaseWork(location)
         }
@@ -100,7 +106,7 @@ class SaveLocationActivity : AppCompatActivity(), LocationListener {
 
     override fun onLocationChanged(location: Location) {
         Log.d(Constants.TAG, "Location = $location")
-        createCoroutineForDB(this, location)
+        createCoroutineForDB(location)
     }
 
     override fun onProviderEnabled(provider: String) {}

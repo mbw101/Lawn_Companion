@@ -30,8 +30,9 @@ Date: 2021-07-01
 
 class AlarmReceiver : BroadcastReceiver() {
     companion object {
-        const val MINIMUM_DAYS_SINCE = 5 // if weather is suitable
-        const val DEFAULT_DAYS_SINCE = 7
+        // can start checking weather/cut suitability 2 days before there next desired cut frequency
+        // ex: 2 weeks but would start checking on the 12th day
+        const val DAYS_SINCE_DELTA = 2
     }
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -188,32 +189,37 @@ class AlarmReceiver : BroadcastReceiver() {
 
         val weatherData = weatherHttpResponse.body()
         Log.d(Constants.TAG, weatherData.toString())
+        val prefs = ApplicationPrefs()
         if (lastCut == null) {
-            // just suggest an appropriate cut (given weather  conditions) anytime since there is no cut registered
-            createNotificationIfSuitableConditions(weatherData, DEFAULT_DAYS_SINCE, context)
+            // just suggest an appropriate cut (given weather conditions) anytime since there is no cut registered
+            createNotificationIfSuitableConditions(weatherData, prefs.getDesiredCutFrequency(), context, prefs)
         } else {
             // calculate the time since last cut until now
             val daysSince = findDaysSince(lastCut)
-            createNotificationIfSuitableConditions(weatherData, daysSince, context)
+            createNotificationIfSuitableConditions(weatherData, daysSince, context, prefs)
         }
     }
 
     private fun createNotificationIfSuitableConditions(
         weatherData: WeatherResponse?,
         daysSince: Int,
-        context: Context
+        context: Context,
+        preferences: ApplicationPrefs
     ) {
-        if (hasSuitableConditionsForCutNotification(weatherData, daysSince)) {
+        if (hasSuitableConditionsForCutNotification(weatherData, daysSince, preferences)) {
             showNotification(context)
         }
     }
 
     private fun hasSuitableConditionsForCutNotification(
         weatherData: WeatherResponse?,
-        daysSince: Int
+        daysSince: Int,
+        preferences: ApplicationPrefs
     ): Boolean {
+        val minDaysSince = preferences.getDesiredCutFrequency() - DAYS_SINCE_DELTA
+
         // go through many checks and include the weather for determining the right time for a cut
-        if (daysSince < MINIMUM_DAYS_SINCE) {
+        if (daysSince < minDaysSince) {
             Log.d(Constants.TAG, "The minimum days since last cut has NOT been surpassed yet!")
             return false
         }
@@ -228,7 +234,7 @@ class AlarmReceiver : BroadcastReceiver() {
             return false
         }
 
-        return true // daysSince >= 7
+        return true
     }
 
     private fun findDaysSince(lastCut: CutEntry): Int {

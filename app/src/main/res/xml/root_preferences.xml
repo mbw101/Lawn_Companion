@@ -39,6 +39,15 @@
             android:entries="@array/weather_frequency_options"
             />
 
+        <ListPreference
+            android:key="@string/desiredCutFrequencyKey"
+            android:summary="@string/desiredCutFrequencySummary"
+            android:title="@string/desiredCutFrequencyTitle"
+            android:defaultValue="@string/desiredCutFrequencyDefault"
+            android:entryValues="@array/desired_cut_frequency_values"
+            android:entries="@array/desired_cut_frequency_options"
+            />
+
 <!--        <CheckBoxPreference android-->
 
     </PreferenceCategory>

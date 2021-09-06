@@ -52,6 +52,13 @@ class ApplicationPrefs {
         return preferences.getString(applicationContext.getString(R.string.weatherCheckFrequencyKey), defaultWeatherCheckFrequency)
     }
 
+    fun getDesiredCutFrequency(): Int {
+        val applicationContext = MyApplication.applicationContext()
+        val preferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        val defaultCutFrequency = "7"
+        return (preferences.getString(applicationContext.getString(R.string.desiredCutFrequencyKey), defaultCutFrequency)!!.toInt())
+    }
+
     // functions for the preference screen
     // these functions will use getDefaultSharedPreferences, so we can't use mPreferences
     fun isInCuttingSeason(): Boolean {
