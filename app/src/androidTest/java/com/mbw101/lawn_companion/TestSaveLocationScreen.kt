@@ -58,7 +58,7 @@ class TestSaveLocationScreen {
     fun testAccept() {
         Espresso.onView(ViewMatchers.withId(R.id.acceptSaveLocationButton)).perform(ViewActions.click())
         // test to see if main activity appeared on screen
-        Timer().schedule(1000) {
+        Timer().schedule(1500) {
             ensureMainActivityIsShown()
         }
     }

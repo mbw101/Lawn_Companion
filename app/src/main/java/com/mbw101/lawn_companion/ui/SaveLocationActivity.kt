@@ -64,7 +64,7 @@ class SaveLocationActivity : AppCompatActivity(), LocationListener {
             LocationUtils.requestLocation(this, this)
             Toast.makeText(this, "Saving lawn location...", Toast.LENGTH_LONG).show()
 
-            Timer().schedule(1000) {
+            Timer().schedule(1500) {
                 launchMainActivity()
             }   // do something after 1 second
         }
