@@ -239,5 +239,6 @@
     <!--    Dialog strings-->
     <string name="permissionDialogTitle">Access to background location</string>
     <string name="permissionDialogContent">Lawn Companion needs to access your location, so your lawn location can be saved!</string>
+    <string name="title_activity_set_dates">SetDatesActivity</string>
 
 </resources>

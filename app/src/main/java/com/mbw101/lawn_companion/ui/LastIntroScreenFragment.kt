@@ -8,6 +8,7 @@ Date: 2021-05-13
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -21,8 +22,13 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.mbw101.lawn_companion.R
+import com.mbw101.lawn_companion.database.AppDatabaseBuilder
+import com.mbw101.lawn_companion.database.CuttingSeasonDatesDao
 import com.mbw101.lawn_companion.utils.Constants
-
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import java.util.*
 
 private const val MY_PERMISSIONS_REQUEST_LOCATION = 100
 
@@ -35,8 +41,36 @@ class LastIntroScreenFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onClick(v: View?) {
+        saveDefaultCuttingSeasonDates()
         askForLocationPermissions()
     }
+
+    private fun saveDefaultCuttingSeasonDates(context: Context = MyApplication.applicationContext()) = runBlocking {
+        // Ensure dates dont' exist before inserting default dates
+        launch (Dispatchers.IO) {
+            val dao = AppDatabaseBuilder.getInstance(context).cuttingSeasonDatesDao()
+            if (hasNoDatesSetup(dao)) {
+                // Insert default dates into Dates DB
+                insertDefaultDates(dao)
+            }
+        }
+    }
+
+    private suspend fun insertDefaultDates(dao: CuttingSeasonDatesDao) {
+        val startDate = Calendar.getInstance()
+        val endDate = Calendar.getInstance()
+
+        startDate.set(Calendar.MONTH, Constants.DEFAULT_CUTTING_SEASON_START_MONTH - 1)
+        endDate.set(Calendar.MONTH, Constants.DEFAULT_CUTTING_SEASON_END_MONTH - 1)
+        startDate.set(Calendar.DAY_OF_MONTH, Constants.DEFAULT_CUTTING_SEASON_START_DAY)
+        endDate.set(Calendar.DAY_OF_MONTH, Constants.DEFAULT_CUTTING_SEASON_END_DAY)
+
+        dao.insertStartDate(startDate)
+        dao.insertEndDate(endDate)
+    }
+
+    private suspend fun hasNoDatesSetup(dao: CuttingSeasonDatesDao) =
+        !dao.hasStartDate() && !dao.hasEndDate()
 
     private fun askForLocationPermissions() {
         val result = activity?.let { thisActivity -> checkLocationPermissions(thisActivity) }

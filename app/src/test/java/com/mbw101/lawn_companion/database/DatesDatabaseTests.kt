@@ -23,7 +23,7 @@ Date: 2021-09-18
 class DatesDatabaseTests {
 
     private lateinit var db: AppDatabase
-    private lateinit var cuttingSeasonDao: CuttingSeasonDao
+    private lateinit var cuttingSeasonDatesDao: CuttingSeasonDatesDao
 
     @Before
     fun setUp() {
@@ -31,7 +31,7 @@ class DatesDatabaseTests {
         db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
             .allowMainThreadQueries()
             .build()
-        cuttingSeasonDao = db.cuttingSeasonDao()
+        cuttingSeasonDatesDao = db.cuttingSeasonDatesDao()
     }
 
     @Test
@@ -40,10 +40,44 @@ class DatesDatabaseTests {
         val (startDate: Calendar, endDate: Calendar) = setupStartEndCalendars()
         val (startVal, endVal) = buildDates(startDate, endDate)
 
-        cuttingSeasonDao.insertAll(startVal)
-        assertEquals(cuttingSeasonDao.getNumEntries(), 1)
-        cuttingSeasonDao.insertAll(endVal)
-        assertEquals(cuttingSeasonDao.getNumEntries(), 2)
+        cuttingSeasonDatesDao.insertAll(startVal)
+        assertEquals(cuttingSeasonDatesDao.getNumEntries(), 1)
+        cuttingSeasonDatesDao.insertAll(endVal)
+        assertEquals(cuttingSeasonDatesDao.getNumEntries(), 2)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testInsertStartDate() = runBlocking {
+        val (startDate: Calendar, endDate: Calendar) = setupStartEndCalendars()
+
+        cuttingSeasonDatesDao.insertStartDate(startDate)
+        assertEquals(cuttingSeasonDatesDao.getNumEntries(), 1)
+        assertEquals(cuttingSeasonDatesDao.getStartDate()!!.typeOfDate, DateType.START_DATE)
+        assertEquals(cuttingSeasonDatesDao.getStartDate()!!.calendarValue, startDate)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testInsertEndDate() = runBlocking {
+        val (startDate: Calendar, endDate: Calendar) = setupStartEndCalendars()
+
+        cuttingSeasonDatesDao.insertEndDate(endDate)
+        assertEquals(cuttingSeasonDatesDao.getNumEntries(), 1)
+        assertEquals(cuttingSeasonDatesDao.getEndDate()!!.typeOfDate, DateType.END_DATE)
+        assertEquals(cuttingSeasonDatesDao.getEndDate()!!.calendarValue, endDate)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testHasStartEndDates() = runBlocking {
+        val (startDate: Calendar, endDate: Calendar) = setupStartEndCalendars()
+
+        assertHasNoDates()
+        cuttingSeasonDatesDao.insertEndDate(endDate)
+        assertOnlyHasEndDate()
+        cuttingSeasonDatesDao.insertStartDate(startDate)
+        assertHasBothDates()
     }
 
     @Test
@@ -53,14 +87,80 @@ class DatesDatabaseTests {
         val (startVal, endVal) = buildDates(startDate, endDate)
         insertDatesIntoDB(startVal, endVal)
 
-        assertEquals(cuttingSeasonDao.getNumEntries(), 2)
-        cuttingSeasonDao.deleteAll()
-        assertEquals(cuttingSeasonDao.getNumEntries(), 0)
+        assertEquals(cuttingSeasonDatesDao.getNumEntries(), 2)
+        cuttingSeasonDatesDao.deleteAll()
+        assertEquals(cuttingSeasonDatesDao.getNumEntries(), 0)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testDeleteDateByType() = runBlocking {
+        val (startDate: Calendar, endDate: Calendar) = setupStartEndCalendars()
+        val (startVal, endVal) = buildDates(startDate, endDate)
+        insertDatesIntoDB(startVal, endVal)
+
+        assertEquals(cuttingSeasonDatesDao.getNumEntries(), 2)
+
+        cuttingSeasonDatesDao.deleteDateByType(DateType.START_DATE)
+        assertEquals(cuttingSeasonDatesDao.getNumEntries(), 1)
+        assertOnlyHasEndDate()
+
+        cuttingSeasonDatesDao.deleteDateByType(DateType.END_DATE)
+        assertEquals(cuttingSeasonDatesDao.getNumEntries(), 0)
+        assertHasNoDates()
+
+        insertDatesIntoDB(startVal, endVal)
+        cuttingSeasonDatesDao.deleteDateByType(DateType.END_DATE)
+        assertEquals(cuttingSeasonDatesDao.getNumEntries(), 1)
+        assertOnlyHasStartDate()
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testDateSpecificDeletion() = runBlocking {
+        val (startDate: Calendar, endDate: Calendar) = setupStartEndCalendars()
+        val (startVal, endVal) = buildDates(startDate, endDate)
+        insertDatesIntoDB(startVal, endVal)
+
+        assertEquals(cuttingSeasonDatesDao.getNumEntries(), 2)
+
+        cuttingSeasonDatesDao.deleteStartDate()
+        assertEquals(cuttingSeasonDatesDao.getNumEntries(), 1)
+        assertOnlyHasEndDate()
+
+        cuttingSeasonDatesDao.deleteEndDate()
+        assertEquals(cuttingSeasonDatesDao.getNumEntries(), 0)
+        assertHasNoDates()
+
+        insertDatesIntoDB(startVal, endVal)
+        cuttingSeasonDatesDao.deleteEndDate()
+        assertEquals(cuttingSeasonDatesDao.getNumEntries(), 1)
+        assertOnlyHasStartDate()
     }
 
     private suspend fun insertDatesIntoDB(startDate: CuttingSeasonDate, endDate: CuttingSeasonDate) {
-        cuttingSeasonDao.insertAll(startDate)
-        cuttingSeasonDao.insertAll(endDate)
+        cuttingSeasonDatesDao.insertAll(startDate)
+        cuttingSeasonDatesDao.insertAll(endDate)
+    }
+
+    private suspend fun assertHasNoDates() {
+        assertEquals(cuttingSeasonDatesDao.hasStartDate(), false)
+        assertEquals(cuttingSeasonDatesDao.hasEndDate(), false)
+    }
+
+    private suspend fun assertOnlyHasStartDate() {
+        assertEquals(cuttingSeasonDatesDao.hasEndDate(), false)
+        assertEquals(cuttingSeasonDatesDao.hasStartDate(), true)
+    }
+
+    private suspend fun assertOnlyHasEndDate() {
+        assertEquals(cuttingSeasonDatesDao.hasEndDate(), true)
+        assertEquals(cuttingSeasonDatesDao.hasStartDate(), false)
+    }
+
+    private suspend fun assertHasBothDates() {
+        assertEquals(cuttingSeasonDatesDao.hasStartDate(), true)
+        assertEquals(cuttingSeasonDatesDao.hasEndDate(), true)
     }
 
     @Test
@@ -70,10 +170,10 @@ class DatesDatabaseTests {
         val (startVal, endVal) = buildDates(startDate, endDate)
         insertDatesIntoDB(startVal, endVal)
 
-        val startDateCopy = cuttingSeasonDao.getDateByType(DateType.START_DATE)
-        val endDateCopy = cuttingSeasonDao.getDateByType(DateType.END_DATE)
-        val startCal = startDateCopy.calendarValue
-        val endCal = endDateCopy.calendarValue
+        val startDateCopy = cuttingSeasonDatesDao.getDateByType(DateType.START_DATE)
+        val endDateCopy = cuttingSeasonDatesDao.getDateByType(DateType.END_DATE)
+        val startCal = startDateCopy!!.calendarValue
+        val endCal = endDateCopy!!.calendarValue
         assertEquals(startCal, startDate)
         assertEquals(endCal, endDate)
     }
@@ -114,8 +214,8 @@ class DatesDatabaseTests {
         val (startVal, endVal) = buildDates(startDate, endDate)
         insertDatesIntoDB(startVal, endVal)
 
-        val startCal = cuttingSeasonDao.getStartDate().calendarValue
-        val endCal = cuttingSeasonDao.getEndDate().calendarValue
+        val startCal = cuttingSeasonDatesDao.getStartDate()!!.calendarValue
+        val endCal = cuttingSeasonDatesDao.getEndDate()!!.calendarValue
 
         assertEquals(startCal.get(Calendar.MONTH), Calendar.JANUARY)
         assertEquals(endCal.get(Calendar.MONTH), Calendar.SEPTEMBER)
@@ -130,8 +230,8 @@ class DatesDatabaseTests {
 
         val (startVal, endVal) = buildDates(startDate, endDate)
         insertDatesIntoDB(startVal, endVal)
-        assertEquals(cuttingSeasonDao.isInCuttingSeasonDates(), true)
-        assertEquals(cuttingSeasonDao.isOutsideOfCuttingSeasonDates(), false)
+        assertEquals(cuttingSeasonDatesDao.isInCuttingSeasonDates(), true)
+        assertEquals(cuttingSeasonDatesDao.isOutsideOfCuttingSeasonDates(), false)
     }
 
     @Test
@@ -141,8 +241,8 @@ class DatesDatabaseTests {
 
         val (startVal, endVal) = buildDates(startDate, endDate)
         insertDatesIntoDB(startVal, endVal)
-        assertEquals(cuttingSeasonDao.isOutsideOfCuttingSeasonDates(), true)
-        assertEquals(cuttingSeasonDao.isInCuttingSeasonDates(), false)
+        assertEquals(cuttingSeasonDatesDao.isOutsideOfCuttingSeasonDates(), true)
+        assertEquals(cuttingSeasonDatesDao.isInCuttingSeasonDates(), false)
     }
 
     @After

@@ -16,7 +16,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Lawn_Companion">
-        <activity android:name=".ui.SaveLocationActivity"></activity>
+        <activity
+            android:name=".ui.SetDatesActivity"
+            android:label="@string/title_activity_set_dates"
+            android:theme="@style/Theme.Lawn_Companion.NoActionBar"></activity>
+        <activity android:name=".ui.SaveLocationActivity" />
         <activity
             android:name=".ui.AddCutActivity"
             android:label="@string/addCutTitle"

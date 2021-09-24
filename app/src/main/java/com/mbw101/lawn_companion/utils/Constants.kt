@@ -45,4 +45,10 @@ object Constants {
     const val THIRTY_MINUTES = 2 * FIFTEEN_MINUTES
     const val ONE_HOUR = 2 * THIRTY_MINUTES
     const val TWO_HOURS = 2 * ONE_HOUR
+
+    // default cutting season dates
+    const val DEFAULT_CUTTING_SEASON_START_MONTH = 1
+    const val DEFAULT_CUTTING_SEASON_START_DAY = 1
+    const val DEFAULT_CUTTING_SEASON_END_MONTH = 12
+    const val DEFAULT_CUTTING_SEASON_END_DAY = 31
 }

@@ -1,5 +1,7 @@
 package com.mbw101.lawn_companion
 
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -12,9 +14,12 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
+import com.mbw101.lawn_companion.database.*
 import com.mbw101.lawn_companion.ui.IntroActivity
 import com.mbw101.lawn_companion.ui.MainActivity
 import com.mbw101.lawn_companion.ui.SaveLocationActivity
+import junit.framework.Assert.assertEquals
+import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matchers.not
 import org.junit.After
@@ -22,6 +27,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.*
 
 /**
 Lawn Companion
@@ -38,10 +44,21 @@ class TestFirstUse {
     var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION,
         android.Manifest.permission.ACCESS_COARSE_LOCATION)
 
+    private lateinit var db: AppDatabase
+    private lateinit var cuttingSeasonDatesDao: CuttingSeasonDatesDao
+
     @Before
     fun setup() {
         Intents.init()
+        setupDatesDB()
     }
+
+    private fun setupDatesDB() {
+        val context: Context = ApplicationProvider.getApplicationContext<Context>()
+        db = AppDatabaseBuilder.getInstance(context)
+        cuttingSeasonDatesDao = db.cuttingSeasonDatesDao()
+    }
+
 
     @Test
     fun testHappyPathOfAppNavigation() {
@@ -52,6 +69,7 @@ class TestFirstUse {
         pressHomeNavButton()
         ensureMainActivityIsShown()
         compareHappyExpectedOutputs()
+        ensureHasDefaultDatesSaved()
     }
 
     private fun pressHomeNavButton() {
@@ -66,6 +84,7 @@ class TestFirstUse {
         pressDenySaveLocation()
         ensureMainActivityIsShown()
         compareNoLocationExpectedOutputs()
+        ensureHasDefaultDatesSaved()
     }
 
     private fun pressNavButtons() {
@@ -106,6 +125,19 @@ class TestFirstUse {
         onView(ViewMatchers.withId(R.id.createLawnLocationButton)).check(
             matches(not(isDisplayed()))
         )
+    }
+
+    private fun ensureHasDefaultDatesSaved() = runBlocking {
+        assertEquals(cuttingSeasonDatesDao.hasStartDate(), true)
+        assertEquals(cuttingSeasonDatesDao.hasEndDate(), true)
+
+        val startDate = cuttingSeasonDatesDao.getStartDate()
+        val endDate = cuttingSeasonDatesDao.getEndDate()
+
+        assertEquals(startDate!!.calendarValue.get(Calendar.MONTH), Calendar.JANUARY)
+        assertEquals(startDate.calendarValue.get(Calendar.DAY_OF_MONTH), 1)
+        assertEquals(endDate!!.calendarValue.get(Calendar.MONTH), Calendar.DECEMBER)
+        assertEquals(endDate.calendarValue.get(Calendar.DAY_OF_MONTH), 31)
     }
 
     private fun compareNoLocationExpectedOutputs() {

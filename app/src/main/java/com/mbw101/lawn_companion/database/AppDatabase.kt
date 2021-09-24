@@ -16,5 +16,5 @@ Date: 2021-05-22
 abstract class AppDatabase : RoomDatabase() {
     abstract fun cutEntryDao(): CutEntryDAO
     abstract fun lawnLocationDao(): LawnLocationDAO
-    abstract fun cuttingSeasonDao(): CuttingSeasonDao
+    abstract fun cuttingSeasonDatesDao(): CuttingSeasonDatesDao
 }
