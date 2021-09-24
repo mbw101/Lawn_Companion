@@ -35,6 +35,7 @@ class DatesDatabaseTests {
     }
 
     @Test
+    @Throws(Exception::class)
     fun testInsertAll() = runBlocking {
         val (startDate: Calendar, endDate: Calendar) = setupStartEndCalendars()
         val (startVal, endVal) = buildDates(startDate, endDate)
@@ -46,6 +47,7 @@ class DatesDatabaseTests {
     }
 
     @Test
+    @Throws(Exception::class)
     fun testDeletion() = runBlocking {
         val (startDate: Calendar, endDate: Calendar) = setupStartEndCalendars()
         val (startVal, endVal) = buildDates(startDate, endDate)
@@ -62,6 +64,7 @@ class DatesDatabaseTests {
     }
 
     @Test
+    @Throws(Exception::class)
     fun testCalendarFunctionality() = runBlocking {
         val (startDate: Calendar, endDate: Calendar) = setupStartEndCalendars()
         val (startVal, endVal) = buildDates(startDate, endDate)
@@ -95,7 +98,17 @@ class DatesDatabaseTests {
         return Pair(startDate, endDate)
     }
 
+    private fun setupOutsideStartEndCalendars(): Pair<Calendar, Calendar> {
+        val startDate: Calendar = Calendar.getInstance()
+        val endDate: Calendar = Calendar.getInstance()
+
+        startDate.add(Calendar.DAY_OF_MONTH, 1)
+        endDate.add(Calendar.DAY_OF_MONTH, 2)
+        return Pair(startDate, endDate)
+    }
+
     @Test
+    @Throws(Exception::class)
     fun testGetStartAndEndDates() = runBlocking {
         val (startDate: Calendar, endDate: Calendar) = setupStartEndCalendars()
         val (startVal, endVal) = buildDates(startDate, endDate)
@@ -111,8 +124,25 @@ class DatesDatabaseTests {
     }
 
     @Test
-    fun testCheckInCuttingSeason() {
-        // TODO: Test the inside cutting season and outside cutting season functions
+    @Throws(Exception::class)
+    fun testInCuttingSeason() = runBlocking {
+        val (startDate: Calendar, endDate: Calendar) = setupStartEndCalendars()
+
+        val (startVal, endVal) = buildDates(startDate, endDate)
+        insertDatesIntoDB(startVal, endVal)
+        assertEquals(cuttingSeasonDao.isInCuttingSeasonDates(), true)
+        assertEquals(cuttingSeasonDao.isOutsideOfCuttingSeasonDates(), false)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testOutsideCuttingSeason() = runBlocking {
+        val (startDate: Calendar, endDate: Calendar) = setupOutsideStartEndCalendars()
+
+        val (startVal, endVal) = buildDates(startDate, endDate)
+        insertDatesIntoDB(startVal, endVal)
+        assertEquals(cuttingSeasonDao.isOutsideOfCuttingSeasonDates(), true)
+        assertEquals(cuttingSeasonDao.isInCuttingSeasonDates(), false)
     }
 
     @After

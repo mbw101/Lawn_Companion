@@ -22,12 +22,14 @@ interface CuttingSeasonDao {
     suspend fun getEndDate(): CuttingSeasonDate = getDateByType(DateType.END_DATE)
 
     suspend fun isInCuttingSeasonDates(): Boolean {
-        // TODO: Look into determining if the current date is within the bounds
-        val currentDate = Calendar.getInstance()
-        return false
+        val currentDate: Date = Calendar.getInstance().time
+        val startDate = getStartDate().calendarValue.time
+        val endDate = getEndDate().calendarValue.time
+
+        return (currentDate.after(startDate) && currentDate.before(endDate))
     }
 
-    suspend fun outsideOfCuttingSeasonDates(): Boolean {
+    suspend fun isOutsideOfCuttingSeasonDates(): Boolean {
         return !isInCuttingSeasonDates()
     }
 

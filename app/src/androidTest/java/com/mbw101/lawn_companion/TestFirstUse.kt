@@ -48,7 +48,7 @@ class TestFirstUse {
         pressNavButtons()
         ensureSaveActivityIsShown()
         pressSaveLocation()
-        Thread.sleep(1000)
+        Thread.sleep(1500)
         pressHomeNavButton()
         ensureMainActivityIsShown()
         compareHappyExpectedOutputs()
