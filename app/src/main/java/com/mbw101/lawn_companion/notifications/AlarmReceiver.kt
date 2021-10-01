@@ -8,6 +8,7 @@ import android.net.NetworkInfo
 import android.util.Log
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.*
+import com.mbw101.lawn_companion.ui.MyApplication
 import com.mbw101.lawn_companion.utils.ApplicationPrefs
 import com.mbw101.lawn_companion.utils.Constants
 import com.mbw101.lawn_companion.utils.UtilFunctions
@@ -58,7 +59,8 @@ class AlarmReceiver : BroadcastReceiver() {
     private fun preferencesHaveHappyConditions(preferences: ApplicationPrefs): Boolean {
         if (!preferences.isInTimeOfDay()
             || !notificationsAreEnabled(preferences)
-            || !isInCuttingSeason(preferences)
+            || !isCuttingSeasonTurnedOff(preferences)
+            || !isInCuttingSeason()
         ) {
             Log.d(Constants.TAG, "The happy conditions have not been met! Check settings configuration!")
             return false
@@ -87,8 +89,23 @@ class AlarmReceiver : BroadcastReceiver() {
         return preferences.isNotificationsEnabled()
     }
 
-    private fun isInCuttingSeason(preferences: ApplicationPrefs): Boolean {
+    private fun isCuttingSeasonTurnedOff(preferences: ApplicationPrefs): Boolean {
         return preferences.isInCuttingSeason()
+    }
+
+    private fun isInCuttingSeason(): Boolean {
+        var inCuttingSeason = false
+        val db = AppDatabaseBuilder.getInstance(MyApplication.applicationContext())
+        val cuttingSeasonDatesDao = db.cuttingSeasonDatesDao()
+
+        // access result from DB function in a different coroutine scope
+        runBlocking {
+            launch (Dispatchers.IO) {
+                inCuttingSeason = cuttingSeasonDatesDao.isInCuttingSeasonDates()
+            }
+        }
+
+        return inCuttingSeason
     }
 
     private fun isDataUseEnabled(preferences: ApplicationPrefs): Boolean {

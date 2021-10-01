@@ -66,7 +66,7 @@ class SaveLocationActivity : AppCompatActivity(), LocationListener {
 
             Timer().schedule(1500) {
                 launchMainActivity()
-            }   // do something after 1 second
+            }
         }
     }
 

@@ -193,7 +193,7 @@ class DatesDatabaseTests {
 
         startDate.set(Calendar.MONTH, Calendar.JANUARY)
         startDate.set(Calendar.DAY_OF_MONTH, 1)
-        endDate.set(Calendar.MONTH, Calendar.SEPTEMBER)
+        endDate.set(Calendar.MONTH, Calendar.OCTOBER)
         endDate.set(Calendar.DAY_OF_MONTH, 25)
         return Pair(startDate, endDate)
     }
@@ -218,7 +218,7 @@ class DatesDatabaseTests {
         val endCal = cuttingSeasonDatesDao.getEndDate()!!.calendarValue
 
         assertEquals(startCal.get(Calendar.MONTH), Calendar.JANUARY)
-        assertEquals(endCal.get(Calendar.MONTH), Calendar.SEPTEMBER)
+        assertEquals(endCal.get(Calendar.MONTH), Calendar.OCTOBER) // this has to change with the other end date mention
         assertEquals(startCal.get(Calendar.DAY_OF_MONTH), 1)
         assertEquals(endCal.get(Calendar.DAY_OF_MONTH), 25)
     }

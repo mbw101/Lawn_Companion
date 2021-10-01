@@ -241,4 +241,13 @@
     <string name="permissionDialogContent">Lawn Companion needs to access your location, so your lawn location can be saved!</string>
     <string name="title_activity_set_dates">SetDatesActivity</string>
 
+    <!-- SaveDatesActivity strings   -->
+    <string name="saveDatesActivityTitle">Modify cutting season dates</string>
+    <string name="saveDatesButtonText">Save Dates</string>
+    <string name="saveStartDate">Start Date:</string>
+    <string name="saveEndDate">End Date:</string>
+    <string name="startDateEditTextDefault">Enter start date here</string>
+    <string name="endDateEditTextDefault">Enter end date here</string>
+    <string name="datePlaceholder">%1$d/%2$d/%3$d</string>
+
 </resources>
