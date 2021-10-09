@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.AppDatabaseBuilder
 import com.mbw101.lawn_companion.database.CuttingSeasonDatesDao
@@ -35,8 +36,51 @@ class SetDatesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_set_dates)
         init()
-        setListeners()
         setupDB()
+        setupExistingDates()
+        setListeners()
+    }
+
+
+    private fun setupExistingDates() {
+        // Access the start and end dates from the DB
+        Toast.makeText(this, "Accessing dates...", Toast.LENGTH_SHORT).show()
+
+        var startDate: Calendar? = null
+        var endDate: Calendar? = null
+        runBlocking {
+            launch (Dispatchers.IO) { // lifecycleScope.launch(Dispatchers.Default)
+                startDate = cuttingSeasonDatesDao.getStartDate()?.calendarValue
+                endDate = cuttingSeasonDatesDao.getEndDate()?.calendarValue
+            }
+        }
+
+        Timer().schedule(1500) {
+            if (startDate != null && endDate != null) {
+//                startDateSelector.text =
+//                    getString(
+//                        R.string.datePlaceholder,
+//                        startDate!!.get(Calendar.DAY_OF_MONTH),
+//                        startDate!!.get(Calendar.MONTH) + 1,
+//                        startDate!!.get(Calendar.YEAR)
+//                    )
+//
+//                endDateSelector.text =
+//                    getString(
+//                        R.string.datePlaceholder,
+//                        endDate!!.get(Calendar.DAY_OF_MONTH),
+//                        endDate!!.get(Calendar.MONTH) + 1,
+//                        endDate!!.get(Calendar.YEAR)
+//                    )
+                endDateSelector.text = "31/12/2021"
+            }
+            else {
+                endDateSelector.text = "31/12/2021"
+            }
+
+            startDateSelector.invalidate()
+            endDateSelector.invalidate()
+        }
     }
 
     private fun init() {
@@ -125,6 +169,4 @@ class SetDatesActivity : AppCompatActivity() {
         startActivity(intent)
         finish()
     }
-
-
 }
