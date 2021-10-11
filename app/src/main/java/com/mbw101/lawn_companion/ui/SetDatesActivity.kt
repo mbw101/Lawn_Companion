@@ -3,14 +3,15 @@ package com.mbw101.lawn_companion.ui
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.widget.*
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import com.mbw101.lawn_companion.R
-import com.mbw101.lawn_companion.database.AppDatabaseBuilder
+import com.mbw101.lawn_companion.database.CuttingSeasonDateRepository
 import com.mbw101.lawn_companion.database.CuttingSeasonDatesDao
-import com.mbw101.lawn_companion.utils.Constants
+import com.mbw101.lawn_companion.database.setupCuttingSeasonDateRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -31,6 +32,9 @@ class SetDatesActivity : AppCompatActivity() {
     private lateinit var currentStartDate: Calendar
     private lateinit var currentEndDate: Calendar
     private lateinit var cuttingSeasonDatesDao: CuttingSeasonDatesDao
+    private lateinit var cuttingSeasonDateRepository: CuttingSeasonDateRepository
+    var startDate: Calendar? = null
+    var endDate: Calendar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,12 +50,14 @@ class SetDatesActivity : AppCompatActivity() {
         // Access the start and end dates from the DB
         Toast.makeText(this, "Accessing dates...", Toast.LENGTH_SHORT).show()
 
-        var startDate: Calendar? = null
-        var endDate: Calendar? = null
+        startDate = null
+        endDate = null
         runBlocking {
             launch (Dispatchers.IO) { // lifecycleScope.launch(Dispatchers.Default)
-                startDate = cuttingSeasonDatesDao.getStartDate()?.calendarValue
-                endDate = cuttingSeasonDatesDao.getEndDate()?.calendarValue
+//                startDate = cuttingSeasonDatesDao.getStartDate()?.calendarValue
+//                endDate = cuttingSeasonDatesDao.getEndDate()?.calendarValue
+                startDate = cuttingSeasonDateRepository.getStartDate()?.calendarValue
+                endDate = cuttingSeasonDateRepository.getEndDate()?.calendarValue
             }
         }
 
@@ -156,8 +162,9 @@ class SetDatesActivity : AppCompatActivity() {
     }
 
     private fun setupDB() {
-        val db = AppDatabaseBuilder.getInstance(MyApplication.applicationContext())
-        cuttingSeasonDatesDao = db.cuttingSeasonDatesDao()
+        cuttingSeasonDateRepository = setupCuttingSeasonDateRepository(this)
+//        val db = AppDatabaseBuilder.getInstance(MyApplication.applicationContext())
+//        cuttingSeasonDatesDao = db.cuttingSeasonDatesDao()
     }
 
     override fun onBackPressed() {
