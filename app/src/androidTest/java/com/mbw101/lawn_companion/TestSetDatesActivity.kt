@@ -2,9 +2,7 @@ package com.mbw101.lawn_companion
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.widget.DatePicker
-import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
@@ -14,20 +12,21 @@ import androidx.test.espresso.contrib.PickerActions
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.rule.ActivityTestRule
 import com.mbw101.lawn_companion.database.AppDatabase
 import com.mbw101.lawn_companion.database.AppDatabaseBuilder
 import com.mbw101.lawn_companion.database.CuttingSeasonDatesDao
 import com.mbw101.lawn_companion.ui.SetDatesActivity
 import com.mbw101.lawn_companion.ui.SettingsActivity
-import com.mbw101.lawn_companion.utils.Constants
-import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertNotNull
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.Matchers
 import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import java.util.*
 
@@ -38,9 +37,9 @@ Created by Malcolm Wright
 Date: 2021-09-24
  */
 class TestSetDatesActivity {
-//    @get:Rule
-//    val setDatesActivityTestRule: ActivityTestRule<SetDatesActivity> = ActivityTestRule(
-//        SetDatesActivity::class.java, true, false) // makes it so the activity doesn't start immediately when a test case is ran , true, false
+    @get:Rule
+    val setDatesActivityTestRule: ActivityTestRule<SetDatesActivity> = ActivityTestRule(
+        SetDatesActivity::class.java, true, false) // makes it so the activity doesn't start immediately when a test case is ran , true, false
     private lateinit var db: AppDatabase
     private lateinit var cuttingSeasonDatesDao: CuttingSeasonDatesDao
     private lateinit var customIntent: Intent
@@ -61,7 +60,7 @@ class TestSetDatesActivity {
 
     @Test
     fun testBackButton() {
-//        setDatesActivityTestRule.launchActivity(customIntent)
+        setDatesActivityTestRule.launchActivity(customIntent)
         Thread.sleep(500)
         // hit back icon
         onView(withId(R.id.backIcon)).perform(click())
@@ -72,7 +71,7 @@ class TestSetDatesActivity {
     @Test
     // the android back button
     fun testPhysicalBackButton() {
-//        setDatesActivityTestRule.launchActivity(customIntent)
+        setDatesActivityTestRule.launchActivity(customIntent)
         Thread.sleep(500)
         pressBack()
         Intents.intended(IntentMatchers.hasComponent(SettingsActivity::class.java.name))
@@ -80,7 +79,7 @@ class TestSetDatesActivity {
 
     @Test
     fun testPickingDates() {
-//        setDatesActivityTestRule.launchActivity(customIntent)
+        setDatesActivityTestRule.launchActivity(customIntent)
         Thread.sleep(500)
         pickDateTest(R.id.startDateSelector)
         pickDateTest(R.id.endDateSelector)
@@ -100,7 +99,7 @@ class TestSetDatesActivity {
 
     @Test
     fun testSaveButton() {
-//        setDatesActivityTestRule.launchActivity(customIntent)
+        setDatesActivityTestRule.launchActivity(customIntent)
         Thread.sleep(500)
         onView(withId(R.id.startDateSelector)).check(matches(isDisplayed()))
         onView(withId(R.id.startDateSelector)).perform(click())
@@ -133,9 +132,6 @@ class TestSetDatesActivity {
 
     @Test
     fun testStartEndDateTextViews() {
-        // TODO: Figure out how to insert 2 dates before the test is ran and before the activity is shown
-
-        // TODO: Ensure they have the default saved (or at least the ones saved from the DB)
         runBlocking {
             launch (Dispatchers.IO) {
                 val startDate = Calendar.getInstance()
@@ -148,26 +144,25 @@ class TestSetDatesActivity {
 
                 cuttingSeasonDatesDao.insertStartDate(startDate)
                 cuttingSeasonDatesDao.insertEndDate(endDate)
-
-                val numEntries = cuttingSeasonDatesDao.getNumEntries()
-                Log.d(Constants.TAG, numEntries.toString())
             }
         }
 
-        Thread.sleep(2000)
+        setDatesActivityTestRule.launchActivity(customIntent)
 
-//        setDatesActivityTestRule.launchActivity(customIntent)
-        val scenario = ActivityScenario.launch(SetDatesActivity::class.java)
-
-        Thread.sleep(2000)
+        // ensure calendars have expected values
+        val startDate = setDatesActivityTestRule.activity.getStartDate()
+        val endDate = setDatesActivityTestRule.activity.getEndDate()
+        assertNotNull(startDate)
+        assertNotNull(endDate)
+        assertEquals(startDate!!.get(Calendar.MONTH), Calendar.JANUARY)
+        assertEquals(startDate.get(Calendar.MONTH), Calendar.JANUARY)
+        assertEquals(endDate!!.get(Calendar.MONTH), Calendar.DECEMBER)
+        assertEquals(endDate.get(Calendar.MONTH), Calendar.DECEMBER)
 
         // Ensure the textview matches proper format
-        scenario.onActivity { activity ->
-            assertNotNull(activity.startDate)
-            assertNotNull(activity.endDate)
-        }
-//        onView(withId(R.id.startDateSelector)).check(matches(withText("1/1/2021")))
-//        onView(withId(R.id.endDateSelector)).check(matches(withText("31/12/2021")))
+//        Thread.sleep(250)
+        onView(withId(R.id.startDateSelector)).check(matches(withText("1/1/2021")))
+        onView(withId(R.id.endDateSelector)).check(matches(withText("31/12/2021")))
     }
 
     @After

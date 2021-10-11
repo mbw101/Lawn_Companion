@@ -10,7 +10,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.CuttingSeasonDateRepository
-import com.mbw101.lawn_companion.database.CuttingSeasonDatesDao
 import com.mbw101.lawn_companion.database.setupCuttingSeasonDateRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,10 +30,9 @@ class SetDatesActivity : AppCompatActivity() {
     private lateinit var endDateSelector: TextView
     private lateinit var currentStartDate: Calendar
     private lateinit var currentEndDate: Calendar
-    private lateinit var cuttingSeasonDatesDao: CuttingSeasonDatesDao
     private lateinit var cuttingSeasonDateRepository: CuttingSeasonDateRepository
-    var startDate: Calendar? = null
-    var endDate: Calendar? = null
+    private var startDate: Calendar? = null
+    private var endDate: Calendar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,39 +51,34 @@ class SetDatesActivity : AppCompatActivity() {
         startDate = null
         endDate = null
         runBlocking {
-            launch (Dispatchers.IO) { // lifecycleScope.launch(Dispatchers.Default)
-//                startDate = cuttingSeasonDatesDao.getStartDate()?.calendarValue
-//                endDate = cuttingSeasonDatesDao.getEndDate()?.calendarValue
+            launch (Dispatchers.IO) {
                 startDate = cuttingSeasonDateRepository.getStartDate()?.calendarValue
                 endDate = cuttingSeasonDateRepository.getEndDate()?.calendarValue
-            }
-        }
 
-        Timer().schedule(1500) {
-            if (startDate != null && endDate != null) {
-//                startDateSelector.text =
-//                    getString(
-//                        R.string.datePlaceholder,
-//                        startDate!!.get(Calendar.DAY_OF_MONTH),
-//                        startDate!!.get(Calendar.MONTH) + 1,
-//                        startDate!!.get(Calendar.YEAR)
-//                    )
-//
-//                endDateSelector.text =
-//                    getString(
-//                        R.string.datePlaceholder,
-//                        endDate!!.get(Calendar.DAY_OF_MONTH),
-//                        endDate!!.get(Calendar.MONTH) + 1,
-//                        endDate!!.get(Calendar.YEAR)
-//                    )
-                endDateSelector.text = "31/12/2021"
-            }
-            else {
-                endDateSelector.text = "31/12/2021"
-            }
+                // timer runs on a different thread than UI, so we need this UI updating code to run on the UI thread
+                runOnUiThread {
+                    if (startDate != null && endDate != null) {
+                        startDateSelector.text =
+                            getString(
+                                R.string.datePlaceholder,
+                                startDate!!.get(Calendar.DAY_OF_MONTH).toString(),
+                                (startDate!!.get(Calendar.MONTH) + 1).toString(),
+                                startDate!!.get(Calendar.YEAR).toString()
+                            )
 
-            startDateSelector.invalidate()
-            endDateSelector.invalidate()
+                        endDateSelector.text =
+                            getString(
+                                R.string.datePlaceholder,
+                                endDate!!.get(Calendar.DAY_OF_MONTH).toString(),
+                                (endDate!!.get(Calendar.MONTH) + 1).toString(),
+                                endDate!!.get(Calendar.YEAR).toString()
+                            )
+                    }
+
+                    startDateSelector.invalidate()
+                    endDateSelector.invalidate()
+                }
+            }
         }
     }
 
@@ -108,11 +101,11 @@ class SetDatesActivity : AppCompatActivity() {
             val year: Int = cal.get(Calendar.YEAR)
             // date picker dialog
             val picker = DatePickerDialog(this,
-                { view, year, monthOfYear, dayOfMonth ->
+                { view, yearPicked, monthOfYear, dayOfMonth ->
                     startDateSelector.text =
-                        getString(R.string.datePlaceholder, dayOfMonth, monthOfYear + 1, year)
+                        getString(R.string.datePlaceholder, dayOfMonth.toString(), (monthOfYear + 1).toString(), yearPicked.toString())
                     currentStartDate = Calendar.getInstance()
-                    currentStartDate.set(Calendar.YEAR, year)
+                    currentStartDate.set(Calendar.YEAR, yearPicked)
                     currentStartDate.set(Calendar.MONTH, monthOfYear)
                     currentStartDate.set(Calendar.DAY_OF_MONTH, dayOfMonth)
                 },
@@ -130,11 +123,11 @@ class SetDatesActivity : AppCompatActivity() {
             val year: Int = cal.get(Calendar.YEAR)
             // date picker dialog
             val picker = DatePickerDialog(this,
-                { view, year, monthOfYear, dayOfMonth ->
+                { view, yearPicked, monthOfYear, dayOfMonth ->
                     endDateSelector.text =
-                        getString(R.string.datePlaceholder, dayOfMonth, monthOfYear + 1, year)
+                        getString(R.string.datePlaceholder, dayOfMonth.toString(), (monthOfYear + 1).toString(), yearPicked.toString())
                     currentEndDate = Calendar.getInstance()
-                    currentEndDate.set(Calendar.YEAR, year)
+                    currentEndDate.set(Calendar.YEAR, yearPicked)
                     currentEndDate.set(Calendar.MONTH, monthOfYear)
                     currentEndDate.set(Calendar.DAY_OF_MONTH, dayOfMonth)
                 },
@@ -149,8 +142,8 @@ class SetDatesActivity : AppCompatActivity() {
             // save start date into DB
             runBlocking {
                 launch (Dispatchers.IO) {
-                    cuttingSeasonDatesDao.insertStartDate(currentStartDate)
-                    cuttingSeasonDatesDao.insertEndDate(currentEndDate)
+                    cuttingSeasonDateRepository.insertStartDate(currentStartDate)
+                    cuttingSeasonDateRepository.insertEndDate(currentEndDate)
                 }
             }
 
@@ -163,8 +156,6 @@ class SetDatesActivity : AppCompatActivity() {
 
     private fun setupDB() {
         cuttingSeasonDateRepository = setupCuttingSeasonDateRepository(this)
-//        val db = AppDatabaseBuilder.getInstance(MyApplication.applicationContext())
-//        cuttingSeasonDatesDao = db.cuttingSeasonDatesDao()
     }
 
     override fun onBackPressed() {
@@ -176,4 +167,7 @@ class SetDatesActivity : AppCompatActivity() {
         startActivity(intent)
         finish()
     }
+
+    fun getStartDate(): Calendar? = startDate
+    fun getEndDate(): Calendar? = endDate
 }

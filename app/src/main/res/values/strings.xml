@@ -248,6 +248,6 @@
     <string name="saveEndDate">End Date:</string>
     <string name="startDateEditTextDefault">Enter start date here</string>
     <string name="endDateEditTextDefault">Enter end date here</string>
-    <string name="datePlaceholder">%1$d/%2$d/%3$d</string>
+    <string name="datePlaceholder">%1$s/%2$s/%3$s</string>
 
 </resources>
