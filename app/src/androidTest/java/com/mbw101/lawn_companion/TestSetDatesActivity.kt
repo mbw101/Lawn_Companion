@@ -44,6 +44,24 @@ class TestSetDatesActivity {
     private lateinit var cuttingSeasonDatesDao: CuttingSeasonDatesDao
     private lateinit var customIntent: Intent
 
+    companion object {
+        /***
+         * Assumes the right date text view is picked. So,
+         * the start or end date edit text views will need to be
+         * pressed before calling this method.
+         */
+        fun setDate(year: Int, monthOfYear: Int, dayOfMonth: Int) {
+            onView(withClassName(Matchers.equalTo(DatePicker::class.java.name))).perform(
+                PickerActions.setDate(
+                    year,
+                    monthOfYear,
+                    dayOfMonth
+                )
+            )
+            onView(withId(android.R.id.button1)).perform(click())
+        }
+    }
+
     @Before
     fun setup() {
         Intents.init()
@@ -160,7 +178,7 @@ class TestSetDatesActivity {
         assertEquals(endDate.get(Calendar.MONTH), Calendar.DECEMBER)
 
         // Ensure the textview matches proper format
-//        Thread.sleep(250)
+        Thread.sleep(250)
         onView(withId(R.id.startDateSelector)).check(matches(withText("1/1/2021")))
         onView(withId(R.id.endDateSelector)).check(matches(withText("31/12/2021")))
     }
@@ -168,21 +186,5 @@ class TestSetDatesActivity {
     @After
     fun release() {
         Intents.release()
-    }
-
-    /***
-     * Assumes the right date text view is picked. So,
-     * the start or end date edit text views will need to be
-     * pressed before calling this method.
-     */
-    private fun setDate(year: Int, monthOfYear: Int, dayOfMonth: Int) {
-        onView(withClassName(Matchers.equalTo(DatePicker::class.java.name))).perform(
-            PickerActions.setDate(
-                year,
-                monthOfYear,
-                dayOfMonth
-            )
-        )
-        onView(withId(android.R.id.button1)).perform(click())
     }
 }

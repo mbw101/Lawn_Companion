@@ -14,15 +14,17 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
-import com.mbw101.lawn_companion.database.*
+import com.mbw101.lawn_companion.database.AppDatabase
+import com.mbw101.lawn_companion.database.AppDatabaseBuilder
+import com.mbw101.lawn_companion.database.CuttingSeasonDatesDao
 import com.mbw101.lawn_companion.ui.IntroActivity
 import com.mbw101.lawn_companion.ui.MainActivity
 import com.mbw101.lawn_companion.ui.SaveLocationActivity
-import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matchers.not
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -70,6 +72,7 @@ class TestFirstUse {
         ensureMainActivityIsShown()
         compareHappyExpectedOutputs()
         ensureHasDefaultDatesSaved()
+        ensureDefaultDatesAreDisplayed()
     }
 
     private fun pressHomeNavButton() {
@@ -85,6 +88,7 @@ class TestFirstUse {
         ensureMainActivityIsShown()
         compareNoLocationExpectedOutputs()
         ensureHasDefaultDatesSaved()
+        ensureDefaultDatesAreDisplayed()
     }
 
     private fun pressNavButtons() {
@@ -138,6 +142,13 @@ class TestFirstUse {
         assertEquals(startDate.calendarValue.get(Calendar.DAY_OF_MONTH), 1)
         assertEquals(endDate!!.calendarValue.get(Calendar.MONTH), Calendar.DECEMBER)
         assertEquals(endDate.calendarValue.get(Calendar.DAY_OF_MONTH), 31)
+    }
+
+    private fun ensureDefaultDatesAreDisplayed() {
+        onView(ViewMatchers.withId(R.id.settingsIcon)).perform(ViewActions.click())
+        TestSettingsScreen.tapSetCuttingSeasonDates()
+        onView(ViewMatchers.withId(R.id.startDateSelector)).check(matches(ViewMatchers.withText("1/1/2021")))
+        onView(ViewMatchers.withId(R.id.endDateSelector)).check(matches(ViewMatchers.withText("31/12/2021")))
     }
 
     private fun compareNoLocationExpectedOutputs() {

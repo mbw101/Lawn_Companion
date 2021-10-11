@@ -1,36 +1,28 @@
 package com.mbw101.lawn_companion
 
-import android.content.Context
-import android.support.test.InstrumentationRegistry
-import androidx.preference.ListPreference
-import androidx.preference.Preference
 import androidx.recyclerview.widget.RecyclerView
-import androidx.test.espresso.Espresso
-import androidx.test.espresso.Espresso.onData
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.swipeUp
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.matcher.ComponentNameMatchers.hasClassName
 import androidx.test.espresso.intent.matcher.IntentMatchers
-import androidx.test.espresso.matcher.PreferenceMatchers.withKey
 import androidx.test.espresso.matcher.RootMatchers.isDialog
-import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
 import com.mbw101.lawn_companion.ui.MainActivity
 import com.mbw101.lawn_companion.ui.MyApplication
+import com.mbw101.lawn_companion.ui.SetDatesActivity
 import com.mbw101.lawn_companion.ui.SettingsActivity
 import com.mbw101.lawn_companion.utils.ApplicationPrefs
 import com.mbw101.lawn_companion.utils.Constants
-import junit.framework.Assert.assertEquals
-import org.hamcrest.CoreMatchers.*
-import org.hamcrest.Matchers
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -50,6 +42,18 @@ class TestSettingsScreen {
     @get:Rule
     val settingsActivityTestRule: ActivityTestRule<SettingsActivity> = ActivityTestRule(SettingsActivity::class.java)
 
+    companion object {
+        fun tapSetCuttingSeasonDates() {
+            onView(withId(androidx.preference.R.id.recycler_view))
+                .perform(
+                    RecyclerViewActions.actionOnItem<RecyclerView.ViewHolder>(
+                        hasDescendant(withText(R.string.setCuttingSeasonDatesTitle)),
+                        click()
+                    )
+                )
+        }
+    }
+
     @Before
     fun setup() {
         Intents.init()
@@ -59,7 +63,7 @@ class TestSettingsScreen {
     // tests back buttons to see if main activity is shown
     fun testPhysicalBackButton() {
         // hit back button
-        Espresso.pressBack()
+        pressBack()
         // test to see if main activity appeared on screen
         Intents.intended(IntentMatchers.hasComponent(MainActivity::class.java.name))
     }
@@ -267,6 +271,31 @@ class TestSettingsScreen {
                     click()
                 )
             )
+    }
+
+    @Test
+    fun testSetDatesSetting() {
+        tapSetCuttingSeasonDates()
+        ensureSetDatesActivityIsShown()
+        onView(withId(R.id.startDateSelector)).perform(click())
+        TestSetDatesActivity.setDate(2021, Calendar.MARCH + 1, 14)
+        onView(withId(R.id.endDateSelector)).perform(click())
+        TestSetDatesActivity.setDate(2021, Calendar.OCTOBER + 1, 31)
+
+        onView(withId(R.id.startDateSelector)).check(matches(withText("14/3/2021")))
+        onView(withId(R.id.endDateSelector)).check(matches(withText("31/10/2021")))
+
+        // test formatting again after closing the activity
+        onView(withId(R.id.saveDatesButton)).perform(click())
+        Thread.sleep(1000)
+        tapSetCuttingSeasonDates()
+        Thread.sleep(200)
+        onView(withId(R.id.startDateSelector)).check(matches(withText("14/3/2021")))
+        onView(withId(R.id.endDateSelector)).check(matches(withText("31/10/2021")))
+    }
+
+    private fun ensureSetDatesActivityIsShown() {
+        Intents.intended(IntentMatchers.hasComponent(hasClassName(SetDatesActivity::class.java.name)))
     }
 
     @After

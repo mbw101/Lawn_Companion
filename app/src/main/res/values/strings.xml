@@ -161,7 +161,8 @@
 
     <!-- Settings activity strings -->
     <string name="settingsTitle">Settings</string>
-    <string name="preferencesGroupTitle">Preferences</string>
+    <string name="generalPreferencesGroupTitle">General Preferences</string>
+    <string name="cuttingSeasonPreferencesTitle">Cutting Season Preferences</string>
     <string name="aboutGroupTitle">About</string>
 
     <string name="cuttingSeasonTitle">Enable/disable cutting season</string>
@@ -211,6 +212,9 @@
     <string name="nightTimeOfDayTitle">Night (9pm-5am)</string>
     <string name="nightTimeOfDayKey">nights</string>
     <string name="timeOfDaySummary">Check weather and send notifications only during this time</string>
+
+    <string name="setCuttingSeasonDatesTitle">Set Cutting Season Dates</string>
+    <string name="setCuttingSeasonDatesSummary">Modify the cutting season based on your climate and location.</string>
 
     <string name="versionNumber">Version 0.1</string>
 
