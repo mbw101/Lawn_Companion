@@ -27,6 +27,7 @@ object AlarmScheduler {
             // set action
             action = context.getString(R.string.markAsCut)
 
+
             // this has to be unique, so we use day to help
             // if not unique, it will override a pending intent
             type = "$day"
