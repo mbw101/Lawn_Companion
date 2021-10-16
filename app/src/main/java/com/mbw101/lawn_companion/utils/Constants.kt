@@ -7,6 +7,9 @@ Date: 2021-05-13
  */
 object Constants {
     const val DATABASE_NAME = "lawncompanion-db"
+    const val CUTTING_SEASON_TABLE_NAME = "dates_table"
+    const val CUT_ENTRY_TABLE_NAME = "cuts_table"
+    const val LAWN_LOCATION_TABLE_NAME = "location_table"
     val months: Array<String> = arrayOf("Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec")
     const val IS_FIRST_TIME = "is_first_time"
     const val APPLICATION_PREFS = "app_preference"
@@ -38,4 +41,16 @@ object Constants {
 
     const val NIGHT_HOUR_START_TIME = 21 // 9pm
     const val NIGHT_HOUR_END_TIME = 4  // 4am
+
+    // weather frequency constants
+    const val FIFTEEN_MINUTES = (15 * 60 * 1000)
+    const val THIRTY_MINUTES = 2 * FIFTEEN_MINUTES
+    const val ONE_HOUR = 2 * THIRTY_MINUTES
+    const val TWO_HOURS = 2 * ONE_HOUR
+
+    // default cutting season dates
+    const val DEFAULT_CUTTING_SEASON_START_MONTH = 1
+    const val DEFAULT_CUTTING_SEASON_START_DAY = 1
+    const val DEFAULT_CUTTING_SEASON_END_MONTH = 12
+    const val DEFAULT_CUTTING_SEASON_END_DAY = 31
 }

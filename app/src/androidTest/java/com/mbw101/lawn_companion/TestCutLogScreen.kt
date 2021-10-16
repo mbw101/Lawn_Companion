@@ -64,7 +64,6 @@ class TestCutLogScreen {
     @Before
     fun setup() {
         Intents.init()
-
         setupCutEntryDB()
     }
 

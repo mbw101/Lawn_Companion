@@ -25,6 +25,40 @@ class ApplicationPrefs {
         mEditor.putBoolean(Constants.IS_FIRST_TIME, b).apply()
     }
 
+    fun getWeatherCheckFrequencyInMillis(): Int {
+        val freq = getWeatherCheckFrequency()
+        if (freq.equals("15 minutes")) {
+            return Constants.FIFTEEN_MINUTES
+        }
+        else if (freq.equals("30 minutes")) {
+            return Constants.THIRTY_MINUTES
+        }
+        else if (freq.equals("1 hour")) {
+            return Constants.ONE_HOUR
+        }
+        else if (freq.equals("2 hours")) {
+            return Constants.TWO_HOURS
+        }
+
+        return Constants.FIFTEEN_MINUTES
+    }
+
+    fun getWeatherCheckFrequency(): String? {
+        val applicationContext = MyApplication.applicationContext()
+        val preferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(
+            applicationContext
+        )
+        val defaultWeatherCheckFrequency = "15 minutes"
+        return preferences.getString(applicationContext.getString(R.string.weatherCheckFrequencyKey), defaultWeatherCheckFrequency)
+    }
+
+    fun getDesiredCutFrequency(): Int {
+        val applicationContext = MyApplication.applicationContext()
+        val preferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        val defaultCutFrequency = "7"
+        return (preferences.getString(applicationContext.getString(R.string.desiredCutFrequencyKey), defaultCutFrequency)!!.toInt())
+    }
+
     // functions for the preference screen
     // these functions will use getDefaultSharedPreferences, so we can't use mPreferences
     fun isInCuttingSeason(): Boolean {

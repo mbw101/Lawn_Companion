@@ -1,13 +1,7 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory app:title="@string/preferencesGroupTitle">
-
-        <SwitchPreferenceCompat
-            app:key="@string/cuttingSeasonKey"
-            android:defaultValue="true"
-            app:title="@string/cuttingSeasonTitle"
-            app:summary="@string/cuttingSeasonDesc"/>
+    <PreferenceCategory app:title="@string/generalPreferencesGroupTitle">
 
         <SwitchPreferenceCompat
             app:dependency="@string/cuttingSeasonKey"
@@ -17,9 +11,6 @@
             app:summaryOn="@string/notification_summary_on"
             app:title="@string/notificationsTitle" />
 
-<!--        <SeekBarPreference-->
-<!--            app:title="@string/desiredCutFrequency" />-->
-
         <SwitchPreferenceCompat
             app:key="@string/dataPreferenceKey"
             android:defaultValue="true"
@@ -27,10 +18,37 @@
             app:summaryOff="@string/data_summary_on"
             app:title="@string/weatherDataAccessTitle" />
 
-        <Preference android:title="@string/createLawnLocationButton"
-            android:summary="@string/createNewLocationSummary"/>
+        <ListPreference
+            android:key="@string/weatherCheckFrequencyKey"
+            android:summary="@string/adjustWeatherCheckFrequencySummary"
+            android:title="@string/adjustWeatherCheckFrequencyTitle"
+            android:defaultValue="@string/weatherCheckFrequencyDefault"
+            android:entryValues="@array/weather_frequency_values"
+            android:entries="@array/weather_frequency_options"
+            />
 
-<!--        <CheckBoxPreference android-->
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/cuttingSeasonPreferencesTitle">
+        <SwitchPreferenceCompat
+            app:key="@string/cuttingSeasonKey"
+            android:defaultValue="true"
+            app:title="@string/cuttingSeasonTitle"
+            app:summary="@string/cuttingSeasonDesc"/>
+
+        <Preference android:title="@string/createLawnLocationButton"
+            android:summary="@string/createNewLocationSummary" />
+
+        <ListPreference
+            android:key="@string/desiredCutFrequencyKey"
+            android:summary="@string/desiredCutFrequencySummary"
+            android:title="@string/desiredCutFrequencyTitle"
+            android:defaultValue="@string/desiredCutFrequencyDefault"
+            android:entryValues="@array/desired_cut_frequency_values"
+            android:entries="@array/desired_cut_frequency_options" />
+
+        <Preference android:title="@string/setCuttingSeasonDatesTitle"
+            android:summary="@string/setCuttingSeasonDatesSummary" />
 
     </PreferenceCategory>
 

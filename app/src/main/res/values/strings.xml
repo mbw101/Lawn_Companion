@@ -161,7 +161,8 @@
 
     <!-- Settings activity strings -->
     <string name="settingsTitle">Settings</string>
-    <string name="preferencesGroupTitle">Preferences</string>
+    <string name="generalPreferencesGroupTitle">General Preferences</string>
+    <string name="cuttingSeasonPreferencesTitle">Cutting Season Preferences</string>
     <string name="aboutGroupTitle">About</string>
 
     <string name="cuttingSeasonTitle">Enable/disable cutting season</string>
@@ -191,6 +192,16 @@
     <string name="createNewLocationTitle">Create a new lawn location</string>
     <string name="createNewLocationSummary">Removes the existing lawn location if one exists and creates a new lawn location</string>
 
+    <string name="adjustWeatherCheckFrequencyTitle">Modify the frequency of weather checks</string>
+    <string name="adjustWeatherCheckFrequencySummary">The time between weather checks and potential cut notifications if the weather is suitable for cutting.</string>
+    <string name="weatherCheckFrequencyKey">weatherCheckFrequency</string>
+    <string name="weatherCheckFrequencyDefault">15 minutes</string>
+
+    <string name="desiredCutFrequencyTitle">Change the desired cut frequency</string>
+    <string name="desiredCutFrequencySummary">The time between the previous cut and the next cut. Sometimes, it won\'t be exact due to weather.</string>
+    <string name="desiredCutFrequencyKey">desiredCutFrequency</string>
+    <string name="desiredCutFrequencyDefault">7</string>
+
     <string name="notificationTimeOfDayCategoryTitle">Preferences for when notifications will be sent</string>
     <string name="morningTimeOfDayTitle">Morning (5am-12pm)</string>
     <string name="morningTimeOfDayKey">mornings</string>
@@ -201,6 +212,9 @@
     <string name="nightTimeOfDayTitle">Night (9pm-5am)</string>
     <string name="nightTimeOfDayKey">nights</string>
     <string name="timeOfDaySummary">Check weather and send notifications only during this time</string>
+
+    <string name="setCuttingSeasonDatesTitle">Set Cutting Season Dates</string>
+    <string name="setCuttingSeasonDatesSummary">Modify the cutting season based on your climate and location.</string>
 
     <string name="versionNumber">Version 0.1</string>
 
@@ -229,5 +243,15 @@
     <!--    Dialog strings-->
     <string name="permissionDialogTitle">Access to background location</string>
     <string name="permissionDialogContent">Lawn Companion needs to access your location, so your lawn location can be saved!</string>
+    <string name="title_activity_set_dates">SetDatesActivity</string>
+
+    <!-- SaveDatesActivity strings   -->
+    <string name="saveDatesActivityTitle">Modify cutting season dates</string>
+    <string name="saveDatesButtonText">Save Dates</string>
+    <string name="saveStartDate">Start Date:</string>
+    <string name="saveEndDate">End Date:</string>
+    <string name="startDateEditTextDefault">Enter start date here</string>
+    <string name="endDateEditTextDefault">Enter end date here</string>
+    <string name="datePlaceholder">%1$s/%2$s/%3$s</string>
 
 </resources>

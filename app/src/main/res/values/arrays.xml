@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="weather_frequency_options">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>2 hours</item>
+    </string-array>
+    <string-array name="weather_frequency_values">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>2 hours</item>
+    </string-array>
+
+    <string-array name="desired_cut_frequency_options">
+        <item>5 days</item>
+        <item>1 week</item>
+        <item>1.5 weeks (~10 days)</item>
+        <item>2 weeks</item>
+        <item>3 weeks</item>
+        <item>1 month</item>
+    </string-array>
+    <string-array name="desired_cut_frequency_values">
+        <item>5</item>
+        <item>7</item>
+        <item>10</item>
+        <item>14</item>
+        <item>21</item>
+        <item>30</item>
+    </string-array>
+</resources>

@@ -68,11 +68,19 @@ class SettingsActivity : AppCompatActivity() {
             if (preferenceTitle.contains("lawn location")) { // getString(R.string.
                 openSaveLocationActivity()
             }
+            else if (preferenceTitle.contains("Cutting Season Dates")) {
+                openSetDatesActivity()
+            }
             return super.onPreferenceTreeClick(preference)
         }
 
         private fun openSaveLocationActivity() {
             val intent = Intent (activity, SaveLocationActivity::class.java)
+            activity?.startActivity(intent)
+        }
+
+        private fun openSetDatesActivity() {
+            val intent = Intent (activity, SetDatesActivity::class.java)
             activity?.startActivity(intent)
         }
     }

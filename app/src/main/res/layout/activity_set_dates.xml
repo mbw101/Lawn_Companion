@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.AddCutActivity"
-    android:theme="@style/Theme.Lawn_Companion">
+    tools:context=".ui.SetDatesActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -31,19 +30,19 @@
                 android:contentDescription="@string/settings_icon" />
 
             <TextView
-                android:id="@+id/titleTextView"
+                android:id="@+id/setDatesActivityTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
 
                 android:gravity="center|center_vertical"
-                android:text="@string/addCutTitle"
+                android:text="@string/saveDatesActivityTitle"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large" />
         </RelativeLayout>
 
     </androidx.appcompat.widget.Toolbar>
 
-    <!--    The add cut part of the activity -->
+    <!--    Set start + end dates of the activity -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -52,110 +51,87 @@
         android:background="@color/background_black">
 
         <TextView
-            android:id="@+id/monthTextView"
+            android:id="@+id/startDateTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="121dp"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
             android:paddingStart="15dp"
-            android:text="@string/enterMonthText"
+            android:text="@string/saveStartDate"
             android:textColor="@color/floral_white"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Spinner
-            android:id="@+id/monthDropdownMenu"
+        <TextView
+            android:id="@+id/startDateSelector"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/floral_white"
+            android:text="@string/startDateEditTextDefault"
+            android:layout_centerHorizontal="true"
             android:layout_marginTop="21dp"
             android:paddingStart="15dp"
             android:paddingLeft="25dp"
             android:paddingRight="25dp"
-            android:spinnerMode="dropdown"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/monthTextView"
+            app:layout_constraintTop_toBottomOf="@+id/startDateTextView"
             android:textAlignment="center"
             android:gravity="center_horizontal" />
 
         <TextView
-            android:id="@+id/dayTextView"
+            android:id="@+id/endDateTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="43dp"
             android:paddingStart="15dp"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
-            android:text="@string/enterDayText"
+            android:text="@string/saveEndDate"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="@color/floral_white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/monthDropdownMenu" />
+            app:layout_constraintTop_toBottomOf="@+id/startDateSelector" />
 
-        <Spinner
-            android:id="@+id/dayDropdownMenu"
+        <TextView
+            android:id="@+id/endDateSelector"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="21dp"
             android:paddingStart="25dp"
             android:paddingLeft="25dp"
             android:paddingRight="25dp"
-            android:spinnerMode="dropdown"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display2"
+            android:text="@string/endDateEditTextDefault"
+            android:textColor="@color/floral_white"
+
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dayTextView"
+            app:layout_constraintTop_toBottomOf="@+id/endDateTextView"
             android:textAlignment="center"
             android:gravity="center_horizontal" />
 
-        <TextView
-            android:id="@+id/timeTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:paddingStart="15dp"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:text="@string/enterTimeText"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@color/floral_white"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dayDropdownMenu" />
-
         <Button
-            android:id="@+id/addCutButton"
+            android:id="@+id/saveDatesButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="28dp"
             android:padding="12dp"
-            android:text="@string/addCutText"
+            android:text="@string/saveDatesButtonText"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <TextView
-            android:id="@+id/selectedTimeTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="38dp"
-            android:text="TextView"
-            android:textAppearance="@style/TextAppearance.AppCompat.Display2"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/timeTextView" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </RelativeLayout>

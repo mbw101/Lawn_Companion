@@ -8,6 +8,7 @@ apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 30
+    buildToolsVersion "30.0.2"
 
     testOptions {
         execution 'ANDROIDX_TEST_ORCHESTRATOR'
@@ -18,9 +19,10 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.mbw101.lawn_companion"
         minSdkVersion 16
         targetSdkVersion 30
+
+        applicationId "com.mbw101.lawn_companion"
         versionCode 1
         versionName "0.1"
         vectorDrawables.useSupportLibrary = true
@@ -33,7 +35,7 @@ android {
     buildTypes {
         // add the API key from the gradle.properties file
         buildTypes.each {
-            it.buildConfigField "String", "OPEN_WEATHER_MAP_API_KEY", open_weather_map_api_key
+            it.buildConfigField("String", "OPEN_WEATHER_MAP_API_KEY", open_weather_map_api_key)
         }
 
         debug {
@@ -42,7 +44,7 @@ android {
                     "${defaultConfig.versionName} - ${versionNameSuffix}"
             // add the API key from the gradle.properties file
             buildTypes.each {
-                it.buildConfigField "String", "OPEN_WEATHER_MAP_API_KEY", open_weather_map_api_key
+                it.buildConfigField("String", "OPEN_WEATHER_MAP_API_KEY", open_weather_map_api_key)
             }
         }
         release {
@@ -51,7 +53,7 @@ android {
             resValue "string", "app_version", "${defaultConfig.versionName}"
             // add the API key from the gradle.properties file
             buildTypes.each {
-                it.buildConfigField "String", "OPEN_WEATHER_MAP_API_KEY", open_weather_map_api_key
+                it.buildConfigField("String", "OPEN_WEATHER_MAP_API_KEY", open_weather_map_api_key)
             }
         }
     }
@@ -68,6 +70,8 @@ android {
 }
 
 dependencies {
+    def espresso_version = 1.3
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.3.1'
     implementation 'androidx.appcompat:appcompat:1.2.0'
@@ -93,7 +97,6 @@ dependencies {
     implementation "androidx.room:room-ktx:2.3.0"
     testImplementation "androidx.arch.core:core-testing:2.1.0"
     testImplementation "androidx.room:room-testing:2.3.0"
-
 
     // worker
     def work_version = "2.5.0"

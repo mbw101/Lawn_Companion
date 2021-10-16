@@ -2,6 +2,7 @@ package com.mbw101.lawn_companion.database
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import com.mbw101.lawn_companion.utils.Constants
 
 /**
 Lawn Companion
@@ -9,7 +10,7 @@ Created by Malcolm Wright
 Date: May 16th, 2021
  */
 
-@Entity(tableName = "cuts_table", primaryKeys = ["month_name", "day_number"])
+@Entity(tableName = Constants.CUT_ENTRY_TABLE_NAME, primaryKeys = ["month_name", "day_number"])
 data class CutEntry(
 
     @ColumnInfo(name = "cut_time") val cut_time: String,
