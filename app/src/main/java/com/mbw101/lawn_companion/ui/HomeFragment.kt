@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -174,7 +173,6 @@ class HomeFragment : Fragment() {
      */
     private fun getSalutation(): String {
         val cal: Calendar = Calendar.getInstance()
-        Log.d("Lawn Companion", "Time: " + cal.get(Calendar.HOUR_OF_DAY))
         val hourOfDay = cal.get(Calendar.HOUR_OF_DAY)
 
          when (hourOfDay) {

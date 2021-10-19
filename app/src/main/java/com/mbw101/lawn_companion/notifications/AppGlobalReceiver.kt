@@ -29,7 +29,7 @@ class AppGlobalReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         NotificationManagerCompat.from(context).cancel(NotificationHelper.CUT_NOTIFICATION_ID)
 
-        val cutEntry = buildEntry(context)
+        val cutEntry = buildCutEntry(context)
         addEntryToDatabase(context, cutEntry)
     }
 
@@ -41,7 +41,7 @@ class AppGlobalReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun buildEntry(context: Context): CutEntry {
+    private fun buildCutEntry(context: Context): CutEntry {
         // use the current time & date
         val cutTimeString = DateUtils.formatDateTime(
             context,

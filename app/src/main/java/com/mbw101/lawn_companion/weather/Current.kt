@@ -25,7 +25,6 @@ data class Current(val sunrise: Int = 0,
 
 // assumes celsius temperature when calculating if it's suitable
 fun isCurrentWeatherSuitable(current: Current): Boolean {
-    // TODO: Add and adjust these conditions to be more realistic
     // especially ones relating to temperature, humidity, and uvIndex
     if (current.weather == null) return false
     if (!isWeatherDescriptionSuitable(current.weather[0])) return false
