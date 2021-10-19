@@ -11,7 +11,6 @@ import android.widget.AdapterView.OnItemSelectedListener
 import androidx.appcompat.app.AppCompatActivity
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.CutEntry
-import com.mbw101.lawn_companion.notifications.NotificationHelper
 import com.mbw101.lawn_companion.utils.Constants
 import com.mbw101.lawn_companion.utils.UtilFunctions
 import java.util.*
@@ -49,9 +48,6 @@ class AddCutActivity : AppCompatActivity() {
 
         init()
         setListeners()
-
-        // debug
-        NotificationHelper.createCutNotification(this, getString(R.string.app_name), getString(R.string.cutSuggestionMessage), true)
     }
 
     private fun init() {
