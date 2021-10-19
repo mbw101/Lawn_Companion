@@ -49,6 +49,9 @@ class AddCutActivity : AppCompatActivity() {
 
         init()
         setListeners()
+
+        // debug
+        NotificationHelper.createCutNotification(this, getString(R.string.app_name), getString(R.string.cutSuggestionMessage), true)
     }
 
     private fun init() {
