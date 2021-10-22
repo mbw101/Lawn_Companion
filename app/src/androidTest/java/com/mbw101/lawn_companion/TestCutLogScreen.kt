@@ -105,4 +105,9 @@ class TestCutLogScreen {
             CutEntry("4:36pm", 1, "October", 10, UtilFunctions.getCurrentYear() - 1)
         )
     }
+
+    @Test
+    fun testDeletingCutEntry() {
+
+    }
 }

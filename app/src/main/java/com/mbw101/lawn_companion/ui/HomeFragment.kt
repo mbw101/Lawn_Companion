@@ -131,7 +131,8 @@ class HomeFragment : Fragment() {
         else {
             // this might be causing the bug with app crashing since it's in a different thread than UI but
             // will be used for updating the UI
-            val hasLocationSavedInDB = createCoroutineToCheckIfLocationIsSaved()
+            val preferences = ApplicationPrefs()
+            val hasLocationSavedInDB = preferences.hasLocationSaved()
             if (hasLocationSavedInDB) {
                 setupViewModel()
                 openPermissions.visibility = View.INVISIBLE

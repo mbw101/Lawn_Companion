@@ -61,7 +61,7 @@ object AlarmScheduler {
                 alarmMgr.setInexactRepeating(
                     AlarmManager.RTC_WAKEUP,
                     datetimeToAlarm.timeInMillis,
-                    (1000 * 60 * 2).toLong(), alarmIntent)
+                    prefs.getWeatherCheckFrequencyInMillis().toLong(), alarmIntent) // (1000 * 60 * 2).toLong()
             }
             else {
                 alarmMgr.setInexactRepeating(

@@ -12,6 +12,7 @@ import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.LawnLocation
 import com.mbw101.lawn_companion.database.LawnLocationRepository
 import com.mbw101.lawn_companion.database.setupLawnLocationRepository
+import com.mbw101.lawn_companion.utils.ApplicationPrefs
 import com.mbw101.lawn_companion.utils.Constants
 import com.mbw101.lawn_companion.utils.LocationUtils
 import kotlinx.coroutines.Dispatchers
@@ -63,6 +64,10 @@ class SaveLocationActivity : AppCompatActivity(), LocationListener {
         acceptSaveButton.setOnClickListener {
             LocationUtils.requestLocation(this, this)
             Toast.makeText(this, "Saving lawn location...", Toast.LENGTH_LONG).show()
+
+            // save location flag
+            val preferences = ApplicationPrefs()
+            preferences.setHasLocationSavedValue(true)
 
             Timer().schedule(1500) {
                 launchMainActivity()

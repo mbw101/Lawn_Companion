@@ -24,6 +24,7 @@ import com.mbw101.lawn_companion.ui.AddCutActivity
 import com.mbw101.lawn_companion.ui.MainActivity
 import com.mbw101.lawn_companion.ui.SaveLocationActivity
 import com.mbw101.lawn_companion.ui.SettingsActivity
+import com.mbw101.lawn_companion.utils.ApplicationPrefs
 import com.mbw101.lawn_companion.utils.Constants
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.containsString
@@ -147,6 +148,8 @@ class TestMainScreen {
 
     @Test
     fun testTurningOffCutSeason() {
+        val appPrefs = ApplicationPrefs()
+        appPrefs.setHasLocationSavedValue(true)// turns off the lawn location prompt
         onView(withId(R.id.home)).perform(click()).check(matches(isDisplayed())) // removes the permissions text
         mainTextViewContainsText("No cuts have been made yet. Add a new cut to get started!")
 
