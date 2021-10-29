@@ -160,7 +160,11 @@ class CutLogFragment : Fragment(), OnItemClickListener {
             .setPositiveButton(R.string.deleteOption,
                 DialogInterface.OnClickListener { dialog, id ->
                     deleteCut(entry)
-//                    mainRecyclerAdaptor.notifyDataSetChanged()
+                    // TODO: Make sure the user interface is updated to reflect the deleted entry
+//                    mainRecyclerAdaptor.notifyItemChanged(entry.month_number-1)
+                    mainRecyclerView.adapter!!.notifyItemRangeChanged(0, 12)
+                    mainRecyclerAdaptor.notifyItemRangeChanged(0, 12)
+
                 })
             .setNegativeButton(R.string.cancelOption,
                 DialogInterface.OnClickListener { dialog, id ->

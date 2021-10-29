@@ -68,8 +68,10 @@ class SaveLocationActivity : AppCompatActivity(), LocationListener {
             // save location flag
             val preferences = ApplicationPrefs()
             preferences.setHasLocationSavedValue(true)
+            val locationListener = this
 
             Timer().schedule(1500) {
+                LocationUtils.stopLocationUpdates(locationListener) // stops the usage of gps when we are done with it
                 launchMainActivity()
             }
         }
@@ -88,8 +90,6 @@ class SaveLocationActivity : AppCompatActivity(), LocationListener {
     }
 
     private suspend fun saveGpsLocationIfExists(newGpsLocation: Location?) {
-        // this is always null due to call from LocationUtils.getLastKnownLocation
-        // locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
         if (newGpsLocation != null) {
             locationGps = newGpsLocation
             Log.d(

@@ -42,6 +42,7 @@ class MainRecyclerAdaptor(clickListener: OnItemClickListener): RecyclerView.Adap
         // create adaptor and pass in the list of entries
         val childAdaptor = ChildRecyclerAdapter(cutEntries, onItemClickListener)
         holder.childRecyclerView.adapter = childAdaptor
+//        holder.childRecyclerView.adapter.notifyItemRangeChanged(0, cutEntries.size)
     }
 
     override fun getItemCount(): Int = sectionList.size
@@ -49,6 +50,5 @@ class MainRecyclerAdaptor(clickListener: OnItemClickListener): RecyclerView.Adap
     fun setSections(sectionList: List<MonthSection>) {
         this.sectionList = sectionList as MutableList<MonthSection>
         notifyItemRangeChanged(0, sectionList.size) // redraw the layout
-
     }
 }

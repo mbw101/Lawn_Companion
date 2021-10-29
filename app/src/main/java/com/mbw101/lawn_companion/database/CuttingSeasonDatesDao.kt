@@ -40,11 +40,35 @@ interface CuttingSeasonDatesDao {
             return false
         }
 
-        val currentDate: Date = Calendar.getInstance().time
-        val startDate = getStartDate()!!.calendarValue.time
-        val endDate = getEndDate()!!.calendarValue.time
+        val todayCalendar = Calendar.getInstance()
+        val startCal = getStartDate()!!.calendarValue
+        val endCal = getEndDate()!!.calendarValue
 
-        return (currentDate.after(startDate) && currentDate.before(endDate))
+        // ensure all the times are the same before getting dates
+        todayCalendar.set(Calendar.HOUR, 1)
+        todayCalendar.set(Calendar.MINUTE, 0)
+        todayCalendar.set(Calendar.AM_PM, Calendar.AM)
+        todayCalendar.set(Calendar.MILLISECOND, startCal.get(Calendar.MILLISECOND))
+        startCal.set(Calendar.HOUR, 1)
+        startCal.set(Calendar.MINUTE, 0)
+        startCal.set(Calendar.AM_PM, Calendar.AM)
+        endCal.set(Calendar.HOUR, 1)
+        endCal.set(Calendar.MINUTE, 0)
+        endCal.set(Calendar.AM_PM, Calendar.AM)
+
+        println("Today's calendar: $todayCalendar")
+        println("Start date calendar: $startCal")
+        println("End date's calendar: $endCal")
+
+        val currentDate = todayCalendar.time
+        val startDate = startCal.time
+        val endDate = endCal.time
+
+        println("!currentDate.before(startDate) = " + !currentDate.before(startDate))
+        println("!currentDate.after(endDate) = " + !currentDate.after(endDate))
+
+        // this allows for the dates to match and still be considered in the cutting season
+        return !(currentDate.before(startDate) || currentDate.after(endDate))
     }
 
     suspend fun isOutsideOfCuttingSeasonDates(): Boolean {

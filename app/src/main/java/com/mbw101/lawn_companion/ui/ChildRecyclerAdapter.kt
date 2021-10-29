@@ -51,7 +51,6 @@ class ChildRecyclerAdapter(cutEntries: List<CutEntry>,
             // call the interface method
             onItemClickListener.onItemClick(entry)
         })
-
     }
 
     override fun getItemCount(): Int = entries.size
