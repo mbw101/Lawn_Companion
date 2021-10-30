@@ -13,7 +13,7 @@ import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import com.mbw101.lawn_companion.R
+import com.mbw101.lawn_companion.databinding.ActivityIntroBinding
 import com.mbw101.lawn_companion.utils.ApplicationPrefs
 
 
@@ -28,9 +28,9 @@ private const val NUM_SCREENS = 4
 class IntroActivity : FragmentActivity() {
 
     private lateinit var nextButton: Button
-
     private lateinit var viewPager: ViewPager2
     private lateinit var tabLayout: TabLayout
+    private lateinit var binding: ActivityIntroBinding
 
     companion object {
         lateinit var preferenceManager: ApplicationPrefs
@@ -39,9 +39,11 @@ class IntroActivity : FragmentActivity() {
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         // set intro activity to full screen
-        setContentView(R.layout.activity_intro)
+        binding = ActivityIntroBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
+
         window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
 
         // start the introduction
@@ -63,9 +65,9 @@ class IntroActivity : FragmentActivity() {
         }
 
         // load all the components
-        nextButton = findViewById(R.id.nextButton)
-        viewPager = findViewById(R.id.introViewPager)
-        tabLayout = findViewById(R.id.tab_indicator)
+        nextButton = binding.nextButton
+        viewPager = binding.introViewPager
+        tabLayout = binding.tabIndicator
 
         // set up adapter
         val pagerAdapter = ScreenSlidePagerAdapter(this)

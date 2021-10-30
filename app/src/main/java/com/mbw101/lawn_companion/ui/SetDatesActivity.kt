@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.CuttingSeasonDateRepository
 import com.mbw101.lawn_companion.database.setupCuttingSeasonDateRepository
+import com.mbw101.lawn_companion.databinding.ActivitySetDatesBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -31,12 +32,16 @@ class SetDatesActivity : AppCompatActivity() {
     private lateinit var currentStartDate: Calendar
     private lateinit var currentEndDate: Calendar
     private lateinit var cuttingSeasonDateRepository: CuttingSeasonDateRepository
+    private lateinit var binding: ActivitySetDatesBinding
     private var startDate: Calendar? = null
     private var endDate: Calendar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_set_dates)
+        binding = ActivitySetDatesBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
+
         init()
         setupDB()
         setupExistingDates()
@@ -83,10 +88,10 @@ class SetDatesActivity : AppCompatActivity() {
     }
 
     private fun init() {
-        backIcon = findViewById(R.id.backIcon)
-        saveDatesButton = findViewById(R.id.saveDatesButton)
-        startDateSelector = findViewById(R.id.startDateSelector)
-        endDateSelector = findViewById(R.id.endDateSelector)
+        backIcon = binding.backIcon
+        saveDatesButton = binding.saveDatesButton
+        startDateSelector = binding.startDateSelector
+        endDateSelector = binding.endDateSelector
     }
 
     private fun setListeners() {

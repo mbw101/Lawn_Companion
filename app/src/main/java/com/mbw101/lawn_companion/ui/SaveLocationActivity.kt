@@ -8,10 +8,10 @@ import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.LawnLocation
 import com.mbw101.lawn_companion.database.LawnLocationRepository
 import com.mbw101.lawn_companion.database.setupLawnLocationRepository
+import com.mbw101.lawn_companion.databinding.ActivitySaveLocationBinding
 import com.mbw101.lawn_companion.utils.ApplicationPrefs
 import com.mbw101.lawn_companion.utils.Constants
 import com.mbw101.lawn_companion.utils.LocationUtils
@@ -33,10 +33,13 @@ class SaveLocationActivity : AppCompatActivity(), LocationListener {
     private lateinit var acceptSaveButton: Button
     private lateinit var lawnLocationRepository: LawnLocationRepository
     var locationGps: Location? = null
+    private lateinit var binding: ActivitySaveLocationBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_save_location)
+        binding = ActivitySaveLocationBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         init()
     }
@@ -48,8 +51,8 @@ class SaveLocationActivity : AppCompatActivity(), LocationListener {
     }
 
     private fun createButtons() {
-        denySaveButton = findViewById(R.id.denySaveLocationButton)
-        acceptSaveButton = findViewById(R.id.acceptSaveLocationButton)
+        denySaveButton = binding.denySaveLocationButton
+        acceptSaveButton = binding.acceptSaveLocationButton
     }
 
     private fun setupRepo() {
