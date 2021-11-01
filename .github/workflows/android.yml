@@ -26,7 +26,7 @@ jobs:
     - name: Decode OPEN_WEATHER_MAP_API_KEY
       env: 
         OPEN_WEATHER_MAP_API_KEY: ${{ secrets.OPEN_WEATHER_MAP_API_KEY }}
-      run: echo OPEN_WEATHER_MAP_API_KEY=\"$OPEN_WEATHER_MAP_API_KEY\" > ./gradle.properties
+      run: echo open_weather_map_api_key=\"$OPEN_WEATHER_MAP_API_KEY\" > ./gradle.properties
       
     - name: Add useAndroidX property to gradle properties file
       run: echo android.useAndroidX=true >> ./gradle.properties 
