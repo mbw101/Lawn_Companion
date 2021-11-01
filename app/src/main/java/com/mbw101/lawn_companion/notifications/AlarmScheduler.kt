@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import com.mbw101.lawn_companion.BuildConfig
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.utils.ApplicationPrefs
 import com.mbw101.lawn_companion.utils.Constants
@@ -56,9 +57,18 @@ object AlarmScheduler {
         if (shouldNotifyToday(dayOfWeek, today, datetimeToAlarm)) { // schedules the alarm if so
             // setInexactRepeating saves battery life compared to setRepeating (synchronizes multiple notifications)
             val prefs = ApplicationPrefs()
-            alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP,
-                datetimeToAlarm.timeInMillis,
-                prefs.getWeatherCheckFrequencyInMillis().toLong(), alarmIntent)
+            if (BuildConfig.DEBUG) {
+                alarmMgr.setInexactRepeating(
+                    AlarmManager.RTC_WAKEUP,
+                    datetimeToAlarm.timeInMillis,
+                    prefs.getWeatherCheckFrequencyInMillis().toLong(), alarmIntent) // (1000 * 60 * 2).toLong()
+            }
+            else {
+                alarmMgr.setInexactRepeating(
+                    AlarmManager.RTC_WAKEUP,
+                    datetimeToAlarm.timeInMillis,
+                    prefs.getWeatherCheckFrequencyInMillis().toLong(), alarmIntent)
+            }
             return
         }
     }

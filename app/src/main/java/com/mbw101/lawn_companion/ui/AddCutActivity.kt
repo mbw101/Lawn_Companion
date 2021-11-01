@@ -11,6 +11,7 @@ import android.widget.AdapterView.OnItemSelectedListener
 import androidx.appcompat.app.AppCompatActivity
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.CutEntry
+import com.mbw101.lawn_companion.databinding.ActivityAddCutBinding
 import com.mbw101.lawn_companion.utils.Constants
 import com.mbw101.lawn_companion.utils.UtilFunctions
 import java.util.*
@@ -30,6 +31,7 @@ class AddCutActivity : AppCompatActivity() {
     private lateinit var selectedTimeTextView: TextView
     private lateinit var addCutButton: Button
     private lateinit var cutTime: Calendar
+    private lateinit var binding: ActivityAddCutBinding
 
     // database variables
     private lateinit var cutEntryViewModel: CutEntryViewModel
@@ -44,18 +46,20 @@ class AddCutActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_cut)
+        binding = ActivityAddCutBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         init()
         setListeners()
     }
 
     private fun init() {
-        monthDropdown = findViewById(R.id.monthDropdownMenu)
-        dayDropdown = findViewById(R.id.dayDropdownMenu)
-        backIcon = findViewById(R.id.backIcon)
-        selectedTimeTextView = findViewById(R.id.selectedTimeTextView)
-        addCutButton = findViewById(R.id.addCutButton)
+        monthDropdown = binding.monthDropdownMenu
+        dayDropdown = binding.dayDropdownMenu
+        backIcon = binding.backIcon
+        selectedTimeTextView = binding.selectedTimeTextView
+        addCutButton = binding.addCutButton
 
         fillDropdownMenus()
         setMonthSelection()

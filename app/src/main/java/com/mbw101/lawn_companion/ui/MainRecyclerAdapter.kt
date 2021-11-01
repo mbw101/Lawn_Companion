@@ -14,7 +14,7 @@ Created by Malcolm Wright
 Date: May 16th, 2021
  */
 
-class MainRecyclerAdaptor(clickListener: OnItemClickListener):  RecyclerView.Adapter<MainRecyclerAdaptor.CustomViewHolder>() {
+class MainRecyclerAdaptor(clickListener: OnItemClickListener): RecyclerView.Adapter<MainRecyclerAdaptor.CustomViewHolder>() {
 
     // add custom interface
     private var onItemClickListener: OnItemClickListener = clickListener
@@ -42,12 +42,13 @@ class MainRecyclerAdaptor(clickListener: OnItemClickListener):  RecyclerView.Ada
         // create adaptor and pass in the list of entries
         val childAdaptor = ChildRecyclerAdapter(cutEntries, onItemClickListener)
         holder.childRecyclerView.adapter = childAdaptor
+//        holder.childRecyclerView.adapter.notifyItemRangeChanged(0, cutEntries.size)
     }
 
     override fun getItemCount(): Int = sectionList.size
 
     fun setSections(sectionList: List<MonthSection>) {
         this.sectionList = sectionList as MutableList<MonthSection>
-        notifyDataSetChanged() // redraw the layout
+        notifyItemRangeChanged(0, sectionList.size) // redraw the layout
     }
 }

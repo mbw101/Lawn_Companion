@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +14,7 @@ import androidx.fragment.app.viewModels
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.CutEntry
 import com.mbw101.lawn_companion.database.setupLawnLocationRepository
+import com.mbw101.lawn_companion.databinding.FragmentHomeBinding
 import com.mbw101.lawn_companion.utils.ApplicationPrefs
 import com.mbw101.lawn_companion.utils.Constants
 import com.mbw101.lawn_companion.utils.UtilFunctions
@@ -31,6 +31,10 @@ class HomeFragment : Fragment() {
     private lateinit var mainTextView: TextView
     private lateinit var salutationTextView: TextView
     private val viewModel: CutEntryViewModel by viewModels()
+    private var _binding: FragmentHomeBinding? = null
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
 
     companion object {
         // Note: When calling this function in this fragment class, check before calling it that
@@ -77,16 +81,22 @@ class HomeFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
-        val view: View = inflater.inflate(R.layout.fragment_home, container, false)
-        init(view)
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        val view = binding.root
+        init()
         return view
     }
 
-    private fun init(view: View) {
-        openPermissions = view.findViewById(R.id.openPermissionsButton)
-        createLawnLocationButton = view.findViewById(R.id.createLawnLocationButton)
-        mainTextView = view.findViewById(R.id.mainMessageTextView)
-        salutationTextView = view.findViewById(R.id.salutationTextView)
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun init() {
+        openPermissions = binding.openPermissionsButton
+        createLawnLocationButton = binding.createLawnLocationButton
+        mainTextView = binding.mainMessageTextView
+        salutationTextView = binding.salutationTextView
 
         checkPermissionsOrIfLocationSaved()
         setCorrectSalutation()
@@ -132,7 +142,8 @@ class HomeFragment : Fragment() {
         else {
             // this might be causing the bug with app crashing since it's in a different thread than UI but
             // will be used for updating the UI
-            val hasLocationSavedInDB = createCoroutineToCheckIfLocationIsSaved()
+            val preferences = ApplicationPrefs()
+            val hasLocationSavedInDB = preferences.hasLocationSaved()
             if (hasLocationSavedInDB) {
                 setupViewModel()
                 openPermissions.visibility = View.INVISIBLE
@@ -174,7 +185,6 @@ class HomeFragment : Fragment() {
      */
     private fun getSalutation(): String {
         val cal: Calendar = Calendar.getInstance()
-        Log.d("Lawn Companion", "Time: " + cal.get(Calendar.HOUR_OF_DAY))
         val hourOfDay = cal.get(Calendar.HOUR_OF_DAY)
 
          when (hourOfDay) {

@@ -13,7 +13,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: set up JDK 11
+    - name: set up JDK 8
       uses: actions/setup-java@v2
       with:
         java-version: '11'
@@ -22,8 +22,32 @@ jobs:
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
+      
+    - name: Decode OPEN_WEATHER_MAP_API_KEY
+      env: 
+        OPEN_WEATHER_MAP_API_KEY: ${{ secrets.OPEN_WEATHER_MAP_API_KEY }}
+      run: echo open_weather_map_api_key=\"$OPEN_WEATHER_MAP_API_KEY\" > ./gradle.properties
+      
+    - name: Add useAndroidX property to gradle properties file
+      run: echo android.useAndroidX=true >> ./gradle.properties 
+      
+    - name: Add enableJetifier to properties file
+      run: echo android.enableJetifier=true >> ./gradle.properties 
+      
+    - name: Increase RAM in properties file
+      run: echo org.gradle.jvmargs=-Xmx2048m -XX:MaxPermSize=512m >> ./gradle.properties
+      
+    - name: List files in the repository
+      run: |
+        ls ${{ github.workspace }}
+    - run: echo "🍏 This job's status is ${{ job.status }}."
+    
+    - name: Print contents of gradle.properties
+      run: cat gradle.properties
+      
     - name: Build with Gradle
-      run: ./gradlew build
+      run: ./gradlew build --stacktrace
+      
     - name: Upload APK Build Artifact
       uses: actions/upload-artifact@v2.2.4
       with:

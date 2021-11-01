@@ -24,6 +24,10 @@ class DatesDatabaseTests {
 
     private lateinit var db: AppDatabase
     private lateinit var cuttingSeasonDatesDao: CuttingSeasonDatesDao
+    private val startDateMonth = Calendar.OCTOBER
+    private val startDateDay = 26
+    private val endDateMonth = Calendar.NOVEMBER
+    private val endDateDay = 5
 
     @Before
     fun setUp() {
@@ -191,10 +195,10 @@ class DatesDatabaseTests {
         val startDate: Calendar = Calendar.getInstance()
         val endDate: Calendar = Calendar.getInstance()
 
-        startDate.set(Calendar.MONTH, Calendar.JANUARY)
-        startDate.set(Calendar.DAY_OF_MONTH, 1)
-        endDate.set(Calendar.MONTH, Calendar.OCTOBER)
-        endDate.set(Calendar.DAY_OF_MONTH, 25)
+        startDate.set(Calendar.MONTH, startDateMonth)
+        startDate.set(Calendar.DAY_OF_MONTH, startDateDay)
+        endDate.set(Calendar.MONTH, endDateMonth)
+        endDate.set(Calendar.DAY_OF_MONTH, endDateDay)
         return Pair(startDate, endDate)
     }
 
@@ -204,6 +208,8 @@ class DatesDatabaseTests {
 
         startDate.add(Calendar.DAY_OF_MONTH, 1)
         endDate.add(Calendar.DAY_OF_MONTH, 2)
+        println(startDate)
+        println(endDate)
         return Pair(startDate, endDate)
     }
 
@@ -217,10 +223,10 @@ class DatesDatabaseTests {
         val startCal = cuttingSeasonDatesDao.getStartDate()!!.calendarValue
         val endCal = cuttingSeasonDatesDao.getEndDate()!!.calendarValue
 
-        assertEquals(startCal.get(Calendar.MONTH), Calendar.JANUARY)
-        assertEquals(endCal.get(Calendar.MONTH), Calendar.OCTOBER) // this has to change with the other end date mention
-        assertEquals(startCal.get(Calendar.DAY_OF_MONTH), 1)
-        assertEquals(endCal.get(Calendar.DAY_OF_MONTH), 25)
+        assertEquals(startCal.get(Calendar.MONTH), startDateMonth)
+        assertEquals(endCal.get(Calendar.MONTH), endDateMonth)
+        assertEquals(startCal.get(Calendar.DAY_OF_MONTH), startDateDay)
+        assertEquals(endCal.get(Calendar.DAY_OF_MONTH), endDateDay)
     }
 
     @Test

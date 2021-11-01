@@ -19,6 +19,7 @@ import androidx.navigation.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mbw101.lawn_companion.R
+import com.mbw101.lawn_companion.databinding.ActivityMainBinding
 import com.mbw101.lawn_companion.notifications.AlarmReceiver
 import com.mbw101.lawn_companion.notifications.AlarmScheduler
 import com.mbw101.lawn_companion.notifications.NotificationHelper
@@ -37,6 +38,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var settingsIcon: ImageView
     private lateinit var refreshIcon: ImageView
     private lateinit var titleTextView: TextView
+
+    private lateinit var binding: ActivityMainBinding
 
     companion object {
         lateinit var addCutFAB: FloatingActionButton
@@ -67,7 +70,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         init()
         setListeners()
@@ -92,11 +97,11 @@ class MainActivity : AppCompatActivity() {
      */
     private fun init() {
         // initialize components
-        bottomNav = findViewById(R.id.bottomNav)
-        settingsIcon = findViewById(R.id.settingsIcon)
-        refreshIcon = findViewById(R.id.refreshIcon)
-        titleTextView = findViewById(R.id.titleTextView)
-        addCutFAB = findViewById(R.id.addCutFAB)
+        bottomNav = binding.bottomNav
+        settingsIcon = binding.settingsIcon
+        refreshIcon = binding.refreshIcon
+        titleTextView = binding.titleTextView
+        addCutFAB = binding.addCutFAB
     }
 
     private fun setListeners() {
@@ -152,7 +157,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun refreshActivity() {
         Toast.makeText(this, "Refreshing...", Toast.LENGTH_SHORT).show()
-        findViewById<ViewGroup>(android.R.id.content).invalidate()
+        findViewById<ViewGroup>(android.R.id.content).invalidate() // TODO: Figure this out
     }
 
     override fun onBackPressed() {

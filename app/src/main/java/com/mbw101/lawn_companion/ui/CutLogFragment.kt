@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.CutEntry
+import com.mbw101.lawn_companion.databinding.FragmentCutLogBinding
 import com.mbw101.lawn_companion.utils.Constants
 import com.mbw101.lawn_companion.utils.UtilFunctions
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +35,12 @@ class CutLogFragment : Fragment(), OnItemClickListener {
     private lateinit var monthSections: List<MonthSection>
     private lateinit var mainRecyclerAdaptor: MainRecyclerAdaptor
 
+
     private val viewModel: CutEntryViewModel by viewModels()
+    private var _binding: FragmentCutLogBinding? = null
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
 
     companion object {
         // sets up the hashmap containing all entries for each respective month
@@ -43,7 +49,7 @@ class CutLogFragment : Fragment(), OnItemClickListener {
             val tempList = mutableListOf<CutEntry>()
             var previousMonth = 1
             var currentMonth: Int
-            val hashMap: java.util.HashMap<Int, List<CutEntry>> = createEmptyMonthHashMap()
+            val hashMap: HashMap<Int, List<CutEntry>> = createEmptyMonthHashMap()
 
             for (cut in entries) {
                 currentMonth = cut.month_number
@@ -97,15 +103,20 @@ class CutLogFragment : Fragment(), OnItemClickListener {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        // Inflate the layout for this fragment
-        val view: View = inflater.inflate(R.layout.fragment_cut_log, container, false)
-        init(view)
+        _binding = FragmentCutLogBinding.inflate(inflater, container, false)
+        val view = binding.root
+        init()
         return view
     }
 
-    private fun init(v: View) {
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun init() {
         // initialize components
-        mainRecyclerView = v.findViewById(R.id.main_recyclerview)
+        mainRecyclerView = binding.mainRecyclerview
 
         // set up the adaptor
         mainRecyclerAdaptor = MainRecyclerAdaptor(this) // pass in our click listener method
@@ -160,6 +171,11 @@ class CutLogFragment : Fragment(), OnItemClickListener {
             .setPositiveButton(R.string.deleteOption,
                 DialogInterface.OnClickListener { dialog, id ->
                     deleteCut(entry)
+                    // TODO: Make sure the user interface is updated to reflect the deleted entry
+//                    mainRecyclerAdaptor.notifyItemChanged(entry.month_number-1)
+                    mainRecyclerView.adapter!!.notifyItemRangeChanged(0, 12)
+                    mainRecyclerAdaptor.notifyItemRangeChanged(0, 12)
+
                 })
             .setNegativeButton(R.string.cancelOption,
                 DialogInterface.OnClickListener { dialog, id ->

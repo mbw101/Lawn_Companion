@@ -16,6 +16,15 @@ class ApplicationPrefs {
         Constants.APPLICATION_PREFS, 0
     )
 
+    fun hasLocationSaved(): Boolean {
+        return mPreferences.getBoolean(Constants.HAS_LOCATION_SAVED, false)
+    }
+
+    fun setHasLocationSavedValue(value: Boolean) {
+        val mEditor = mPreferences.edit()
+        mEditor.putBoolean(Constants.HAS_LOCATION_SAVED, value).apply()
+    }
+
     fun isNotFirstTime(): Boolean {
         return mPreferences.getBoolean(Constants.IS_FIRST_TIME, false)
     }

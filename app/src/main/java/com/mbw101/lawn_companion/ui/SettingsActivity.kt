@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.mbw101.lawn_companion.R
+import com.mbw101.lawn_companion.databinding.SettingsActivityBinding
 import com.mbw101.lawn_companion.utils.Constants
 
 /**
@@ -18,10 +19,14 @@ Created by Malcolm Wright
 Date: 2021-05-15
  */
 class SettingsActivity : AppCompatActivity() {
+    private lateinit var binding: SettingsActivityBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.settings_activity)
+        binding = SettingsActivityBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
+
         if (savedInstanceState == null) {
             supportFragmentManager
                 .beginTransaction()

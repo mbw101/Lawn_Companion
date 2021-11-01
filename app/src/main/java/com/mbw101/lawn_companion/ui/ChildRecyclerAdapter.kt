@@ -51,14 +51,13 @@ class ChildRecyclerAdapter(cutEntries: List<CutEntry>,
             // call the interface method
             onItemClickListener.onItemClick(entry)
         })
-
     }
 
     override fun getItemCount(): Int = entries.size
 
     fun setCuts(entries: List<CutEntry>) {
         this.entries = entries
-        notifyDataSetChanged() // redraw the layout
+        notifyItemRangeChanged(0, entries.size) // redraw the layout
     }
 }
 

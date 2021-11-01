@@ -47,8 +47,10 @@ class AlarmReceiver : BroadcastReceiver() {
 
         // check if a location is saved in db
         if (!hasLocationSaved(context)) {
+            Log.d(Constants.TAG, "No location is saved in the DB!")
             return
         }
+
         Log.d(Constants.TAG, "Has a lawn location saved in the DB!")
 
         val repository =
@@ -120,6 +122,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
             // only run through the notification logic and call the api if we have right connection type
             if (connectionTypeMatchesPreferences(preferences, context)) {
+                Log.d(Constants.TAG, "Connection type matches preferences!")
                 val weatherHttpResponse: Response<WeatherResponse> = callWeatherAPI(context)
                 performNotificationLogic(lastCut, weatherHttpResponse, context)
             } else {
@@ -205,7 +208,8 @@ class AlarmReceiver : BroadcastReceiver() {
         }
 
         val weatherData = weatherHttpResponse.body()
-        Log.d(Constants.TAG, weatherData.toString())
+//        Log.d(Constants.TAG, weatherData.toString())
+        Log.d(Constants.TAG, "Current weather: " + weatherData!!.current.toString())
         val prefs = ApplicationPrefs()
         if (lastCut == null) {
             // just suggest an appropriate cut (given weather conditions) anytime since there is no cut registered
@@ -224,6 +228,7 @@ class AlarmReceiver : BroadcastReceiver() {
         preferences: ApplicationPrefs
     ) {
         if (hasSuitableConditionsForCutNotification(weatherData, daysSince, preferences)) {
+            Log.d(Constants.TAG, "The conditions are suitable for a cut!")
             showNotification(context)
         }
     }
@@ -246,6 +251,7 @@ class AlarmReceiver : BroadcastReceiver() {
             return false
         }
 
+        Log.d(Constants.TAG, "Checking if current weather object of weather data is suitable")
         if (!isCurrentWeatherSuitable(weatherData.current)) {
             Log.d(Constants.TAG, "The Current weather data is NOT suitable for a cut!")
             return false
