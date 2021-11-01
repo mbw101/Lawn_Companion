@@ -26,8 +26,8 @@ class DatesDatabaseTests {
     private lateinit var cuttingSeasonDatesDao: CuttingSeasonDatesDao
     private val startDateMonth = Calendar.OCTOBER
     private val startDateDay = 26
-    private val endDateMonth = Calendar.OCTOBER
-    private val endDateDay = 29
+    private val endDateMonth = Calendar.NOVEMBER
+    private val endDateDay = 5
 
     @Before
     fun setUp() {
