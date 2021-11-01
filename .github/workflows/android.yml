@@ -27,9 +27,9 @@ jobs:
         OPEN_WEATHER_MAP_API_KEY: ${{ secrets.OPEN_WEATHER_MAP_API_KEY }}
       run: echo OPEN_WEATHER_MAP_API_KEY=\"$OPEN_WEATHER_MAP_API_KEY\" > ./gradle.properties
     - name: Add useAndroidX property to gradle properties file
-      run: echo "android.useAndroidX=true" > ./gradle.properties 
+      run: echo android.useAndroidX=true > ./gradle.properties 
     - name: Add enableJetifier to properties file
-      run: echo "android.enableJetifier=true" > ./gradle.properties 
+      run: echo android.enableJetifier=true > ./gradle.properties 
     - name: Build with Gradle
       run: ./gradlew build --stacktrace
     - name: Upload APK Build Artifact
