@@ -34,6 +34,9 @@ jobs:
     - name: Add enableJetifier to properties file
       run: echo android.enableJetifier=true >> ./gradle.properties 
       
+    - name: Increase RAM in properties file
+      run: echo org.gradle.jvmargs=-Xmx2048m -XX:MaxPermSize=512m >> ./gradle.properties
+      
     - name: List files in the repository
       run: |
         ls ${{ github.workspace }}
