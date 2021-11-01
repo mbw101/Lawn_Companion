@@ -31,7 +31,7 @@ android {
 
         applicationId "com.mbw101.lawn_companion"
         versionCode 1
-        versionName "0.9"
+        versionName '0.9'
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
 
