@@ -30,12 +30,12 @@ jobs:
       run: echo android.useAndroidX=true > ./gradle.properties 
     - name: Add enableJetifier to properties file
       run: echo android.enableJetifier=true > ./gradle.properties 
-    - name: Build with Gradle
-      run: ./gradlew build --stacktrace
     - name: List files in the repository
       run: |
         ls ${{ github.workspace }}
     - run: echo "🍏 This job's status is ${{ job.status }}."
+    - name: Build with Gradle
+      run: ./gradlew build --stacktrace
     - name: Upload APK Build Artifact
       uses: actions/upload-artifact@v2.2.4
       with:
