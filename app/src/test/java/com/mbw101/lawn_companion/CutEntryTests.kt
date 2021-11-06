@@ -1,6 +1,6 @@
 package com.mbw101.lawn_companion
 
-import androidx.test.runner.AndroidJUnit4
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.mbw101.lawn_companion.database.CutEntry
 import com.mbw101.lawn_companion.ui.AddCutActivity
 import com.mbw101.lawn_companion.ui.CutLogFragment
@@ -18,7 +18,7 @@ Created by Malcolm Wright
 Date: June 17th, 2021
  */
 
-@RunWith(AndroidJUnit4::class)
+@RunWith(AndroidJUnit4 ::class)
 @Config(sdk = [28])
 class CutEntryTests {
 

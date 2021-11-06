@@ -43,9 +43,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_toStartOf="@id/refreshIcon"
-                android:layout_toLeftOf="@id/refreshIcon"
                 android:layout_toEndOf="@id/settingsIcon"
-                android:layout_toRightOf="@id/settingsIcon"
                 android:gravity="center|center_vertical"
                 android:text="@string/home"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large" />
@@ -55,10 +53,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
                 android:background="@drawable/ic_baseline_refresh_32"
                 android:contentDescription="@string/refresh_icon"
-                android:visibility="visible" />
+                android:visibility="invisible" />
         </RelativeLayout>
 
     </androidx.appcompat.widget.Toolbar>
@@ -68,11 +65,11 @@
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@+id/bottomNav"
+        android:layout_below="@+id/toolbar"
         app:defaultNavHost="true"
         app:navGraph="@navigation/nav_graph"
-        tools:layout="@layout/fragment_home"
-        android:layout_below="@+id/toolbar"
-        android:layout_above="@+id/bottomNav"/>
+        tools:layout="@layout/fragment_home" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNav"
@@ -88,15 +85,17 @@
         android:id="@+id/addCutFAB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_alignParentRight="true"
+        android:layout_above="@+id/bottomNav"
         android:layout_alignParentEnd="true"
-        app:layout_constraintBottom_toTopOf="@+id/bottomNav"
-        android:layout_margin="@dimen/fab_margin"
+        android:layout_gravity="bottom|end"
+        android:layout_marginStart="@dimen/fab_margin"
+        android:layout_marginTop="@dimen/fab_margin"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_marginBottom="@dimen/fab_margin"
         android:clickable="true"
         android:contentDescription="@string/floating_action_button_for_adding_new_cuts"
         android:focusable="true"
-        android:layout_above="@+id/bottomNav"
-        app:backgroundTint="@color/medium_spring_green"
+        app:backgroundTint="@color/medium_spring_green_darker_shade"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNav"
         app:srcCompat="@drawable/ic_baseline_add_32" />
 </RelativeLayout>

@@ -3,10 +3,10 @@ package com.mbw101.lawn_companion.database
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.runner.AndroidJUnit4
-import junit.framework.Assert.assertEquals
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.runBlocking
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -18,7 +18,7 @@ Lawn Companion
 Created by Malcolm Wright
 Date: 2021-09-18
  */
-@RunWith(AndroidJUnit4::class)
+@RunWith(AndroidJUnit4 ::class)
 @Config(sdk = [28])
 class DatesDatabaseTests {
 
@@ -27,7 +27,7 @@ class DatesDatabaseTests {
     private val startDateMonth = Calendar.OCTOBER
     private val startDateDay = 26
     private val endDateMonth = Calendar.NOVEMBER
-    private val endDateDay = 5
+    private val endDateDay = 7
 
     @Before
     fun setUp() {
@@ -53,7 +53,7 @@ class DatesDatabaseTests {
     @Test
     @Throws(Exception::class)
     fun testInsertStartDate() = runBlocking {
-        val (startDate: Calendar, endDate: Calendar) = setupStartEndCalendars()
+        val (startDate: Calendar, _: Calendar) = setupStartEndCalendars()
 
         cuttingSeasonDatesDao.insertStartDate(startDate)
         assertEquals(cuttingSeasonDatesDao.getNumEntries(), 1)
@@ -64,7 +64,7 @@ class DatesDatabaseTests {
     @Test
     @Throws(Exception::class)
     fun testInsertEndDate() = runBlocking {
-        val (startDate: Calendar, endDate: Calendar) = setupStartEndCalendars()
+        val (_: Calendar, endDate: Calendar) = setupStartEndCalendars()
 
         cuttingSeasonDatesDao.insertEndDate(endDate)
         assertEquals(cuttingSeasonDatesDao.getNumEntries(), 1)

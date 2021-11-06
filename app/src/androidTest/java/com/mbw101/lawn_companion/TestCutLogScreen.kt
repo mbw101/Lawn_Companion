@@ -10,6 +10,8 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.matcher.BoundedMatcher
 import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
 import com.mbw101.lawn_companion.database.AppDatabase
@@ -25,7 +27,10 @@ import org.hamcrest.Matchers.not
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 
+@RunWith(AndroidJUnit4::class)
+@LargeTest
 class TestCutLogScreen {
     private lateinit var db: AppDatabase
     private lateinit var cutEntryDao: CutEntryDAO
@@ -40,7 +45,7 @@ class TestCutLogScreen {
     companion object {
         private const val MONTH_TO_TEST = 9
 
-        fun withViewAtPosition(position: Int, itemMatcher: Matcher<View?>): Matcher<View?>? {
+        fun withViewAtPosition(position: Int, itemMatcher: Matcher<View?>): Matcher<View?> {
             return object : BoundedMatcher<View?, RecyclerView>(RecyclerView::class.java) {
 
                 override fun matchesSafely(recyclerView: RecyclerView): Boolean {
@@ -49,7 +54,7 @@ class TestCutLogScreen {
                 }
 
                 override fun describeTo(description: org.hamcrest.Description?) {
-                    itemMatcher.describeTo(description);
+                    itemMatcher.describeTo(description)
                 }
             }
         }
@@ -77,7 +82,7 @@ class TestCutLogScreen {
             .check(matches(not(withViewAtPosition(MONTH_TO_TEST, hasDescendant(allOf(withText("Sept"), isDisplayed()))))))
 
         addTestEntryInSameYear()
-        TestMainScreen.tapRefresh()
+//        TestMainScreen.tapRefresh()
         navigateToCutLog()
 //        onView(withId(R.id.main_recyclerview))
 //            .check(matches(withViewAtPosition(MONTH_TO_TEST, hasDescendant(allOf(withText("Sept"), isDisplayed()))))) // Completed Cut

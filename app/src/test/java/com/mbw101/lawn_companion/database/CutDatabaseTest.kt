@@ -3,17 +3,17 @@ package com.mbw101.lawn_companion.database
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.runner.AndroidJUnit4
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.mbw101.lawn_companion.utils.UtilFunctions
-import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.runBlocking
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 
-@RunWith(AndroidJUnit4::class)
+@RunWith(AndroidJUnit4 ::class)
 @Config(sdk = [28])
 class CutDatabaseTest {
 
@@ -58,7 +58,7 @@ class CutDatabaseTest {
             CutEntry("4:36pm", 28, "September", 9, UtilFunctions.getCurrentYear()),
             CutEntry("4:36pm", 5, "October", 10, UtilFunctions.getCurrentYear()))
 
-        var returnedEntries: List<CutEntry>? = null
+        var returnedEntries: List<CutEntry>?
         runBlocking {
             returnedEntries = cutEntryDao.findByMonthName("October")
             assertEquals(returnedEntries!!.size, 1)
@@ -233,7 +233,6 @@ class CutDatabaseTest {
             assertEquals(returnedEntry!!.month_name, "September")
 
             // check size after deleting
-            val remainingEntries = cutEntryDao.getAllCuts()
             assertEquals(cutEntryDao.getNumEntries(), 2)
         }
     }
@@ -250,7 +249,6 @@ class CutDatabaseTest {
         cutEntryDao.deleteAll()
 
         // check size after deleting
-        val remainingEntries = cutEntryDao.getAllCuts()
         assertEquals(cutEntryDao.getNumEntries(), 0)
     }
 

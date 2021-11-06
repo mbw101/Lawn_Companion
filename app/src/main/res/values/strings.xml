@@ -28,20 +28,23 @@
     </string>
 
     <!--  5th screen - Saves the lawn location  -->
-    <string name="fifthScreenTitle">
-        Can Lawn Companion save your current location, so it can use it for accurate weather data?
+    <string name="lawnLocationTitle">
+        Save Lawn Location?
     </string>
 
-    <string name="fifthScreenContent">
-        Lawn Companion saves your location locally, so it can retrieve the current weather forecast for your city (and lawn) no
-        matter where you are located! You can adjust this location at any moment in the settings.
+    <string name="lawnLocationBodyText">
+        Lawn Companion saves your location locally, so it can retrieve the relevant weather forecast for your lawn no matter where you are!
     </string>
 
-    <string name="fifthScreenAccept">
+    <string name="lawnLocationDisclaimer">
+        Lawn Companion never shares your lawn location.
+    </string>
+
+    <string name="lawnLocationAccept">
         Yes, I am home
     </string>
 
-    <string name="fifthScreenDeny">
+    <string name="lawnLocationDeny">
         No, I am not home
     </string>
 

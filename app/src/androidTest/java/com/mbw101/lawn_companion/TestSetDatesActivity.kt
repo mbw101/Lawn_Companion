@@ -12,6 +12,7 @@ import androidx.test.espresso.contrib.PickerActions
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.ActivityTestRule
 import com.mbw101.lawn_companion.database.AppDatabase
 import com.mbw101.lawn_companion.database.AppDatabaseBuilder
@@ -28,6 +29,7 @@ import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 import java.util.*
 
 
@@ -36,6 +38,7 @@ Lawn Companion
 Created by Malcolm Wright
 Date: 2021-09-24
  */
+@RunWith(AndroidJUnit4::class)
 class TestSetDatesActivity {
     @get:Rule
     val setDatesActivityTestRule: ActivityTestRule<SetDatesActivity> = ActivityTestRule(

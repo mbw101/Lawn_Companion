@@ -6,7 +6,7 @@
             android:thickness="2dp"
             android:useLevel="false">
 
-            <solid android:color="@color/medium_spring_green" />
+            <solid android:color="@color/medium_spring_green_darker_shade" />
 
         </shape>
     </item>

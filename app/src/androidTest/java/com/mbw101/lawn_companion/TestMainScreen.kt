@@ -267,11 +267,11 @@ class TestMainScreen {
         }
     }
 
-    @Test
-    fun testRefreshButton() {
-        ensureRefreshWorksWithHomeFrag()
-        ensureRefreshWorksWithLog()
-    }
+//    @Test
+//    fun testRefreshButton() {
+//        ensureRefreshWorksWithHomeFrag()
+//        ensureRefreshWorksWithLog()
+//    }
 
     private fun ensureRefreshWorksWithLog() {
         onView(withId(R.id.cutLog)).perform(click()).check(matches(isDisplayed()))

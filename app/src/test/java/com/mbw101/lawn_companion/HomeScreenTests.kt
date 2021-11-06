@@ -1,10 +1,10 @@
 package com.mbw101.lawn_companion
 
-import androidx.test.runner.AndroidJUnit4
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.mbw101.lawn_companion.database.CutEntry
 import com.mbw101.lawn_companion.ui.HomeFragment
 import com.mbw101.lawn_companion.utils.UtilFunctions
-import junit.framework.Assert.assertEquals
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
