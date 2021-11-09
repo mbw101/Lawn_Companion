@@ -63,10 +63,10 @@ class HomeFragment : Fragment() {
                 val cal = Calendar.getInstance()
                 cal.set(Calendar.MONTH, latestCut.month_number - 1) // month numbers in Calendar start at 0
                 cal.set(Calendar.DAY_OF_MONTH, latestCut.day_number)
+                val preferences = ApplicationPrefs()
 
-                // TODO: Implement the user's preference for how long they require a cut (replace the 1 week value -> 7 days)
                 val numDaysSince = UtilFunctions.getNumDaysSince(cal)
-                return if (numDaysSince > 7) {
+                return if (numDaysSince > preferences.getDesiredCutFrequency()) {
                     MyApplication.applicationContext().getString(R.string.passedIntervalMessage)
                 }
                 else if (numDaysSince > 1) { // days will be multiple
@@ -142,7 +142,6 @@ class HomeFragment : Fragment() {
         else {
             // this might be causing the bug with app crashing since it's in a different thread than UI but
             // will be used for updating the UI
-            val preferences = ApplicationPrefs()
             val hasLocationSavedInDB = preferences.hasLocationSaved()
             if (hasLocationSavedInDB) {
                 setupViewModel()

@@ -27,7 +27,7 @@ class DatesDatabaseTests {
     private val startDateMonth = Calendar.OCTOBER
     private val startDateDay = 26
     private val endDateMonth = Calendar.NOVEMBER
-    private val endDateDay = 7
+    private val endDateDay = 15
 
     @Before
     fun setUp() {

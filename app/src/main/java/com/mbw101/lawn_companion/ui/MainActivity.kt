@@ -157,7 +157,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun refreshActivity() {
         Toast.makeText(this, "Refreshing...", Toast.LENGTH_SHORT).show()
-        findViewById<ViewGroup>(android.R.id.content).invalidate() // TODO: Figure this out
+        findViewById<ViewGroup>(android.R.id.content).invalidate()
     }
 
     override fun onBackPressed() {

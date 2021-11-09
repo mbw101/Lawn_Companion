@@ -3,6 +3,7 @@ package com.mbw101.lawn_companion.ui
 import android.app.TimePickerDialog
 import android.content.Intent
 import android.os.Bundle
+import android.text.format.DateFormat
 import android.text.format.DateUtils
 import android.util.Log
 import android.view.View
@@ -268,7 +269,7 @@ class AddCutActivity : AppCompatActivity() {
             },
             cutTime.get(Calendar.HOUR_OF_DAY),
             cutTime.get(Calendar.MINUTE),
-            false // TODO: Add if statement to support 24-hour locales (based on preference)
+            DateFormat.is24HourFormat(this) // Shows a 24 hour time picker dialog based on the system settings for 24 hour format
         )
         timePickerDialog.show()
     }
