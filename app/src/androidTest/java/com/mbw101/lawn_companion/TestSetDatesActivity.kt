@@ -37,6 +37,7 @@ import java.util.*
 Lawn Companion
 Created by Malcolm Wright
 Date: 2021-09-24
+ Date format: YYYY-MM-DD
  */
 @RunWith(AndroidJUnit4::class)
 class TestSetDatesActivity {
@@ -110,12 +111,12 @@ class TestSetDatesActivity {
         onView(withId(id)).check(matches(isDisplayed()))
         onView(withId(id)).perform(click())
         setDate(2021, 9, 25)
-        onView(withId(id)).check(matches(withText("25/9/2021")))
+        onView(withId(id)).check(matches(withText("2021/9/25")))
 
         onView(withId(id)).check(matches(isDisplayed()))
         onView(withId(id)).perform(click())
         setDate(2021, 12, 5)
-        onView(withId(id)).check(matches(withText("5/12/2021")))
+        onView(withId(id)).check(matches(withText("2021/12/5")))
     }
 
     @Test
@@ -182,8 +183,42 @@ class TestSetDatesActivity {
 
         // Ensure the textview matches proper format
         Thread.sleep(250)
-        onView(withId(R.id.startDateSelector)).check(matches(withText("1/1/2021")))
-        onView(withId(R.id.endDateSelector)).check(matches(withText("31/12/2021")))
+        onView(withId(R.id.startDateSelector)).check(matches(withText("2021/1/1"))) // yyyy-mm-dd
+        onView(withId(R.id.endDateSelector)).check(matches(withText("2021/12/31")))
+    }
+
+    @Test
+    fun testDateSuggestionForDatePicker() {
+        runBlocking {
+            val startDate = Calendar.getInstance()
+            startDate.set(Calendar.MONTH, Calendar.JANUARY)
+            startDate.set(Calendar.DAY_OF_MONTH, 1)
+
+            val endDate = Calendar.getInstance()
+            endDate.set(Calendar.MONTH, Calendar.DECEMBER)
+            endDate.set(Calendar.DAY_OF_MONTH, 31)
+
+            cuttingSeasonDatesDao.insertStartDate(startDate)
+            cuttingSeasonDatesDao.insertEndDate(endDate)
+        }
+
+        setDatesActivityTestRule.launchActivity(customIntent)
+
+        onView(withId(R.id.startDateSelector)).perform(click())
+        onView(withId(android.R.id.button1)).perform(click())
+        onView(withId(R.id.startDateSelector)).check(matches(withText("2021/1/1")))
+
+        onView(withId(R.id.startDateSelector)).perform(click())
+        setDate(2021, 1, 23)
+        onView(withId(R.id.startDateSelector)).check(matches(withText("2021/1/23")))
+
+        onView(withId(R.id.endDateSelector)).perform(click())
+        onView(withId(android.R.id.button1)).perform(click())
+        onView(withId(R.id.endDateSelector)).check(matches(withText("2021/12/31")))
+
+        onView(withId(R.id.endDateSelector)).perform(click())
+        setDate(2021, 12, 5)
+        onView(withId(R.id.endDateSelector)).check(matches(withText("2021/12/5")))
     }
 
     @After

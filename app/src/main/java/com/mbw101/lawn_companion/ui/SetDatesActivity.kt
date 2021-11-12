@@ -68,17 +68,18 @@ class SetDatesActivity : AppCompatActivity() {
                         startDateSelector.text =
                             getString(
                                 R.string.datePlaceholder,
-                                startDateFromDB!!.get(Calendar.DAY_OF_MONTH).toString(),
+                                startDateFromDB!!.get(Calendar.YEAR).toString(),
                                 (startDateFromDB!!.get(Calendar.MONTH) + 1).toString(),
-                                startDateFromDB!!.get(Calendar.YEAR).toString()
+                                startDateFromDB!!.get(Calendar.DAY_OF_MONTH).toString(),
+
                             )
 
                         endDateSelector.text =
                             getString(
                                 R.string.datePlaceholder,
-                                endDateFromDB!!.get(Calendar.DAY_OF_MONTH).toString(),
+                                endDateFromDB!!.get(Calendar.YEAR).toString(),
                                 (endDateFromDB!!.get(Calendar.MONTH) + 1).toString(),
-                                endDateFromDB!!.get(Calendar.YEAR).toString()
+                                endDateFromDB!!.get(Calendar.DAY_OF_MONTH).toString()
                             )
                     }
 
@@ -102,15 +103,16 @@ class SetDatesActivity : AppCompatActivity() {
         }
 
         startDateSelector.setOnClickListener {
-            val cal = Calendar.getInstance()
-            val day: Int = cal.get(Calendar.DAY_OF_MONTH)
+            val cal = getAppropriateStartCalendar() ?: Calendar.getInstance()
+            val day: Int = cal!!.get(Calendar.DAY_OF_MONTH)
             val month: Int = cal.get(Calendar.MONTH)
             val year: Int = cal.get(Calendar.YEAR)
+
             // date picker dialog
             val picker = DatePickerDialog(this,
                 { _, yearPicked, monthOfYear, dayOfMonth ->
                     startDateSelector.text =
-                        getString(R.string.datePlaceholder, dayOfMonth.toString(), (monthOfYear + 1).toString(), yearPicked.toString())
+                        getString(R.string.datePlaceholder, yearPicked.toString(), (monthOfYear + 1).toString(), dayOfMonth.toString())
                     selectedStartDate = Calendar.getInstance()
                     selectedStartDate!!.set(Calendar.YEAR, yearPicked)
                     selectedStartDate!!.set(Calendar.MONTH, monthOfYear)
@@ -124,7 +126,7 @@ class SetDatesActivity : AppCompatActivity() {
         }
 
         endDateSelector.setOnClickListener {
-            val cal = Calendar.getInstance()
+            val cal = getAppropriateEndCalendar() ?: Calendar.getInstance()
             val day: Int = cal.get(Calendar.DAY_OF_MONTH)
             val month: Int = cal.get(Calendar.MONTH)
             val year: Int = cal.get(Calendar.YEAR)
@@ -132,7 +134,7 @@ class SetDatesActivity : AppCompatActivity() {
             val picker = DatePickerDialog(this,
                 { _, yearPicked, monthOfYear, dayOfMonth ->
                     endDateSelector.text =
-                        getString(R.string.datePlaceholder, dayOfMonth.toString(), (monthOfYear + 1).toString(), yearPicked.toString())
+                        getString(R.string.datePlaceholder, yearPicked.toString(), (monthOfYear + 1).toString(), dayOfMonth.toString()) // ISO date format (YYYY-MM-DD)
                     selectedEndDate = Calendar.getInstance()
                     selectedEndDate!!.set(Calendar.YEAR, yearPicked)
                     selectedEndDate!!.set(Calendar.MONTH, monthOfYear)
@@ -165,6 +167,14 @@ class SetDatesActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    // we want date on the DatePicker to be consistent with what's on the text view
+    private fun getAppropriateStartCalendar(): Calendar? {
+        return if (selectedStartDate == null) startDateFromDB else selectedStartDate
+    }
+    private fun getAppropriateEndCalendar(): Calendar? {
+        return if (selectedEndDate == null) endDateFromDB else selectedEndDate
     }
 
     private fun setupDB() {

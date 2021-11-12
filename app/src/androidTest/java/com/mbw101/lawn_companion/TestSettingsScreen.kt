@@ -282,16 +282,16 @@ class TestSettingsScreen {
         onView(withId(R.id.endDateSelector)).perform(click())
         TestSetDatesActivity.setDate(2021, Calendar.OCTOBER + 1, 31)
 
-        onView(withId(R.id.startDateSelector)).check(matches(withText("14/3/2021")))
-        onView(withId(R.id.endDateSelector)).check(matches(withText("31/10/2021")))
+        onView(withId(R.id.startDateSelector)).check(matches(withText("2021/3/14")))
+        onView(withId(R.id.endDateSelector)).check(matches(withText("2021/10/31")))
 
         // test formatting again after closing the activity
         onView(withId(R.id.saveDatesButton)).perform(click())
         Thread.sleep(1000)
         tapSetCuttingSeasonDates()
         Thread.sleep(200)
-        onView(withId(R.id.startDateSelector)).check(matches(withText("14/3/2021")))
-        onView(withId(R.id.endDateSelector)).check(matches(withText("31/10/2021")))
+        onView(withId(R.id.startDateSelector)).check(matches(withText("2021/3/14")))
+        onView(withId(R.id.endDateSelector)).check(matches(withText("2021/10/31")))
     }
 
     private fun ensureSetDatesActivityIsShown() {

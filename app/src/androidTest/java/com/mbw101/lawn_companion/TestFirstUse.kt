@@ -147,8 +147,8 @@ class TestFirstUse {
     private fun ensureDefaultDatesAreDisplayed() {
         onView(ViewMatchers.withId(R.id.settingsIcon)).perform(ViewActions.click())
         TestSettingsScreen.tapSetCuttingSeasonDates()
-        onView(ViewMatchers.withId(R.id.startDateSelector)).check(matches(ViewMatchers.withText("1/1/2021")))
-        onView(ViewMatchers.withId(R.id.endDateSelector)).check(matches(ViewMatchers.withText("31/12/2021")))
+        onView(ViewMatchers.withId(R.id.startDateSelector)).check(matches(ViewMatchers.withText("2021/1/1")))
+        onView(ViewMatchers.withId(R.id.endDateSelector)).check(matches(ViewMatchers.withText("2021/12/31")))
     }
 
     private fun compareNoLocationExpectedOutputs() {
