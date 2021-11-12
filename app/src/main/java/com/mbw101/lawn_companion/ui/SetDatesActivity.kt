@@ -29,12 +29,12 @@ class SetDatesActivity : AppCompatActivity() {
     private lateinit var saveDatesButton: Button
     private lateinit var startDateSelector: TextView
     private lateinit var endDateSelector: TextView
-    private lateinit var currentStartDate: Calendar
-    private lateinit var currentEndDate: Calendar
     private lateinit var cuttingSeasonDateRepository: CuttingSeasonDateRepository
     private lateinit var binding: ActivitySetDatesBinding
-    private var startDate: Calendar? = null
-    private var endDate: Calendar? = null
+    private var selectedStartDate: Calendar? = null
+    private var selectedEndDate: Calendar? = null
+    private var startDateFromDB: Calendar? = null
+    private var endDateFromDB: Calendar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,30 +53,32 @@ class SetDatesActivity : AppCompatActivity() {
         // Access the start and end dates from the DB
         Toast.makeText(this, "Accessing dates...", Toast.LENGTH_SHORT).show()
 
-        startDate = null
-        endDate = null
+        startDateFromDB = null
+        endDateFromDB = null
         runBlocking {
             launch (Dispatchers.IO) {
-                startDate = cuttingSeasonDateRepository.getStartDate()?.calendarValue
-                endDate = cuttingSeasonDateRepository.getEndDate()?.calendarValue
+                startDateFromDB = cuttingSeasonDateRepository.getStartDate()?.calendarValue
+                endDateFromDB = cuttingSeasonDateRepository.getEndDate()?.calendarValue
+                println("startDate $startDateFromDB")
+                println("endDate $startDateFromDB")
 
                 // timer runs on a different thread than UI, so we need this UI updating code to run on the UI thread
                 runOnUiThread {
-                    if (startDate != null && endDate != null) {
+                    if (startDateFromDB != null && endDateFromDB != null) {
                         startDateSelector.text =
                             getString(
                                 R.string.datePlaceholder,
-                                startDate!!.get(Calendar.DAY_OF_MONTH).toString(),
-                                (startDate!!.get(Calendar.MONTH) + 1).toString(),
-                                startDate!!.get(Calendar.YEAR).toString()
+                                startDateFromDB!!.get(Calendar.DAY_OF_MONTH).toString(),
+                                (startDateFromDB!!.get(Calendar.MONTH) + 1).toString(),
+                                startDateFromDB!!.get(Calendar.YEAR).toString()
                             )
 
                         endDateSelector.text =
                             getString(
                                 R.string.datePlaceholder,
-                                endDate!!.get(Calendar.DAY_OF_MONTH).toString(),
-                                (endDate!!.get(Calendar.MONTH) + 1).toString(),
-                                endDate!!.get(Calendar.YEAR).toString()
+                                endDateFromDB!!.get(Calendar.DAY_OF_MONTH).toString(),
+                                (endDateFromDB!!.get(Calendar.MONTH) + 1).toString(),
+                                endDateFromDB!!.get(Calendar.YEAR).toString()
                             )
                     }
 
@@ -106,13 +108,13 @@ class SetDatesActivity : AppCompatActivity() {
             val year: Int = cal.get(Calendar.YEAR)
             // date picker dialog
             val picker = DatePickerDialog(this,
-                { view, yearPicked, monthOfYear, dayOfMonth ->
+                { _, yearPicked, monthOfYear, dayOfMonth ->
                     startDateSelector.text =
                         getString(R.string.datePlaceholder, dayOfMonth.toString(), (monthOfYear + 1).toString(), yearPicked.toString())
-                    currentStartDate = Calendar.getInstance()
-                    currentStartDate.set(Calendar.YEAR, yearPicked)
-                    currentStartDate.set(Calendar.MONTH, monthOfYear)
-                    currentStartDate.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                    selectedStartDate = Calendar.getInstance()
+                    selectedStartDate!!.set(Calendar.YEAR, yearPicked)
+                    selectedStartDate!!.set(Calendar.MONTH, monthOfYear)
+                    selectedStartDate!!.set(Calendar.DAY_OF_MONTH, dayOfMonth)
                 },
                 year,
                 month,
@@ -128,13 +130,13 @@ class SetDatesActivity : AppCompatActivity() {
             val year: Int = cal.get(Calendar.YEAR)
             // date picker dialog
             val picker = DatePickerDialog(this,
-                { view, yearPicked, monthOfYear, dayOfMonth ->
+                { _, yearPicked, monthOfYear, dayOfMonth ->
                     endDateSelector.text =
                         getString(R.string.datePlaceholder, dayOfMonth.toString(), (monthOfYear + 1).toString(), yearPicked.toString())
-                    currentEndDate = Calendar.getInstance()
-                    currentEndDate.set(Calendar.YEAR, yearPicked)
-                    currentEndDate.set(Calendar.MONTH, monthOfYear)
-                    currentEndDate.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                    selectedEndDate = Calendar.getInstance()
+                    selectedEndDate!!.set(Calendar.YEAR, yearPicked)
+                    selectedEndDate!!.set(Calendar.MONTH, monthOfYear)
+                    selectedEndDate!!.set(Calendar.DAY_OF_MONTH, dayOfMonth)
                 },
                 year,
                 month,
@@ -147,14 +149,20 @@ class SetDatesActivity : AppCompatActivity() {
             // save start date into DB
             runBlocking {
                 launch (Dispatchers.IO) {
-                    cuttingSeasonDateRepository.insertStartDate(currentStartDate)
-                    cuttingSeasonDateRepository.insertEndDate(currentEndDate)
+                    if (selectedStartDate != null) {
+                        cuttingSeasonDateRepository.insertStartDate(selectedStartDate!!)
+                    }
+                    if (selectedEndDate != null) {
+                        cuttingSeasonDateRepository.insertEndDate(selectedEndDate!!)
+                    }
                 }
             }
 
             Toast.makeText(this, "Saving dates...", Toast.LENGTH_LONG).show()
             Timer().schedule(1000) {
-                launchSettingsActivity()
+                runOnUiThread {
+                    launchSettingsActivity()
+                }
             }
         }
     }
@@ -173,6 +181,6 @@ class SetDatesActivity : AppCompatActivity() {
         finish()
     }
 
-    fun getStartDate(): Calendar? = startDate
-    fun getEndDate(): Calendar? = endDate
+    fun getStartDate(): Calendar? = startDateFromDB
+    fun getEndDate(): Calendar? = endDateFromDB
 }

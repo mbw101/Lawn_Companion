@@ -240,6 +240,86 @@ class DatesDatabaseTests {
         assertEquals(cuttingSeasonDatesDao.isOutsideOfCuttingSeasonDates(), false)
     }
 
+    // Edge cases where the today's calendar aligns on the same day as both the start/end dates and is offset by one of the time fields
+    @Test
+    @Throws(Exception::class)
+    fun testInCuttingSeasonHourOfDayEdgeCase() = runBlocking {
+        val startCal = Calendar.getInstance()
+        val endCal = Calendar.getInstance()
+        startCal.set(Calendar.HOUR_OF_DAY, 10)
+        endCal.set(Calendar.HOUR_OF_DAY, 5)
+
+        val (startVal, endVal) = buildDates(startCal, endCal)
+        insertDatesIntoDB(startVal, endVal)
+        assertEquals(cuttingSeasonDatesDao.isInCuttingSeasonDates(), true)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testInCuttingSeasonHourEdgeCase() = runBlocking {
+        val startCal = Calendar.getInstance()
+        val endCal = Calendar.getInstance()
+        startCal.set(Calendar.HOUR, 10)
+        endCal.set(Calendar.HOUR, 5)
+
+        val (startVal, endVal) = buildDates(startCal, endCal)
+        insertDatesIntoDB(startVal, endVal)
+        assertEquals(cuttingSeasonDatesDao.isInCuttingSeasonDates(), true)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testInCuttingSeasonMinuteEdgeCase() = runBlocking {
+        val startCal = Calendar.getInstance()
+        val endCal = Calendar.getInstance()
+        startCal.set(Calendar.MINUTE, 10)
+        endCal.set(Calendar.MINUTE, 5)
+
+        val (startVal, endVal) = buildDates(startCal, endCal)
+        insertDatesIntoDB(startVal, endVal)
+        assertEquals(cuttingSeasonDatesDao.isInCuttingSeasonDates(), true)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testInCuttingSeasonSecondEdgeCase() = runBlocking {
+        val startCal = Calendar.getInstance()
+        val endCal = Calendar.getInstance()
+        startCal.set(Calendar.SECOND, 10)
+        endCal.set(Calendar.SECOND, 5)
+
+        val (startVal, endVal) = buildDates(startCal, endCal)
+        insertDatesIntoDB(startVal, endVal)
+        assertEquals(cuttingSeasonDatesDao.isInCuttingSeasonDates(), true)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testInCuttingSeasonMillisecondEdgeCase() = runBlocking {
+        val startCal = Calendar.getInstance()
+        val endCal = Calendar.getInstance()
+        startCal.set(Calendar.MILLISECOND, 10)
+        endCal.set(Calendar.MILLISECOND, 5)
+
+        val (startVal, endVal) = buildDates(startCal, endCal)
+        insertDatesIntoDB(startVal, endVal)
+        assertEquals(cuttingSeasonDatesDao.isInCuttingSeasonDates(), true)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testInCuttingSeasonPMEdgeCase() = runBlocking {
+        val startCal = Calendar.getInstance()
+        val endCal = Calendar.getInstance()
+        startCal.set(Calendar.AM_PM, Calendar.PM)
+        endCal.set(Calendar.AM_PM, Calendar.PM)
+
+        val (startVal, endVal) = buildDates(startCal, endCal)
+        insertDatesIntoDB(startVal, endVal)
+        assertEquals(cuttingSeasonDatesDao.isInCuttingSeasonDates(), true)
+    }
+
+
     @Test
     @Throws(Exception::class)
     fun testOutsideCuttingSeason() = runBlocking {

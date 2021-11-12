@@ -12,8 +12,8 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.mbw101.lawn_companion.R
+import com.mbw101.lawn_companion.database.AppDatabaseBuilder
 import com.mbw101.lawn_companion.database.CutEntry
-import com.mbw101.lawn_companion.database.setupLawnLocationRepository
 import com.mbw101.lawn_companion.databinding.FragmentHomeBinding
 import com.mbw101.lawn_companion.utils.ApplicationPrefs
 import com.mbw101.lawn_companion.utils.Constants
@@ -32,6 +32,7 @@ class HomeFragment : Fragment() {
     private lateinit var salutationTextView: TextView
     private val viewModel: CutEntryViewModel by viewModels()
     private var _binding: FragmentHomeBinding? = null
+    private var withinCuttingSeason: Boolean = false
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
@@ -93,6 +94,14 @@ class HomeFragment : Fragment() {
     }
 
     private fun init() {
+        // check if in cutting season
+        val dbBuilder = AppDatabaseBuilder.getInstance(MyApplication.applicationContext())
+        runBlocking {
+            launch (Dispatchers.IO) {
+                withinCuttingSeason = dbBuilder.cuttingSeasonDatesDao().isInCuttingSeasonDates()
+            }
+        }
+
         openPermissions = binding.openPermissionsButton
         createLawnLocationButton = binding.createLawnLocationButton
         mainTextView = binding.mainMessageTextView
@@ -134,7 +143,7 @@ class HomeFragment : Fragment() {
         val preferences = ApplicationPrefs()
 
         // look at if they turned on/off cutting season
-        if (!preferences.isInCuttingSeason()) {
+        if (!preferences.isInCuttingSeason() || !withinCuttingSeason) {
             mainTextView.text = getString(R.string.cuttingSeasonOver)
             openPermissions.visibility = View.INVISIBLE
             createLawnLocationButton.visibility = View.INVISIBLE
@@ -159,23 +168,6 @@ class HomeFragment : Fragment() {
                 createLawnLocationButton.visibility = View.VISIBLE
             }
         }
-    }
-
-    private fun createCoroutineToCheckIfLocationIsSaved(): Boolean {
-        var hasLocationSaved = false
-
-        runBlocking {
-            launch (Dispatchers.IO) {
-                hasLocationSaved = checkIfLocationSaved()
-            }
-        }
-
-        return hasLocationSaved
-    }
-
-    private suspend fun checkIfLocationSaved(): Boolean {
-        val lawnLocationRepository = setupLawnLocationRepository(MyApplication.applicationContext())
-        return lawnLocationRepository.hasALocationSaved()
     }
 
     /***

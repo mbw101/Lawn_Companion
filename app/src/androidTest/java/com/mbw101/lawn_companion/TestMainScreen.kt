@@ -17,9 +17,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
-import com.mbw101.lawn_companion.database.LawnLocation
-import com.mbw101.lawn_companion.database.LawnLocationRepository
-import com.mbw101.lawn_companion.database.setupLawnLocationRepository
+import com.mbw101.lawn_companion.database.*
 import com.mbw101.lawn_companion.ui.AddCutActivity
 import com.mbw101.lawn_companion.ui.MainActivity
 import com.mbw101.lawn_companion.ui.SaveLocationActivity
@@ -50,6 +48,7 @@ class TestMainScreen {
     private val goodEvening = "Good Evening!"
     private val goodNight = "Good Night!"
     private lateinit var lawnLocationRepository: LawnLocationRepository
+    private lateinit var cuttingSeasonDateRepository: CuttingSeasonDateRepository
 
     @get:Rule
     val mainActivityTestRule: ActivityTestRule<MainActivity> = ActivityTestRule(MainActivity::class.java)
@@ -74,7 +73,13 @@ class TestMainScreen {
         setupLocationDB()
         runBlocking {
             createMockLocationEntry()
+            setNewCuttingSeasonDates()
         }
+    }
+
+    private suspend fun setNewCuttingSeasonDates() {
+        cuttingSeasonDateRepository.insertStartDate(Calendar.getInstance())
+        cuttingSeasonDateRepository.insertEndDate(Calendar.getInstance())
     }
 
     private suspend fun createMockLocationEntry() {
@@ -85,6 +90,7 @@ class TestMainScreen {
     private fun setupLocationDB() {
         val context: Context = ApplicationProvider.getApplicationContext<Context>()
         lawnLocationRepository = setupLawnLocationRepository(context)
+        cuttingSeasonDateRepository = setupCuttingSeasonDateRepository(context)
     }
 
     private fun calculateExpectedMessage(): String {

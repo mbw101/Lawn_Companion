@@ -45,20 +45,11 @@ interface CuttingSeasonDatesDao {
         val endCal = getEndDate()!!.calendarValue
 
         // ensure all the times are the same before getting dates
-        todayCalendar.set(Calendar.HOUR, 1)
-        todayCalendar.set(Calendar.MINUTE, 0)
-        todayCalendar.set(Calendar.AM_PM, Calendar.AM)
-        todayCalendar.set(Calendar.MILLISECOND, startCal.get(Calendar.MILLISECOND))
-        startCal.set(Calendar.HOUR, 1)
-        startCal.set(Calendar.MINUTE, 0)
-        startCal.set(Calendar.AM_PM, Calendar.AM)
-        endCal.set(Calendar.HOUR, 1)
-        endCal.set(Calendar.MINUTE, 0)
-        endCal.set(Calendar.AM_PM, Calendar.AM)
+        ensureCalendarsWorkWithComparison(todayCalendar, startCal, endCal)
 
-        println("Today's calendar: $todayCalendar")
-        println("Start date calendar: $startCal")
-        println("End date's calendar: $endCal")
+        println("Today's calendar time: ${todayCalendar.time}")
+        println("Start date calendar time: ${startCal.time}")
+        println("End date's calendar time: ${endCal.time}")
 
         val currentDate = todayCalendar.time
         val startDate = startCal.time
@@ -69,6 +60,31 @@ interface CuttingSeasonDatesDao {
 
         // this allows for the dates to match and still be considered in the cutting season
         return !(currentDate.before(startDate) || currentDate.after(endDate))
+    }
+
+    // For the calendar comparison to work properly when the current calendar aligns with either the start or end date,
+    // we need the second and millisecond parts to match one another.
+    private fun ensureCalendarsWorkWithComparison(todayCalendar: Calendar, startCal: Calendar, endCal: Calendar) {
+        todayCalendar.set(Calendar.HOUR_OF_DAY, 1)
+        todayCalendar.set(Calendar.HOUR, 1)
+        todayCalendar.set(Calendar.MINUTE, 0)
+        todayCalendar.set(Calendar.SECOND, 0)
+        todayCalendar.set(Calendar.MILLISECOND, 0)
+        todayCalendar.set(Calendar.AM_PM, Calendar.AM)
+
+        startCal.set(Calendar.HOUR_OF_DAY, 1)
+        startCal.set(Calendar.HOUR, 1)
+        startCal.set(Calendar.MINUTE, 0)
+        startCal.set(Calendar.SECOND, 0)
+        startCal.set(Calendar.MILLISECOND, 0)
+        startCal.set(Calendar.AM_PM, Calendar.AM)
+
+        endCal.set(Calendar.HOUR_OF_DAY, 1)
+        endCal.set(Calendar.HOUR, 1)
+        endCal.set(Calendar.MINUTE, 0)
+        endCal.set(Calendar.SECOND, 0)
+        endCal.set(Calendar.MILLISECOND, 0)
+        endCal.set(Calendar.AM_PM, Calendar.AM)
     }
 
     suspend fun isOutsideOfCuttingSeasonDates(): Boolean {
