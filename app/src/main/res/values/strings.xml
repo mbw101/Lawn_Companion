@@ -229,6 +229,16 @@
     <string name="cancelOption">Cancel</string>
     <string name="deleteOption">Delete</string>
 
+    <!--    New Cut Log-->
+    <string name="yearDropdownTitle">Year</string>
+    <string name="cutEntryDetailsTitle">Cut Entry Details</string>
+    <string name="noCutEntryBody">No entry made!\nWould you like to add one?</string>
+    <string name="denyAddOneResponse">No</string>
+    <string name="acceptAddOneResponse">Yes</string>
+    <string name="cutEntryBody">Entry made at %1$s.\nWould you like to delete it?</string>
+    <string name="denyDeleteEntry">Cancel</string>
+    <string name="acceptDeleteEntry">Delete</string>
+
     <!-- Notification strings -->
     <string name="markAsCut">Mark as cut</string>
     <string name="skip">Skip</string>
