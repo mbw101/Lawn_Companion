@@ -10,7 +10,7 @@ Created by Malcolm Wright
 Date: May 16th, 2021
  */
 
-@Entity(tableName = Constants.CUT_ENTRY_TABLE_NAME, primaryKeys = ["month_name", "day_number"])
+@Entity(tableName = Constants.CUT_ENTRY_TABLE_NAME, primaryKeys = ["month_name", "day_number", "year"])
 data class CutEntry(
 
     @ColumnInfo(name = "cut_time") val cut_time: String,
