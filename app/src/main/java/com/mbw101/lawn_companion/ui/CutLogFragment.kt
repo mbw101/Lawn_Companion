@@ -1,7 +1,6 @@
 package com.mbw101.lawn_companion.ui
 
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
@@ -12,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.internal.zzagr.runOnUiThread
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.CutEntry
 import com.mbw101.lawn_companion.databinding.FragmentCutLogBinding
@@ -72,7 +72,7 @@ class CutLogFragment : Fragment(), OnItemClickListener {
         }
 
         private fun createEmptyMonthHashMap(): HashMap<Int, List<CutEntry>> {
-            val hashMap: java.util.HashMap<Int, List<CutEntry>> = HashMap()
+            val hashMap: HashMap<Int, List<CutEntry>> = HashMap()
 
             // map each month to empty list to start
             for (i in 1..12) {
@@ -149,7 +149,9 @@ class CutLogFragment : Fragment(), OnItemClickListener {
             launch (Dispatchers.IO) {
                 val sortedEntriesFromCurrentYear = viewModel.getEntriesFromSpecificYearSorted(UtilFunctions.getCurrentYear())
                 setupCutEntries(sortedEntriesFromCurrentYear)
-                mainRecyclerAdaptor.setSections(monthSections)
+                runOnUiThread {
+                    mainRecyclerAdaptor.setSections(monthSections)
+                }
             }
         }
     }
@@ -168,19 +170,14 @@ class CutLogFragment : Fragment(), OnItemClickListener {
         Log.d(Constants.TAG, "onItemClick: $entry")
         val builder = AlertDialog.Builder(context)
         builder.setTitle(R.string.alertTitle)
-            .setPositiveButton(R.string.deleteOption,
-                DialogInterface.OnClickListener { dialog, id ->
-                    deleteCut(entry)
-                    // TODO: Make sure the user interface is updated to reflect the deleted entry
-//                    mainRecyclerAdaptor.notifyItemChanged(entry.month_number-1)
-                    mainRecyclerView.adapter!!.notifyItemRangeChanged(0, 12)
-                    mainRecyclerAdaptor.notifyItemRangeChanged(0, 12)
-
-                })
-            .setNegativeButton(R.string.cancelOption,
-                DialogInterface.OnClickListener { dialog, id ->
-                    // User cancelled the dialog
-                })
+            .setPositiveButton(R.string.deleteOption) { _, _ ->
+                // remove cut entry and update the list in the main recyclerview
+                deleteCut(entry)
+                setupViewModel()
+            }
+            .setNegativeButton(R.string.cancelOption) { _, _ ->
+                // User cancelled the dialog
+            }
             .setMessage(R.string.alertMessage)
 
         // Create the AlertDialog object and set properties

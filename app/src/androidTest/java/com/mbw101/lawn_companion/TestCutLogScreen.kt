@@ -6,7 +6,9 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.matcher.BoundedMatcher
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -43,11 +45,10 @@ class TestCutLogScreen {
         android.Manifest.permission.ACCESS_COARSE_LOCATION)
 
     companion object {
-        private const val MONTH_TO_TEST = 9
+        private const val MONTH_TO_TEST = 8
 
         fun withViewAtPosition(position: Int, itemMatcher: Matcher<View?>): Matcher<View?> {
             return object : BoundedMatcher<View?, RecyclerView>(RecyclerView::class.java) {
-
                 override fun matchesSafely(recyclerView: RecyclerView): Boolean {
                     val viewHolder = recyclerView.findViewHolderForAdapterPosition(position)
                     return viewHolder != null && itemMatcher.matches(viewHolder.itemView)
@@ -61,7 +62,7 @@ class TestCutLogScreen {
     }
 
     private fun setupCutEntryDB() {
-        val context: Context = ApplicationProvider.getApplicationContext<Context>()
+        val context: Context = ApplicationProvider.getApplicationContext()
         db = AppDatabaseBuilder.getInstance(context)
         cutEntryDao = db.cutEntryDao()
     }
@@ -82,10 +83,7 @@ class TestCutLogScreen {
             .check(matches(not(withViewAtPosition(MONTH_TO_TEST, hasDescendant(allOf(withText("Sept"), isDisplayed()))))))
 
         addTestEntryInSameYear()
-//        TestMainScreen.tapRefresh()
         navigateToCutLog()
-//        onView(withId(R.id.main_recyclerview))
-//            .check(matches(withViewAtPosition(MONTH_TO_TEST, hasDescendant(allOf(withText("Sept"), isDisplayed()))))) // Completed Cut
     }
 
     private fun addTestEntryInSameYear() = runBlocking {
@@ -113,6 +111,20 @@ class TestCutLogScreen {
 
     @Test
     fun testDeletingCutEntry() {
+        addTestEntryInSameYear()
+        navigateToCutLog()
+        ensureCutLogIsDisplayed()
+        // make sure entry is there first
+        onView(withId(R.id.main_recyclerview))
+            .check(matches(withViewAtPosition(MONTH_TO_TEST, hasDescendant(allOf(withText("Completed Cut"), isDisplayed())))))
 
+        // delete cut entry
+        onView(withId(R.id.main_recyclerview)).perform(
+            RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(8, click()))
+        onView(withId(android.R.id.button1)).perform(click())
+
+        // that entry should be gone now
+        onView(withId(R.id.main_recyclerview))
+            .check(matches(not(withViewAtPosition(MONTH_TO_TEST, hasDescendant(allOf(withText("Completed Cut"), isDisplayed()))))))
     }
 }
