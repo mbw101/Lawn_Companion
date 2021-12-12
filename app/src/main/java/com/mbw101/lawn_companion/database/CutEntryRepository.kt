@@ -1,5 +1,6 @@
 package com.mbw101.lawn_companion.database
 
+import android.content.Context
 import com.mbw101.lawn_companion.utils.UtilFunctions
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -21,6 +22,7 @@ class CutEntryRepository @Inject constructor(private val cutEntryDAO: CutEntryDA
     suspend fun getLastEntryFromSpecificYear(year: Int) = cutEntryDAO.getLastEntryFromSpecificYear(year)
     suspend fun addCut(cutEntry: CutEntry) = cutEntryDAO.insertAll(cutEntry)
     suspend fun deleteCuts(vararg cuts: CutEntry) = cutEntryDAO.deleteCuts(*cuts)
+    suspend fun getYearDropdownArray() = cutEntryDAO.getYearDropdownArray()
 
     suspend fun hasANewYearOccurredSinceLastCut(): Boolean {
         val currentYearCuts = cutEntryDAO.getEntriesFromSpecificYearSortedAsync(UtilFunctions.getCurrentYear())
@@ -31,4 +33,9 @@ class CutEntryRepository @Inject constructor(private val cutEntryDAO: CutEntryDA
         }
         return false
     }
+}
+
+fun setupCutEntryRepository(context: Context): CutEntryRepository {
+    val dao = AppDatabaseBuilder.getInstance(context).cutEntryDao()
+    return CutEntryRepository(dao)
 }

@@ -252,6 +252,27 @@ class CutDatabaseTest {
         assertEquals(cutEntryDao.getNumEntries(), 0)
     }
 
+    @Test
+    @Throws(Exception::class)
+    fun testGetYearDropdownArray() = runBlocking {
+        assertEquals(cutEntryDao.getYearDropdownArray().size, 0)
+        assertEquals(cutEntryDao.getYearDropdownArray(), emptyList<String>())
+
+        cutEntryDao.insertAll(CutEntry("4:36pm", 17, "September", 9, 2021),
+            CutEntry("4:36pm", 5, "October", 10, 2021),
+            CutEntry("4:36pm", 28, "September", 9, 2020),
+            CutEntry("4:36pm", 1, "October", 10, 2020))
+        cutEntryDao.insertAll(CutEntry("4:36pm", 17, "September", 9, 2018))
+
+        assertEquals(cutEntryDao.getYearDropdownArray().size, 3)
+        assertEquals(cutEntryDao.getYearDropdownArray(), listOf("2021", "2020", "2018"))
+
+        cutEntryDao.insertAll(CutEntry("4:36pm", 17, "September", 9, 2019))
+
+        assertEquals(cutEntryDao.getYearDropdownArray().size, 4)
+        assertEquals(cutEntryDao.getYearDropdownArray(), listOf("2021", "2020", "2019", "2018"))
+    }
+
     @After
     fun tearDown() {
         db.close()

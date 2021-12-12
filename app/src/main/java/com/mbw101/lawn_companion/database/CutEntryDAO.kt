@@ -15,6 +15,12 @@ interface CutEntryDAO {
     @Query("SELECT * FROM cuts_table")
     fun getAllCuts(): LiveData<List<CutEntry>>
 
+    @Query("SELECT * FROM cuts_table")
+    fun getAllCutsRegularReturn(): List<CutEntry>
+
+    @Query("SELECT * FROM cuts_table ORDER BY year DESC")
+    fun getAllCutsOrderedByYear(): List<CutEntry>
+
     // get cuts queries (all sorted) Jan-Dec order
     @Query("SELECT * FROM cuts_table ORDER BY month_num ASC, day_number ASC")
     fun getAllCutsSorted(): LiveData<List<CutEntry>>
@@ -53,6 +59,20 @@ interface CutEntryDAO {
 
     @Query("SELECT * FROM cuts_table WHERE year = :year ORDER BY month_num DESC, day_number DESC")
     suspend fun getLastEntryFromSpecificYear(year: Int): CutEntry?
+
+    suspend fun getYearDropdownArray(): List<String> {
+        val entries: List<CutEntry> = getAllCutsOrderedByYear()
+        val yearDropdownArray: MutableList<String> = mutableListOf()
+
+        // Not very efficient but takes into account every possible year (ex: non-consecutive years)
+        for (entry in entries) {
+            if (!yearDropdownArray.contains(entry.year.toString())) {
+                yearDropdownArray.add(entry.year.toString())
+            }
+        }
+
+        return yearDropdownArray
+    }
 
     // insertion queries
     @Insert(onConflict = OnConflictStrategy.REPLACE)
