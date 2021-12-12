@@ -140,7 +140,7 @@ class TestMainScreen {
 
     @Test
     // tests both fragments in the bottom nav
-    fun testBottomNav() {
+    fun testhBottomNav() {
         onView(withId(R.id.cutLog)).perform(click()).check(matches(isDisplayed())) // open cut log fragment and test visibility
         // test going back
         pressBack()
