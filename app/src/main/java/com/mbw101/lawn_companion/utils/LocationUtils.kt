@@ -27,17 +27,17 @@ object LocationUtils {
             return null
         }
 
-        if (hasGpsProvider()) {
-           return locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+        if (hasNetworkProvider()) {
+           return locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
         }
-        Log.d(Constants.TAG, "Has no gps provider!")
+        Log.d(Constants.TAG, "Has no network provider!")
         return null
     }
 
     @SuppressLint("MissingPermission")
     fun requestLocation(context: Context, locationListener: LocationListener) {
         setupLocationManager(context)
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5.0f, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 1000.0f, locationListener)
     }
 
     fun stopLocationUpdates(locationListener: LocationListener) {
@@ -51,8 +51,8 @@ object LocationUtils {
     private fun hasNoLocationPermissions(context: Context) =
         ActivityCompat.checkSelfPermission(
             context,
-            Manifest.permission.ACCESS_FINE_LOCATION // gps location provider requires fine location
+            Manifest.permission.ACCESS_COARSE_LOCATION
         ) != PackageManager.PERMISSION_GRANTED
 
-    private fun hasGpsProvider() = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+    private fun hasNetworkProvider() = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
 }

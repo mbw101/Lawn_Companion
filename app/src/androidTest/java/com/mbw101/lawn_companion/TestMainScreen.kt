@@ -53,16 +53,11 @@ class TestMainScreen {
     @get:Rule
     val mainActivityTestRule: ActivityTestRule<MainActivity> = ActivityTestRule(MainActivity::class.java)
 
-    @get:Rule var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION,
-    android.Manifest.permission.ACCESS_COARSE_LOCATION)
+    @get:Rule var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_COARSE_LOCATION)
 
     companion object {
         fun ensureSaveLocationActivityIsShown() {
             intended(hasComponent(SaveLocationActivity::class.java.name))
-        }
-
-        fun tapRefresh() {
-            onView(withId(R.id.refreshIcon)).perform(click())
         }
     }
 
@@ -271,24 +266,6 @@ class TestMainScreen {
         runBlocking {
             lawnLocationRepository.addLocation(LawnLocation(42.2, 42.3))
         }
-    }
-
-//    @Test
-//    fun testRefreshButton() {
-//        ensureRefreshWorksWithHomeFrag()
-//        ensureRefreshWorksWithLog()
-//    }
-
-    private fun ensureRefreshWorksWithLog() {
-        onView(withId(R.id.cutLog)).perform(click()).check(matches(isDisplayed()))
-        tapRefresh()
-        onView(withId(R.id.cutLogConstraintLayout)).check(matches(isDisplayed()))
-    }
-
-    private fun ensureRefreshWorksWithHomeFrag() {
-        onView(withId(R.id.homeConstraintLayout)).check(matches(isDisplayed()))
-        tapRefresh()
-        onView(withId(R.id.home)).perform(click()).check(matches(isDisplayed()))
     }
 
     @After

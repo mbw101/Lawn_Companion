@@ -5,7 +5,6 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
@@ -41,8 +40,7 @@ class TestCutLogScreen {
     val mainActivityTestRule: ActivityTestRule<MainActivity> = ActivityTestRule(MainActivity::class.java)
 
     @get:Rule
-    var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION,
-        android.Manifest.permission.ACCESS_COARSE_LOCATION)
+    var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_COARSE_LOCATION)
 
     companion object {
         private const val MONTH_TO_TEST = 8
@@ -97,7 +95,7 @@ class TestCutLogScreen {
     }
 
     private fun navigateToCutLog() {
-        onView(withId(R.id.cutLog)).perform(ViewActions.click())
+        onView(withId(R.id.cutLog)).perform(click())
     }
 
     private fun addEntriesInPreviousYear() = runBlocking {

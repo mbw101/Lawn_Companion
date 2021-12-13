@@ -65,6 +65,9 @@ class SaveLocationActivity : AppCompatActivity(), LocationListener {
         }
 
         acceptSaveButton.setOnClickListener {
+            // check for location permission
+
+
             LocationUtils.requestLocation(this, this)
             Toast.makeText(this, "Saving lawn location...", Toast.LENGTH_LONG).show()
 

@@ -2,7 +2,7 @@ package com.mbw101.lawn_companion
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.mbw101.lawn_companion.utils.UtilFunctions
-import junit.framework.Assert.assertEquals
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
@@ -29,10 +29,22 @@ class TestUtil {
         // use 2 Calendar objects and test against expected
         val date1: Calendar = Calendar.getInstance()
         val date2: Calendar = Calendar.getInstance()
+        date1.set(Calendar.MILLISECOND, 0)
+        date2.set(Calendar.MILLISECOND, 0)
+        date1.set(Calendar.SECOND, 0)
+        date2.set(Calendar.SECOND, 0)
+        date1.set(Calendar.MINUTE, 0)
+        date2.set(Calendar.MINUTE, 0)
+        date1.set(Calendar.HOUR, 1)
+        date2.set(Calendar.HOUR, 1)
         // The getNumDaysBetween function works when calculating from April 1st to JUne 18th
         // but it fails when calculating from March 1st to June 18th.
-        date1.set(2021, Calendar.MARCH, 1) // Jan 1st, 2021
-        date2.set(2021, Calendar.JUNE, 18) // June 18th, 2021
+        date1.set(2021, Calendar.MARCH, 1)
+        date2.set(2021, Calendar.MARCH, 3)
+
+        assertEquals(UtilFunctions.getNumDaysBetween(date1, date2), 2)
+        date2.set(2021, Calendar.JUNE, 18)
+        assertEquals(UtilFunctions.getNumDaysBetween(date1, date2), 109)
     }
 
     @Test

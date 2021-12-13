@@ -28,7 +28,7 @@ class HomeScreenTests {
         val currentDate = Calendar.getInstance()
 
         // test no cuts made
-        val list: MutableList<CutEntry> = mutableListOf<CutEntry>()
+        val list: MutableList<CutEntry> = mutableListOf()
         var expectedString = "No cuts have been made yet. Add a new cut to get started!"
         assertEquals(HomeFragment.getDescriptionMessage(list.toList()), expectedString)
 

@@ -37,7 +37,6 @@ class CutEntryTests {
 
             // March
             CutEntry("4:36pm", 25, "March", 3, UtilFunctions.getCurrentYear()),
-//            CutEntry("4:36pm", 25, "March", 3),
 
             // april
             CutEntry("4:36pm", 25, "april", 4, UtilFunctions.getCurrentYear()),
@@ -91,11 +90,13 @@ class CutEntryTests {
         assertEquals(monthSections[4].items.size, 2)
         assertEquals(monthSections[5].items.size, 0)
         // rest of the months will have 0 entries
+        for (i in 6..11) {
+            assertEquals(monthSections[i].items.size, 0)
+        }
     }
 
     @Test
     fun testDateValidity() {
-//        val currentDate = Calendar.getInstance()
         val newDate = Calendar.getInstance()
         assertEquals(AddCutActivity.checkDateValidity(newDate), true)
         newDate.add(Calendar.DAY_OF_MONTH, -1)

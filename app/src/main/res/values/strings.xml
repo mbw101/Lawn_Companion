@@ -48,6 +48,10 @@
         No, I am not home
     </string>
 
+    <string name="toastNoLocationPermission">
+        Lawn Companion needs location permissions in order to save a lawn location!
+    </string>
+
     <!-- Main activity strings -->
 
     <!-- Salutations -->

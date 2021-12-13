@@ -33,8 +33,6 @@ class AddCutActivity : AppCompatActivity() {
     private lateinit var addCutButton: Button
     private lateinit var cutTime: Calendar
     private lateinit var binding: ActivityAddCutBinding
-
-    // database variables
     private lateinit var cutEntryViewModel: CutEntryViewModel
 
     companion object {
@@ -288,7 +286,6 @@ class AddCutActivity : AppCompatActivity() {
         setupDaysDropdown(month, cal) // sets up the correct amount of days based on month value
         Log.d(Constants.TAG, "Month = $month")
 
-//        val day: Int = cal.get(Calendar.DAY_OF_MONTH)
         dayDropdown.setSelection(0)
     }
 

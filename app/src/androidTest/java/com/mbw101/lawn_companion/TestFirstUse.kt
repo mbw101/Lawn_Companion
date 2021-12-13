@@ -43,8 +43,7 @@ class TestFirstUse {
     val introActivityTestRule: ActivityTestRule<IntroActivity> = ActivityTestRule(IntroActivity::class.java)
 
     @get:Rule
-    var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION,
-        android.Manifest.permission.ACCESS_COARSE_LOCATION)
+    var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_COARSE_LOCATION)
 
     private lateinit var db: AppDatabase
     private lateinit var cuttingSeasonDatesDao: CuttingSeasonDatesDao
@@ -60,8 +59,7 @@ class TestFirstUse {
         db = AppDatabaseBuilder.getInstance(context)
         cuttingSeasonDatesDao = db.cuttingSeasonDatesDao()
     }
-
-
+    
     @Test
     fun testHappyPathOfAppNavigation() {
         pressNavButtons()
