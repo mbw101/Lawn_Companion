@@ -22,6 +22,7 @@ class CutEntryRepository @Inject constructor(private val cutEntryDAO: CutEntryDA
     suspend fun getLastEntryFromSpecificYear(year: Int) = cutEntryDAO.getLastEntryFromSpecificYear(year)
     suspend fun addCut(cutEntry: CutEntry) = cutEntryDAO.insertAll(cutEntry)
     suspend fun deleteCuts(vararg cuts: CutEntry) = cutEntryDAO.deleteCuts(*cuts)
+    suspend fun deleteAllCuts() = cutEntryDAO.deleteAll()
     suspend fun getYearDropdownArray() = cutEntryDAO.getYearDropdownArray()
 
     suspend fun hasANewYearOccurredSinceLastCut(): Boolean {

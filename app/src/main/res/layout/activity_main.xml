@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center_vertical"
     android:orientation="vertical"
     tools:context=".ui.MainActivity">
 
@@ -11,18 +12,18 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        android:layout_gravity="top"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         android:padding="5dp"
-        android:theme="?attr/actionBarTheme"
-        android:layout_gravity="top">
+        android:theme="?attr/actionBarTheme">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="5dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             android:gravity="center|center_horizontal"
@@ -34,28 +35,30 @@
                 android:id="@+id/settingsIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
                 android:background="@drawable/ic_baseline_settings_32"
-                android:contentDescription="@string/settings_icon" />
+                android:contentDescription="@string/settings_icon"
+                android:foregroundGravity="center_vertical" />
 
             <TextView
                 android:id="@+id/titleTextView"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_toStartOf="@id/refreshIcon"
-                android:layout_toEndOf="@id/settingsIcon"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
                 android:gravity="center|center_vertical"
                 android:text="@string/home"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
-            <ImageView
-                android:id="@+id/refreshIcon"
+            <Spinner
+                android:id="@+id/yearDropdown"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_alignParentEnd="true"
-                android:background="@drawable/ic_baseline_refresh_32"
-                android:contentDescription="@string/refresh_icon"
-                android:visibility="invisible" />
+                android:gravity="center_horizontal"
+                android:spinnerMode="dropdown"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+<!--            android:entries="@array/year_dropdown_test_values"-->
         </RelativeLayout>
 
     </androidx.appcompat.widget.Toolbar>
@@ -76,10 +79,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
         app:itemIconTint="@drawable/bottom_nav_colour_selector"
         app:itemTextColor="@drawable/bottom_nav_colour_selector"
-        app:menu="@menu/bottom_navigation_file"
-        android:layout_gravity="bottom" />
+        app:menu="@menu/bottom_navigation_file" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addCutFAB"

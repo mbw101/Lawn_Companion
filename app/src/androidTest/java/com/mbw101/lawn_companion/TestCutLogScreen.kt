@@ -25,6 +25,7 @@ import kotlinx.coroutines.runBlocking
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -40,7 +41,7 @@ class TestCutLogScreen {
     val mainActivityTestRule: ActivityTestRule<MainActivity> = ActivityTestRule(MainActivity::class.java)
 
     @get:Rule
-    var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_COARSE_LOCATION)
+    var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION)
 
     companion object {
         private const val MONTH_TO_TEST = 8
@@ -77,7 +78,7 @@ class TestCutLogScreen {
         ensureCutLogIsDisplayed()
         addEntriesInPreviousYear()
         // test to make sure no entries appear in recyclerview
-        onView(withId(R.id.main_recyclerview))
+        onView(withId(R.id.cutlog_recyclerview))
             .check(matches(not(withViewAtPosition(MONTH_TO_TEST, hasDescendant(allOf(withText("Sept"), isDisplayed()))))))
 
         addTestEntryInSameYear()
@@ -113,16 +114,21 @@ class TestCutLogScreen {
         navigateToCutLog()
         ensureCutLogIsDisplayed()
         // make sure entry is there first
-        onView(withId(R.id.main_recyclerview))
+        onView(withId(R.id.cutlog_recyclerview))
             .check(matches(withViewAtPosition(MONTH_TO_TEST, hasDescendant(allOf(withText("Completed Cut"), isDisplayed())))))
 
         // delete cut entry
-        onView(withId(R.id.main_recyclerview)).perform(
+        onView(withId(R.id.cutlog_recyclerview)).perform(
             RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(8, click()))
         onView(withId(android.R.id.button1)).perform(click())
 
         // that entry should be gone now
-        onView(withId(R.id.main_recyclerview))
+        onView(withId(R.id.cutlog_recyclerview))
             .check(matches(not(withViewAtPosition(MONTH_TO_TEST, hasDescendant(allOf(withText("Completed Cut"), isDisplayed()))))))
+    }
+
+    @After
+    fun cleanup() {
+        Intents.release()
     }
 }

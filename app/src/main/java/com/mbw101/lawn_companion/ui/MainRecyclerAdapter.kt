@@ -42,7 +42,6 @@ class MainRecyclerAdaptor(clickListener: OnItemClickListener): RecyclerView.Adap
         // create adaptor and pass in the list of entries
         val childAdaptor = ChildRecyclerAdapter(cutEntries, onItemClickListener)
         holder.childRecyclerView.adapter = childAdaptor
-//        holder.childRecyclerView.adapter.notifyItemRangeChanged(0, cutEntries.size)
     }
 
     override fun getItemCount(): Int = sectionList.size

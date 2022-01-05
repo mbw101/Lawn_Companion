@@ -263,7 +263,7 @@ class AddCutActivity : AppCompatActivity() {
                 cutTime = cal
 
                 // set the text view to have the time they picked
-                selectedTimeTextView.text =  DateUtils.formatDateTime(this,cal.timeInMillis, DateUtils.FORMAT_SHOW_TIME)
+                selectedTimeTextView.text = DateUtils.formatDateTime(this, cal.timeInMillis, DateUtils.FORMAT_SHOW_TIME)
             },
             cutTime.get(Calendar.HOUR_OF_DAY),
             cutTime.get(Calendar.MINUTE),

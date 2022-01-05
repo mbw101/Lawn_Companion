@@ -35,7 +35,6 @@ class CutLogFragment : Fragment(), OnItemClickListener {
     private lateinit var monthSections: List<MonthSection>
     private lateinit var mainRecyclerAdaptor: MainRecyclerAdaptor
 
-
     private val viewModel: CutEntryViewModel by viewModels()
     private var _binding: FragmentCutLogBinding? = null
     // This property is only valid between onCreateView and
@@ -43,6 +42,8 @@ class CutLogFragment : Fragment(), OnItemClickListener {
     private val binding get() = _binding!!
 
     companion object {
+        var currentYear = UtilFunctions.getCurrentYear()
+
         // sets up the hashmap containing all entries for each respective month
         fun setupHashmap(entries: List<CutEntry>): HashMap<Int, List<CutEntry>> {
             // fill all the entries for each month
@@ -116,7 +117,7 @@ class CutLogFragment : Fragment(), OnItemClickListener {
 
     private fun init() {
         // initialize components
-        mainRecyclerView = binding.mainRecyclerview
+        mainRecyclerView = binding.cutlogRecyclerview
 
         // set up the adaptor
         mainRecyclerAdaptor = MainRecyclerAdaptor(this) // pass in our click listener method
@@ -127,7 +128,7 @@ class CutLogFragment : Fragment(), OnItemClickListener {
         mainRecyclerView.addItemDecoration(itemDecoration)
 
         setupListeners()
-        setupViewModel()
+        setupViewModel(UtilFunctions.getCurrentYear())
     }
 
     private fun setupListeners() {
@@ -144,10 +145,10 @@ class CutLogFragment : Fragment(), OnItemClickListener {
         })
     }
 
-    private fun setupViewModel() {
+    fun setupViewModel(year: Int) {
         runBlocking {
             launch (Dispatchers.IO) {
-                val sortedEntriesFromCurrentYear = viewModel.getEntriesFromSpecificYearSorted(UtilFunctions.getCurrentYear())
+                val sortedEntriesFromCurrentYear = viewModel.getEntriesFromSpecificYearSorted(year)
                 setupCutEntries(sortedEntriesFromCurrentYear)
                 runOnUiThread {
                     mainRecyclerAdaptor.setSections(monthSections)
@@ -173,7 +174,9 @@ class CutLogFragment : Fragment(), OnItemClickListener {
             .setPositiveButton(R.string.deleteOption) { _, _ ->
                 // remove cut entry and update the list in the main recyclerview
                 deleteCut(entry)
-                setupViewModel()
+                setupViewModel(currentYear)
+                val myActivity = activity as MainActivity
+                myActivity.updateYearDropdown()
             }
             .setNegativeButton(R.string.cancelOption) { _, _ ->
                 // User cancelled the dialog

@@ -24,8 +24,8 @@ class DatesDatabaseTests {
 
     private lateinit var db: AppDatabase
     private lateinit var cuttingSeasonDatesDao: CuttingSeasonDatesDao
-    private val startDateMonth = Calendar.OCTOBER
-    private val startDateDay = 26
+    private val startDateMonth = Calendar.JANUARY
+    private val startDateDay = 4
     private val endDateMonth = Calendar.DECEMBER
     private val endDateDay = 31
 

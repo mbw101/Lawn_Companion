@@ -30,7 +30,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.util.*
 
-private const val MY_PERMISSIONS_REQUEST_LOCATION = 100
+const val MY_PERMISSIONS_REQUEST_LOCATION = 100
 
 class LastIntroScreenFragment : Fragment(), View.OnClickListener {
     private var _binding: FragmentLastIntroScreenBinding? = null
@@ -98,7 +98,7 @@ class LastIntroScreenFragment : Fragment(), View.OnClickListener {
         Log.d(Constants.TAG, "Asking for permissions!")
         return when {
             // permission was not granted
-            (ContextCompat.checkSelfPermission(activity.applicationContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) -> {
+            (ContextCompat.checkSelfPermission(activity.applicationContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) -> {
                 requestLocationPermission(activity)
                 true
             }
@@ -114,13 +114,13 @@ class LastIntroScreenFragment : Fragment(), View.OnClickListener {
     private fun requestLocationPermission(activity: Activity) {
         // see if we need to show an explanation
         if (ActivityCompat.shouldShowRequestPermissionRationale
-                (activity, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                (activity, Manifest.permission.ACCESS_FINE_LOCATION)) {
             // Show an explanation to the user
             showLocationPermissionDialog()
         } else {
             // No explanation needed, we can request the permission.
             requestPermissions(
-                arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 MY_PERMISSIONS_REQUEST_LOCATION
             )
         }
@@ -133,7 +133,7 @@ class LastIntroScreenFragment : Fragment(), View.OnClickListener {
             .setPositiveButton(android.R.string.ok) { _, i -> //Prompt the user once explanation has been shown
                 // request perms again
                 requestPermissions(
-                    arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                     MY_PERMISSIONS_REQUEST_LOCATION
                 )
                 Log.d(Constants.TAG, "ACCEPTED LOCATION PERMISSION")
@@ -154,11 +154,11 @@ class LastIntroScreenFragment : Fragment(), View.OnClickListener {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (requestCode == MY_PERMISSIONS_REQUEST_LOCATION) {
-            if (permissions[0] == Manifest.permission.ACCESS_COARSE_LOCATION && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (permissions[0] == Manifest.permission.ACCESS_FINE_LOCATION && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Log.d(Constants.TAG, "Location permission has been granted!")
                 launchSaveLocationActivity()
             }
-            else if (permissions[0] == Manifest.permission.ACCESS_COARSE_LOCATION && grantResults[0] == PackageManager.PERMISSION_DENIED) {
+            else if (permissions[0] == Manifest.permission.ACCESS_FINE_LOCATION && grantResults[0] == PackageManager.PERMISSION_DENIED) {
                 Log.d(Constants.TAG, "Location permission has been denied!")
                 launchMainActivity()
             }

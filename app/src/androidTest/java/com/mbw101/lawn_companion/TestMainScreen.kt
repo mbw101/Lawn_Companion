@@ -26,6 +26,7 @@ import com.mbw101.lawn_companion.utils.ApplicationPrefs
 import com.mbw101.lawn_companion.utils.Constants
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.containsString
+import org.hamcrest.CoreMatchers.not
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -49,11 +50,12 @@ class TestMainScreen {
     private val goodNight = "Good Night!"
     private lateinit var lawnLocationRepository: LawnLocationRepository
     private lateinit var cuttingSeasonDateRepository: CuttingSeasonDateRepository
+    private lateinit var cutEntryRepository: CutEntryRepository
 
     @get:Rule
     val mainActivityTestRule: ActivityTestRule<MainActivity> = ActivityTestRule(MainActivity::class.java)
 
-    @get:Rule var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_COARSE_LOCATION)
+    @get:Rule var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION)
 
     companion object {
         fun ensureSaveLocationActivityIsShown() {
@@ -83,9 +85,10 @@ class TestMainScreen {
     }
 
     private fun setupLocationDB() {
-        val context: Context = ApplicationProvider.getApplicationContext<Context>()
+        val context: Context = ApplicationProvider.getApplicationContext()
         lawnLocationRepository = setupLawnLocationRepository(context)
         cuttingSeasonDateRepository = setupCuttingSeasonDateRepository(context)
+        cutEntryRepository = setupCutEntryRepository(context)
     }
 
     private fun calculateExpectedMessage(): String {
@@ -135,7 +138,7 @@ class TestMainScreen {
 
     @Test
     // tests both fragments in the bottom nav
-    fun testhBottomNav() {
+    fun testBottomNav() {
         onView(withId(R.id.cutLog)).perform(click()).check(matches(isDisplayed())) // open cut log fragment and test visibility
         // test going back
         pressBack()
@@ -151,9 +154,12 @@ class TestMainScreen {
     fun testTurningOffCutSeason() {
         val appPrefs = ApplicationPrefs()
         appPrefs.setHasLocationSavedValue(true)// turns off the lawn location prompt
+        runBlocking {
+            cutEntryRepository.deleteAllCuts()
+        }
         onView(withId(R.id.home)).perform(click()).check(matches(isDisplayed())) // removes the permissions text
         mainTextViewContainsText("No cuts have been made yet. Add a new cut to get started!")
-
+        Thread.sleep(3000)
         // navigate to settings screen
         onView(withId(R.id.settingsIcon)).perform(click())
 
@@ -182,10 +188,12 @@ class TestMainScreen {
     @Test
     fun testTurningOffCutSeasonWithoutLocationSaved() {
         removeExistingLocation()
+        TestFirstUse.resetAppPreferences()
 
         onView(withId(R.id.home)).perform(click()).check(matches(isDisplayed())) // removes the permissions text
 
-        mainTextViewContainsText("There is no current lawn location saved. Add a location to receive notifications")
+        mainTextViewContainsText("No cuts have been made yet. Add a new cut to get started!")
+        secondaryTextViewContainsText("There is no current lawn location saved. Add a location to receive notifications")
 
         onView(withId(R.id.createLawnLocationButton)).perform(click())
 
@@ -226,6 +234,11 @@ class TestMainScreen {
             .check(matches(withText(containsString(textToTest))))
     }
 
+    private fun secondaryTextViewContainsText(textToTest: String) {
+        onView(withId(R.id.secondaryTextView))
+            .check(matches(withText(containsString(textToTest))))
+    }
+
     private fun pressCuttingSeasonPreference() {
         onView(withId(androidx.preference.R.id.recycler_view))
             .perform(
@@ -238,11 +251,12 @@ class TestMainScreen {
 
     @Test
     fun testLawnLocationButtonVisibility() {
+        TestFirstUse.resetAppPreferences()
         removeExistingLocation()
 
         onView(withId(R.id.home)).perform(click()) // press home to update text
 
-        mainTextViewContainsText("There is no current lawn location saved. Add a location to receive notifications.")
+        secondaryTextViewContainsText("There is no current lawn location saved. Add a location to receive notifications.")
 
         // test button text
         onView(withId(R.id.createLawnLocationButton)).check(matches(isCompletelyDisplayed()))
@@ -266,6 +280,13 @@ class TestMainScreen {
         runBlocking {
             lawnLocationRepository.addLocation(LawnLocation(42.2, 42.3))
         }
+    }
+
+    @Test
+    fun testYeardropdownVisibility() {
+        onView(withId(R.id.yearDropdown)).check(matches(not(isDisplayed())))
+        onView(withId(R.id.cutLog)).perform(click())
+        onView(withId(R.id.yearDropdown)).check(matches(isDisplayed()))
     }
 
     @After

@@ -13,7 +13,9 @@ import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
+import androidx.test.rule.GrantPermissionRule
 import com.mbw101.lawn_companion.database.AppDatabase
 import com.mbw101.lawn_companion.database.AppDatabaseBuilder
 import com.mbw101.lawn_companion.database.CuttingSeasonDatesDao
@@ -40,10 +42,15 @@ Date: 2021-09-24
  Date format: YYYY-MM-DD
  */
 @RunWith(AndroidJUnit4::class)
+@LargeTest
 class TestSetDatesActivity {
     @get:Rule
     val setDatesActivityTestRule: ActivityTestRule<SetDatesActivity> = ActivityTestRule(
         SetDatesActivity::class.java, true, false) // makes it so the activity doesn't start immediately when a test case is ran , true, false
+
+    @get:Rule
+    var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION)
+
     private lateinit var db: AppDatabase
     private lateinit var cuttingSeasonDatesDao: CuttingSeasonDatesDao
     private lateinit var customIntent: Intent

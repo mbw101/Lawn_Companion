@@ -29,6 +29,7 @@ class HomeFragment : Fragment() {
     private lateinit var openPermissions: Button
     private lateinit var createLawnLocationButton: Button
     private lateinit var mainTextView: TextView
+    private lateinit var secondaryTextView: TextView
     private lateinit var salutationTextView: TextView
     private val viewModel: CutEntryViewModel by viewModels()
     private var _binding: FragmentHomeBinding? = null
@@ -47,7 +48,7 @@ class HomeFragment : Fragment() {
         fun getDescriptionMessage(entries: List<CutEntry>): String {
             // take into account the last cut (or if there even is an entry made)
             if (entries.isEmpty()) {
-                return  MyApplication.applicationContext().getString(R.string.noCutMessage)
+                return MyApplication.applicationContext().getString(R.string.noCutMessage)
             }
 
             // get the current date
@@ -105,6 +106,7 @@ class HomeFragment : Fragment() {
         openPermissions = binding.openPermissionsButton
         createLawnLocationButton = binding.createLawnLocationButton
         mainTextView = binding.mainMessageTextView
+        secondaryTextView = binding.secondaryTextView
         salutationTextView = binding.salutationTextView
 
         checkPermissionsOrIfLocationSaved()
@@ -147,24 +149,27 @@ class HomeFragment : Fragment() {
             mainTextView.text = getString(R.string.cuttingSeasonOver)
             openPermissions.visibility = View.INVISIBLE
             createLawnLocationButton.visibility = View.INVISIBLE
+            secondaryTextView.visibility = View.INVISIBLE
         }
         else {
-            // this might be causing the bug with app crashing since it's in a different thread than UI but
-            // will be used for updating the UI
             val hasLocationSavedInDB = preferences.hasLocationSaved()
-            if (hasLocationSavedInDB) {
-                setupViewModel()
-                openPermissions.visibility = View.INVISIBLE
-                createLawnLocationButton.visibility = View.INVISIBLE
-            }
-            else if (!UtilFunctions.hasLocationPermissions() && !hasLocationSavedInDB) {
-                mainTextView.text = getString(R.string.needsPermissionString)
+            if (!UtilFunctions.hasLocationPermissions()) {
+                secondaryTextView.text = getString(R.string.needsPermissionString)
+                secondaryTextView.visibility = View.VISIBLE
                 createLawnLocationButton.visibility = View.INVISIBLE
                 openPermissions.visibility = View.VISIBLE
             }
+            else if (hasLocationSavedInDB) {
+                setupViewModel()
+                secondaryTextView.visibility = View.INVISIBLE
+                openPermissions.visibility = View.INVISIBLE
+                createLawnLocationButton.visibility = View.INVISIBLE
+                secondaryTextView.visibility = View.INVISIBLE
+            }
             else if (!hasLocationSavedInDB) {
                 // show button + text
-                mainTextView.text = getString(R.string.noLawnLocationMessage)
+                secondaryTextView.text = getString(R.string.noLawnLocationMessage)
+                secondaryTextView.visibility = View.VISIBLE
                 createLawnLocationButton.visibility = View.VISIBLE
             }
         }

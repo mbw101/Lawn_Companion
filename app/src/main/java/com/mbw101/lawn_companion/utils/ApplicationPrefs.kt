@@ -34,6 +34,12 @@ class ApplicationPrefs {
         mEditor.putBoolean(Constants.IS_FIRST_TIME, b).apply()
     }
 
+    fun clearPreferences() {
+        val editor = mPreferences.edit()
+        editor.clear()
+        editor.apply()
+    }
+
     fun getWeatherCheckFrequencyInMillis(): Int {
         val freq = getWeatherCheckFrequency()
         if (freq.equals("15 minutes")) {

@@ -41,6 +41,8 @@ class SaveLocationActivity : AppCompatActivity(), LocationListener {
         val view = binding.root
         setContentView(view)
 
+        // request location update now since it takes some time
+        LocationUtils.requestLocation(this, this)
         init()
     }
 
@@ -66,21 +68,31 @@ class SaveLocationActivity : AppCompatActivity(), LocationListener {
 
         acceptSaveButton.setOnClickListener {
             // check for location permission
-
-
-            LocationUtils.requestLocation(this, this)
             Toast.makeText(this, "Saving lawn location...", Toast.LENGTH_LONG).show()
-
-            // save location flag
-            val preferences = ApplicationPrefs()
-            preferences.setHasLocationSavedValue(true)
             val locationListener = this
+
+            val pref = ApplicationPrefs()
+            if (!pref.hasLocationSaved() || locationGps == null) {
+                // TODO: Figure out what we should do here
+                locationGps = LocationUtils.getLastKnownLocation(this)
+                saveLocation()
+            }
+            else {
+                saveLocation()
+            }
 
             Timer().schedule(1500) {
                 LocationUtils.stopLocationUpdates(locationListener) // stops the usage of gps when we are done with it
                 launchMainActivity()
             }
         }
+    }
+
+    private fun saveLocation() {
+        if (locationGps == null) {
+            return
+        }
+        createCoroutineForDB(locationGps!!)
     }
 
     private fun createCoroutineForDB(location: Location) = runBlocking {
@@ -97,7 +109,11 @@ class SaveLocationActivity : AppCompatActivity(), LocationListener {
 
     private suspend fun saveGpsLocationIfExists(newGpsLocation: Location?) {
         if (newGpsLocation != null) {
-            locationGps = newGpsLocation
+            // save location flag
+            val preferences = ApplicationPrefs()
+            preferences.setHasLocationSavedValue(true)
+
+//            locationGps = newGpsLocation
             Log.d(
                 Constants.TAG,
                 "GPS: Long: ${locationGps!!.longitude}, Lat: ${locationGps!!.latitude}"
@@ -106,6 +122,9 @@ class SaveLocationActivity : AppCompatActivity(), LocationListener {
             lawnLocationRepository.addLocation(
                 LawnLocation(locationGps!!.latitude, locationGps!!.longitude)
             )
+        }
+        else {
+            Log.d(Constants.TAG, "Here")
         }
     }
 
@@ -117,7 +136,7 @@ class SaveLocationActivity : AppCompatActivity(), LocationListener {
 
     override fun onLocationChanged(location: Location) {
         Log.d(Constants.TAG, "Location = $location")
-        createCoroutineForDB(location)
+        locationGps = location
     }
 
     override fun onProviderEnabled(provider: String) {}

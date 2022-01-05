@@ -76,7 +76,7 @@ class SettingsActivity : AppCompatActivity() {
             Log.d(Constants.TAG, "Preference title = $preferenceTitle")
             if (preferenceTitle.contains("lawn location")) {
                 if (ActivityCompat.checkSelfPermission(MyApplication.applicationContext(),
-                        Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                        Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                     openSaveLocationActivity()
                 }
                 else {

@@ -30,6 +30,7 @@ class HomeScreenTests {
         // test no cuts made
         val list: MutableList<CutEntry> = mutableListOf()
         var expectedString = "No cuts have been made yet. Add a new cut to get started!"
+        println(HomeFragment.getDescriptionMessage(list.toList()))
         assertEquals(HomeFragment.getDescriptionMessage(list.toList()), expectedString)
 
         // test 1 cut in the list (with cut on the same day)
