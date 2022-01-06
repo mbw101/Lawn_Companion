@@ -79,7 +79,7 @@ class CutEntryTests {
 
         // use hashmap to get month sections
         val hashMap = CutLogFragment.setupHashmap(entries)
-        val monthSections = CutLogFragment.setupMonthSections(hashMap)
+        val monthSections = CutLogFragment.setupMonthSections(hashMap, UtilFunctions.getCurrentYear())
 
         // test values inside the monthSection list
         assertEquals(monthSections.size, 12) // 12 months

@@ -8,14 +8,16 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.navigation.Navigation
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.NavigationUI
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mbw101.lawn_companion.R
@@ -25,6 +27,7 @@ import com.mbw101.lawn_companion.databinding.ActivityMainBinding
 import com.mbw101.lawn_companion.notifications.AlarmReceiver
 import com.mbw101.lawn_companion.notifications.AlarmScheduler
 import com.mbw101.lawn_companion.notifications.NotificationHelper
+import com.mbw101.lawn_companion.utils.Constants
 import com.mbw101.lawn_companion.utils.UtilFunctions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -47,11 +50,10 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var cutEntryRepository: CutEntryRepository
-    private var yearDropdownArray: List<String> = listOf()
+    var yearDropdownArray: List<String> = listOf()
 
     companion object {
         lateinit var addCutFAB: FloatingActionButton
-        var selectedYear: Int = UtilFunctions.getCurrentYear()
 
         fun setupNotificationAlarmManager() {
             // Pass in the pending intent
@@ -100,11 +102,11 @@ class MainActivity : AppCompatActivity() {
 
         if (ActivityCompat.checkSelfPermission(
                 this,
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 // TODO: Cause of issue in espresso UI tests
 //                requestPermissions(
-//                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+//                    arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
 //                    MY_PERMISSIONS_REQUEST_LOCATION
 //                )
             }
@@ -132,6 +134,12 @@ class MainActivity : AppCompatActivity() {
         addCutFAB = binding.addCutFAB
         yearDropdown = binding.yearDropdown
         yearDropdown.visibility = View.INVISIBLE
+
+        // set up bottom navigation
+        val navController = Navigation.findNavController(this, R.id.nav_host_fragment)
+        val bottomNavView = binding.bottomNav
+        NavigationUI.setupWithNavController(bottomNavView, navController)
+
         fillInYearDropdown()
     }
 
@@ -149,19 +157,26 @@ class MainActivity : AppCompatActivity() {
             listOf(currentYear)
         } else {
             if (!yearDropdownArray.contains(currentYear)) {
-                yearDropdownArray + listOf(currentYear)
+                listOf(currentYear) + yearDropdownArray
             } else {
                 yearDropdownArray
             }
         }
 
+        Log.d(Constants.TAG, "Year array: $yearArray")
+
+        // testing purposes
+//        yearDropdownArray = MyApplication.applicationContext().resources.getStringArray(R.array.year_dropdown_test_values)
+//            .toList()
+        yearDropdownArray = yearArray
         val yearAdaptor: ArrayAdapter<String> = ArrayAdapter(
             this, android.R.layout.simple_spinner_item,
-            yearArray
+            yearDropdownArray //MyApplication.applicationContext().resources.getStringArray(R.array.year_dropdown_test_values)
         )
 
-        yearAdaptor.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line)
         yearDropdown.adapter = yearAdaptor
+        yearAdaptor.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line)
+        yearDropdown.setSelection(0) // always set to current year in dropdown menu
     }
 
     private fun setListeners() {
@@ -170,21 +185,20 @@ class MainActivity : AppCompatActivity() {
             when(item.itemId) {
                 R.id.home -> {
                     // navigate to the home fragment
-                    findNavController(R.id.nav_host_fragment).navigate(R.id.nav_home)
+                    findNavController(R.id.nav_host_fragment).navigate(R.id.home)
                     titleTextView.text = getString(R.string.home)
                     yearDropdown.visibility = View.INVISIBLE
                     true
                 }
-                R.id.cutLog -> {
+                R.id.cutlog -> {
                     // navigate to the cut log fragment
-                    findNavController(R.id.nav_host_fragment).navigate(R.id.nav_cutlog)
+                    findNavController(R.id.nav_host_fragment).navigate(R.id.cutlog)
                     titleTextView.text = getString(R.string.cutLog)
                     yearDropdown.visibility = View.VISIBLE
-                    setupYeardropdownListener()
                     // clear all entries and update them again
                     true
                 }
-                else -> false
+                else -> true
             }
         }
 
@@ -196,44 +210,6 @@ class MainActivity : AppCompatActivity() {
         // FAB listener
         addCutFAB.setOnClickListener {
             launchAddCutScreen()
-        }
-    }
-
-    private fun setupYeardropdownListener() {
-        // get the cut log fragment object
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        val navController = navHostFragment.navController
-        println(navHostFragment.childFragmentManager.primaryNavigationFragment)
-//        navController.addOnDestinationChangedListener { controller, destination, arguments ->
-//            if (destination.id == R.id.nav_cutlog) {
-//
-//            }
-//        }
-//        println(supportFragmentManager.fragments)
-//        println(navHostFragment.childFragmentManager.fragments)
-//        val cutLogFragment = navHostFragment.childFragmentManager.fragments[1] as CutLogFragment
-//        val cutLogFragment = navHostFragment.childFragmentManager. as CutLogFragment
-//        val cutLogFragment = navHostFragment.childFragmentManager.fragments.any {  it.javaClass == CutLogFragment::class.java && it.isVisible }
-
-        yearDropdown.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parentView: AdapterView<*>?,
-                selectedItemView: View,
-                position: Int,
-                id: Long
-            ) {
-//                if (cutLogFragment == null) {
-//                    return
-//                }
-
-//                val selectedYear = yearDropdownArray[position].toInt()
-//                if(cutLogFragment.isAdded) { // make sure the cut log is shown
-//                    cutLogFragment.setupViewModel(selectedYear)
-//                    CutLogFragment.currentYear = selectedYear
-//                }
-            }
-
-            override fun onNothingSelected(parentView: AdapterView<*>?) {}
         }
     }
 

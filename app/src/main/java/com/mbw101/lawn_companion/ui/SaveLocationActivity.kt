@@ -32,17 +32,18 @@ class SaveLocationActivity : AppCompatActivity(), LocationListener {
     private lateinit var denySaveButton: Button
     private lateinit var acceptSaveButton: Button
     private lateinit var lawnLocationRepository: LawnLocationRepository
-    var locationGps: Location? = null
+    var locationNetwork: Location? = null
     private lateinit var binding: ActivitySaveLocationBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // request location update now since it takes some time
+        LocationUtils.requestLocation(this, this)
+
         binding = ActivitySaveLocationBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
 
-        // request location update now since it takes some time
-        LocationUtils.requestLocation(this, this)
         init()
     }
 
@@ -67,64 +68,13 @@ class SaveLocationActivity : AppCompatActivity(), LocationListener {
         }
 
         acceptSaveButton.setOnClickListener {
-            // check for location permission
             Toast.makeText(this, "Saving lawn location...", Toast.LENGTH_LONG).show()
             val locationListener = this
 
-            val pref = ApplicationPrefs()
-            if (!pref.hasLocationSaved() || locationGps == null) {
-                // TODO: Figure out what we should do here
-                locationGps = LocationUtils.getLastKnownLocation(this)
-                saveLocation()
-            }
-            else {
-                saveLocation()
-            }
-
-            Timer().schedule(1500) {
-                LocationUtils.stopLocationUpdates(locationListener) // stops the usage of gps when we are done with it
+            Timer().schedule(2000) {
+                LocationUtils.stopLocationUpdates(locationListener) // stops the usage of network location when we are done with it
                 launchMainActivity()
             }
-        }
-    }
-
-    private fun saveLocation() {
-        if (locationGps == null) {
-            return
-        }
-        createCoroutineForDB(locationGps!!)
-    }
-
-    private fun createCoroutineForDB(location: Location) = runBlocking {
-        launch (Dispatchers.IO) {
-            performDatabaseWork(location)
-        }
-    }
-
-    private suspend fun performDatabaseWork(location: Location) {
-        if (!lawnLocationRepository.hasALocationSaved()) {
-            saveGpsLocationIfExists(location)
-        }
-    }
-
-    private suspend fun saveGpsLocationIfExists(newGpsLocation: Location?) {
-        if (newGpsLocation != null) {
-            // save location flag
-            val preferences = ApplicationPrefs()
-            preferences.setHasLocationSavedValue(true)
-
-//            locationGps = newGpsLocation
-            Log.d(
-                Constants.TAG,
-                "GPS: Long: ${locationGps!!.longitude}, Lat: ${locationGps!!.latitude}"
-            )
-
-            lawnLocationRepository.addLocation(
-                LawnLocation(locationGps!!.latitude, locationGps!!.longitude)
-            )
-        }
-        else {
-            Log.d(Constants.TAG, "Here")
         }
     }
 
@@ -135,11 +85,41 @@ class SaveLocationActivity : AppCompatActivity(), LocationListener {
     }
 
     override fun onLocationChanged(location: Location) {
-        Log.d(Constants.TAG, "Location = $location")
-        locationGps = location
+        Log.e(Constants.TAG, "Network Location = $location")
+        createCoroutineForDB(location)
     }
 
     override fun onProviderEnabled(provider: String) {}
     override fun onProviderDisabled(provider: String) {}
     override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
+
+    private fun createCoroutineForDB(location: Location) = runBlocking {
+        launch (Dispatchers.IO) {
+            performDatabaseWork(location)
+        }
+    }
+
+    private suspend fun performDatabaseWork(location: Location) {
+        if (!lawnLocationRepository.hasALocationSaved()) {
+            saveNetworkLocationIfExists(location)
+        }
+    }
+
+    private suspend fun saveNetworkLocationIfExists(newNetworkLocation: Location?) {
+        if (newNetworkLocation != null) {
+            locationNetwork = newNetworkLocation
+            Log.e(
+                Constants.TAG,
+                "Network: Long: ${locationNetwork!!.longitude}, Lat: ${locationNetwork!!.latitude}"
+            )
+
+            lawnLocationRepository.addLocation(
+                LawnLocation(locationNetwork!!.latitude, locationNetwork!!.longitude)
+            )
+
+            // save location flag
+            val preferences = ApplicationPrefs()
+            preferences.setHasLocationSavedValue(true)
+        }
+    }
 }

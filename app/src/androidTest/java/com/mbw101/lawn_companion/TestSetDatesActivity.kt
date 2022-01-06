@@ -21,6 +21,7 @@ import com.mbw101.lawn_companion.database.AppDatabaseBuilder
 import com.mbw101.lawn_companion.database.CuttingSeasonDatesDao
 import com.mbw101.lawn_companion.ui.SetDatesActivity
 import com.mbw101.lawn_companion.ui.SettingsActivity
+import com.mbw101.lawn_companion.utils.UtilFunctions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -49,11 +50,12 @@ class TestSetDatesActivity {
         SetDatesActivity::class.java, true, false) // makes it so the activity doesn't start immediately when a test case is ran , true, false
 
     @get:Rule
-    var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION)
+    var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_COARSE_LOCATION)
 
     private lateinit var db: AppDatabase
     private lateinit var cuttingSeasonDatesDao: CuttingSeasonDatesDao
     private lateinit var customIntent: Intent
+    private var currentYear = UtilFunctions.getCurrentYear()
 
     companion object {
         /***
@@ -117,13 +119,13 @@ class TestSetDatesActivity {
     private fun pickDateTest(id: Int) {
         onView(withId(id)).check(matches(isDisplayed()))
         onView(withId(id)).perform(click())
-        setDate(2021, 9, 25)
-        onView(withId(id)).check(matches(withText("2021/9/25")))
+        setDate(currentYear, 9, 25)
+        onView(withId(id)).check(matches(withText("$currentYear/9/25")))
 
         onView(withId(id)).check(matches(isDisplayed()))
         onView(withId(id)).perform(click())
-        setDate(2021, 12, 5)
-        onView(withId(id)).check(matches(withText("2021/12/5")))
+        setDate(currentYear, 12, 5)
+        onView(withId(id)).check(matches(withText("$currentYear/12/5")))
     }
 
     @Test
@@ -132,11 +134,11 @@ class TestSetDatesActivity {
         Thread.sleep(500)
         onView(withId(R.id.startDateSelector)).check(matches(isDisplayed()))
         onView(withId(R.id.startDateSelector)).perform(click())
-        setDate(2021, 9, 25)
+        setDate(currentYear, 9, 25)
 
         onView(withId(R.id.endDateSelector)).check(matches(isDisplayed()))
         onView(withId(R.id.endDateSelector)).perform(click())
-        setDate(2021, 12, 5)
+        setDate(currentYear, 12, 5)
 
         onView(withId(R.id.saveDatesButton)).perform(click())
         Thread.sleep(1000)
@@ -145,12 +147,12 @@ class TestSetDatesActivity {
             launch (Dispatchers.IO) {
                 assertEquals(cuttingSeasonDatesDao.getNumEntries(), 2)
                 val startDate = cuttingSeasonDatesDao.getStartDate()!!
-                assertEquals(startDate.calendarValue.get(Calendar.YEAR), 2021)
+                assertEquals(startDate.calendarValue.get(Calendar.YEAR), currentYear)
                 assertEquals(startDate.calendarValue.get(Calendar.MONTH), 9 - 1) // zero indexed
                 assertEquals(startDate.calendarValue.get(Calendar.DAY_OF_MONTH), 25)
 
                 val endDate = cuttingSeasonDatesDao.getEndDate()!!
-                assertEquals(endDate.calendarValue.get(Calendar.YEAR), 2021)
+                assertEquals(endDate.calendarValue.get(Calendar.YEAR), currentYear)
                 assertEquals(endDate.calendarValue.get(Calendar.MONTH), 12 - 1) // zero indexed
                 assertEquals(endDate.calendarValue.get(Calendar.DAY_OF_MONTH), 5)
             }
@@ -190,8 +192,8 @@ class TestSetDatesActivity {
 
         // Ensure the textview matches proper format
         Thread.sleep(250)
-        onView(withId(R.id.startDateSelector)).check(matches(withText("2021/1/1"))) // yyyy-mm-dd
-        onView(withId(R.id.endDateSelector)).check(matches(withText("2021/12/31")))
+        onView(withId(R.id.startDateSelector)).check(matches(withText("$currentYear/1/1"))) // yyyy-mm-dd
+        onView(withId(R.id.endDateSelector)).check(matches(withText("$currentYear/12/31")))
     }
 
     @Test
@@ -213,19 +215,19 @@ class TestSetDatesActivity {
 
         onView(withId(R.id.startDateSelector)).perform(click())
         onView(withId(android.R.id.button1)).perform(click())
-        onView(withId(R.id.startDateSelector)).check(matches(withText("2021/1/1")))
+        onView(withId(R.id.startDateSelector)).check(matches(withText("$currentYear/1/1")))
 
         onView(withId(R.id.startDateSelector)).perform(click())
-        setDate(2021, 1, 23)
-        onView(withId(R.id.startDateSelector)).check(matches(withText("2021/1/23")))
+        setDate(currentYear, 1, 23)
+        onView(withId(R.id.startDateSelector)).check(matches(withText("$currentYear/1/23")))
 
         onView(withId(R.id.endDateSelector)).perform(click())
         onView(withId(android.R.id.button1)).perform(click())
-        onView(withId(R.id.endDateSelector)).check(matches(withText("2021/12/31")))
+        onView(withId(R.id.endDateSelector)).check(matches(withText("$currentYear/12/31")))
 
         onView(withId(R.id.endDateSelector)).perform(click())
-        setDate(2021, 12, 5)
-        onView(withId(R.id.endDateSelector)).check(matches(withText("2021/12/5")))
+        setDate(currentYear, 12, 5)
+        onView(withId(R.id.endDateSelector)).check(matches(withText("$currentYear/12/5")))
     }
 
     @After

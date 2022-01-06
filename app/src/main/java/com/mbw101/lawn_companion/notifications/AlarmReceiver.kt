@@ -4,7 +4,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
-import android.net.NetworkInfo
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.util.Log
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.*
@@ -167,8 +168,15 @@ class AlarmReceiver : BroadcastReceiver() {
         // determines whether the user has an internet connection
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetwork: NetworkInfo? = connectivityManager.activeNetworkInfo
-        return activeNetwork?.isConnectedOrConnecting == true
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val network = connectivityManager.activeNetwork ?: return false
+            val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+
+            return activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+        }
+        else {
+            return connectivityManager.activeNetworkInfo?.isConnectedOrConnecting ?: false
+        }
     }
 
     private suspend fun callWeatherAPI(context: Context): Response<WeatherResponse> {
@@ -208,7 +216,6 @@ class AlarmReceiver : BroadcastReceiver() {
         }
 
         val weatherData = weatherHttpResponse.body()
-//        Log.d(Constants.TAG, weatherData.toString())
         Log.d(Constants.TAG, "Current weather: " + weatherData!!.current.toString())
         val prefs = ApplicationPrefs()
         if (lastCut == null) {

@@ -68,7 +68,7 @@ class HomeFragment : Fragment() {
                 val preferences = ApplicationPrefs()
 
                 val numDaysSince = UtilFunctions.getNumDaysSince(cal)
-                return if (numDaysSince > preferences.getDesiredCutFrequency()) {
+                return if (numDaysSince > preferences.getDesiredCutFrequency() || numDaysSince < 0) { // 2nd condition accounts for cuts in previous year
                     MyApplication.applicationContext().getString(R.string.passedIntervalMessage)
                 }
                 else if (numDaysSince > 1) { // days will be multiple

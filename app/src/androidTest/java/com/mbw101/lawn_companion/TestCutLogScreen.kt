@@ -1,9 +1,11 @@
 package com.mbw101.lawn_companion
 
 import android.content.Context
+import android.content.Intent
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -25,6 +27,9 @@ import kotlinx.coroutines.runBlocking
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
+import org.hamcrest.core.AllOf
+import org.hamcrest.core.Is
+import org.hamcrest.core.IsInstanceOf
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -38,10 +43,12 @@ class TestCutLogScreen {
     private lateinit var cutEntryDao: CutEntryDAO
 
     @get:Rule
-    val mainActivityTestRule: ActivityTestRule<MainActivity> = ActivityTestRule(MainActivity::class.java)
+    val mainActivityTestRule: ActivityTestRule<MainActivity> = ActivityTestRule(MainActivity::class.java, true, false)
 
     @get:Rule
-    var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION)
+    var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_COARSE_LOCATION)
+
+    private lateinit var customIntent: Intent
 
     companion object {
         private const val MONTH_TO_TEST = 8
@@ -70,19 +77,40 @@ class TestCutLogScreen {
     fun setup() {
         Intents.init()
         setupCutEntryDB()
+        customIntent = Intent()
+        customIntent.putExtra("your_key", "your_value")
     }
 
     @Test
-    fun testCutEntryInDifferentYear() {
+    fun testCutEntryInDifferentYearWithDropdown() {
+        // test current year
+        addEntriesInPreviousYear()
+        addTestEntryInSameYear()
+        mainActivityTestRule.launchActivity(customIntent)
         navigateToCutLog()
         ensureCutLogIsDisplayed()
-        addEntriesInPreviousYear()
-        // test to make sure no entries appear in recyclerview
+        // test to make sure correct entries are there for current year and previous year cut entries are not there
         onView(withId(R.id.cutlog_recyclerview))
-            .check(matches(not(withViewAtPosition(MONTH_TO_TEST, hasDescendant(allOf(withText("Sept"), isDisplayed()))))))
+            .check(matches(not(withViewAtPosition(MONTH_TO_TEST + 1, hasDescendant(allOf(withText("Completed Cut"), isDisplayed()))))))
+        onView(withId(R.id.cutlog_recyclerview))
+            .check(matches(withViewAtPosition(MONTH_TO_TEST, hasDescendant(allOf(withText("Completed Cut"), isDisplayed())))))
 
-        addTestEntryInSameYear()
-        navigateToCutLog()
+        // test previous year
+        onView(withId(R.id.yearDropdown)).perform(click())
+        val previousYear = UtilFunctions.getCurrentYear() - 1
+        Espresso.onData(
+            AllOf.allOf(
+                Is.`is`(IsInstanceOf.instanceOf(String::class.java)),
+                Is.`is`(previousYear.toString())
+            )
+        ).perform(click())
+
+        Thread.sleep(500)
+        // test to make sure correct entries are there for current year and previous year cut entries are not there
+        onView(withId(R.id.cutlog_recyclerview))
+            .check(matches(withViewAtPosition(MONTH_TO_TEST + 1, hasDescendant(allOf(withText("Completed Cut"), isDisplayed())))))
+        onView(withId(R.id.cutlog_recyclerview))
+            .check(matches(not(withViewAtPosition(MONTH_TO_TEST, hasDescendant(allOf(withText("Completed Cut"), isDisplayed()))))))
     }
 
     private fun addTestEntryInSameYear() = runBlocking {
@@ -96,20 +124,21 @@ class TestCutLogScreen {
     }
 
     private fun navigateToCutLog() {
-        onView(withId(R.id.cutLog)).perform(click())
+        onView(withId(R.id.cutlog)).perform(click())
     }
 
     private fun addEntriesInPreviousYear() = runBlocking {
         cutEntryDao.insertAll(
-            CutEntry("4:36pm", 17, "September", 9, UtilFunctions.getCurrentYear() - 1),
+//            CutEntry("4:36pm", 17, "September", 9, UtilFunctions.getCurrentYear() - 1),
             CutEntry("4:36pm", 5, "October", 10, UtilFunctions.getCurrentYear() - 1),
-            CutEntry("4:36pm", 28, "September", 9, UtilFunctions.getCurrentYear() - 1),
+//            CutEntry("4:36pm", 28, "September", 9, UtilFunctions.getCurrentYear() - 1),
             CutEntry("4:36pm", 1, "October", 10, UtilFunctions.getCurrentYear() - 1)
         )
     }
 
     @Test
     fun testDeletingCutEntry() {
+        mainActivityTestRule.launchActivity(customIntent)
         addTestEntryInSameYear()
         navigateToCutLog()
         ensureCutLogIsDisplayed()

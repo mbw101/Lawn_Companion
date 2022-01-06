@@ -55,11 +55,21 @@ class TestMainScreen {
     @get:Rule
     val mainActivityTestRule: ActivityTestRule<MainActivity> = ActivityTestRule(MainActivity::class.java)
 
-    @get:Rule var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION)
+    @get:Rule var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_COARSE_LOCATION)
 
     companion object {
         fun ensureSaveLocationActivityIsShown() {
             intended(hasComponent(SaveLocationActivity::class.java.name))
+        }
+
+        fun pressPreferenceWithTitle(title: String) {
+            onView(withId(androidx.preference.R.id.recycler_view))
+                .perform(
+                    actionOnItem<RecyclerView.ViewHolder>(
+                        hasDescendant(withText(title)),
+                        click()
+                    )
+                )
         }
     }
 
@@ -139,14 +149,14 @@ class TestMainScreen {
     @Test
     // tests both fragments in the bottom nav
     fun testBottomNav() {
-        onView(withId(R.id.cutLog)).perform(click()).check(matches(isDisplayed())) // open cut log fragment and test visibility
+        onView(withId(R.id.cutlog)).perform(click()).check(matches(isDisplayed())) // open cut log fragment and test visibility
         // test going back
         pressBack()
         // check to see if home fragment is there
         onView(withId(R.id.homeConstraintLayout)).check(matches(isDisplayed()))
 
         // go back to cut log and move back to home once more
-        onView(withId(R.id.cutLog)).perform(click())
+        onView(withId(R.id.cutlog)).perform(click())
         onView(withId(R.id.home)).perform(click()).check(matches(isDisplayed())) // open home fragment and test visibility
     }
 
@@ -285,7 +295,7 @@ class TestMainScreen {
     @Test
     fun testYeardropdownVisibility() {
         onView(withId(R.id.yearDropdown)).check(matches(not(isDisplayed())))
-        onView(withId(R.id.cutLog)).perform(click())
+        onView(withId(R.id.cutlog)).perform(click())
         onView(withId(R.id.yearDropdown)).check(matches(isDisplayed()))
     }
 

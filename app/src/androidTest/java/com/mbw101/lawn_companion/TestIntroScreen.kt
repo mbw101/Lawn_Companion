@@ -26,7 +26,7 @@ class TestIntroScreen {
     val introActivityRule: ActivityTestRule<IntroActivity> = ActivityTestRule(IntroActivity::class.java, true, false)
 
     @get:Rule
-    var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION)
+    var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_COARSE_LOCATION)
 
     private lateinit var customIntent: Intent
 

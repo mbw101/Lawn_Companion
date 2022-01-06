@@ -39,7 +39,7 @@ class TestAddCutScreen {
     val addCutActivityTestRule: ActivityTestRule<AddCutActivity> = ActivityTestRule(AddCutActivity::class.java)
 
     @get:Rule
-    var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION)
+    var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_COARSE_LOCATION)
 
     @Before
     fun setup() {

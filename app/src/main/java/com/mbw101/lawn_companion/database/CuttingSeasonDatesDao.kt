@@ -47,16 +47,9 @@ interface CuttingSeasonDatesDao {
         // ensure all the times are the same before getting dates
         ensureCalendarsWorkWithComparison(todayCalendar, startCal, endCal)
 
-        println("Today's calendar time: ${todayCalendar.time}")
-        println("Start date calendar time: ${startCal.time}")
-        println("End date's calendar time: ${endCal.time}")
-
         val currentDate = todayCalendar.time
         val startDate = startCal.time
         val endDate = endCal.time
-
-        println("!currentDate.before(startDate) = " + !currentDate.before(startDate))
-        println("!currentDate.after(endDate) = " + !currentDate.after(endDate))
 
         // this allows for the dates to match and still be considered in the cutting season
         return !(currentDate.before(startDate) || currentDate.after(endDate))

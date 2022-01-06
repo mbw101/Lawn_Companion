@@ -23,6 +23,7 @@ import com.mbw101.lawn_companion.ui.IntroActivity
 import com.mbw101.lawn_companion.ui.MainActivity
 import com.mbw101.lawn_companion.ui.SaveLocationActivity
 import com.mbw101.lawn_companion.utils.ApplicationPrefs
+import com.mbw101.lawn_companion.utils.UtilFunctions
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matchers.not
@@ -46,7 +47,7 @@ class TestFirstUse {
     val introActivityTestRule: ActivityTestRule<IntroActivity> = ActivityTestRule(IntroActivity::class.java, true, false)
 
     @get:Rule
-    var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION)
+    var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_COARSE_LOCATION)
 
     private lateinit var db: AppDatabase
     private lateinit var cuttingSeasonDatesDao: CuttingSeasonDatesDao
@@ -83,8 +84,9 @@ class TestFirstUse {
         ensureIntroActivityIsShown()
         pressNavButtons()
         ensureSaveActivityIsShown()
-        pressSaveLocation() // TODO: Look into passing in MockLocation and mocking the SaveLocationActivity?
-        Thread.sleep(1500)
+        Thread.sleep(500)
+        pressSaveLocation()
+        Thread.sleep(2000)
         pressHomeNavButton()
         ensureMainActivityIsShown()
         compareHappyExpectedOutputs()
@@ -171,8 +173,9 @@ class TestFirstUse {
     private fun ensureDefaultDatesAreDisplayed() {
         onView(ViewMatchers.withId(R.id.settingsIcon)).perform(ViewActions.click())
         TestSettingsScreen.tapSetCuttingSeasonDates()
-        onView(ViewMatchers.withId(R.id.startDateSelector)).check(matches(ViewMatchers.withText("2021/1/1")))
-        onView(ViewMatchers.withId(R.id.endDateSelector)).check(matches(ViewMatchers.withText("2021/12/31")))
+        val year = UtilFunctions.getCurrentYear()
+        onView(ViewMatchers.withId(R.id.startDateSelector)).check(matches(ViewMatchers.withText("$year/1/1")))
+        onView(ViewMatchers.withId(R.id.endDateSelector)).check(matches(ViewMatchers.withText("$year/12/31")))
     }
 
     private fun compareNoLocationExpectedOutputs() {

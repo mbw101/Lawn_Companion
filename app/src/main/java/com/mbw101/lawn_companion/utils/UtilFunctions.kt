@@ -10,13 +10,12 @@ import java.util.*
 import java.util.Calendar.DAY_OF_YEAR
 
 object UtilFunctions {
-   private const val MY_PERMISSIONS_REQUEST_LOCATION = 99
 
     /***
      * Returns true if the FINE location permission has been granted
      */
     fun hasLocationPermissions(): Boolean {
-        return (ContextCompat.checkSelfPermission(MyApplication.applicationContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+        return (ContextCompat.checkSelfPermission(MyApplication.applicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
             == PackageManager.PERMISSION_GRANTED)
     }
 

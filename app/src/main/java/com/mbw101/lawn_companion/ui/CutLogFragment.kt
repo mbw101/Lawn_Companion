@@ -7,6 +7,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.Spinner
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -30,7 +33,7 @@ Date: May 15th, 2021
  */
 
 
-class CutLogFragment : Fragment(), OnItemClickListener {
+class CutLogFragment : Fragment(), OnItemClickListener, AdapterView.OnItemSelectedListener {
     private lateinit var mainRecyclerView: RecyclerView
     private lateinit var monthSections: List<MonthSection>
     private lateinit var mainRecyclerAdaptor: MainRecyclerAdaptor
@@ -40,10 +43,9 @@ class CutLogFragment : Fragment(), OnItemClickListener {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+    var currentYear = UtilFunctions.getCurrentYear()
 
     companion object {
-        var currentYear = UtilFunctions.getCurrentYear()
-
         // sets up the hashmap containing all entries for each respective month
         fun setupHashmap(entries: List<CutEntry>): HashMap<Int, List<CutEntry>> {
             // fill all the entries for each month
@@ -82,23 +84,22 @@ class CutLogFragment : Fragment(), OnItemClickListener {
             return hashMap
         }
 
-        fun setupMonthSections(hashMap: HashMap<Int, List<CutEntry>>): List<MonthSection> {
-            val currentYear = UtilFunctions.getCurrentYear()
+        fun setupMonthSections(hashMap: HashMap<Int, List<CutEntry>>, year: Int): List<MonthSection> {
             println(hashMap)
             // add each month section
             return listOf(
-                MonthSection("Jan $currentYear", hashMap[Constants.Month.JANUARY.monthNum] ?: emptyList()),
-                MonthSection("Feb $currentYear", hashMap[Constants.Month.FEBRUARY.monthNum] ?: emptyList()),
-                MonthSection("Mar $currentYear", hashMap[Constants.Month.MARCH.monthNum] ?: emptyList()),
-                MonthSection("Apr $currentYear", hashMap[Constants.Month.APRIL.monthNum] ?: emptyList()),
-                MonthSection("May $currentYear", hashMap[Constants.Month.MAY.monthNum] ?: emptyList()),
-                MonthSection("June $currentYear", hashMap[Constants.Month.JUNE.monthNum] ?: emptyList()),
-                MonthSection("July $currentYear", hashMap[Constants.Month.JULY.monthNum] ?: emptyList()),
-                MonthSection("Aug $currentYear", hashMap[Constants.Month.AUGUST.monthNum] ?: emptyList()),
-                MonthSection("Sept $currentYear", hashMap[Constants.Month.SEPTEMBER.monthNum] ?: emptyList()),
-                MonthSection("Oct $currentYear", hashMap[Constants.Month.OCTOBER.monthNum] ?: emptyList()),
-                MonthSection("Nov $currentYear", hashMap[Constants.Month.NOVEMBER.monthNum] ?: emptyList()),
-                MonthSection("Dec $currentYear", hashMap[Constants.Month.DECEMBER.monthNum] ?: emptyList())
+                MonthSection("Jan $year", hashMap[Constants.Month.JANUARY.monthNum] ?: emptyList()),
+                MonthSection("Feb $year", hashMap[Constants.Month.FEBRUARY.monthNum] ?: emptyList()),
+                MonthSection("Mar $year", hashMap[Constants.Month.MARCH.monthNum] ?: emptyList()),
+                MonthSection("Apr $year", hashMap[Constants.Month.APRIL.monthNum] ?: emptyList()),
+                MonthSection("May $year", hashMap[Constants.Month.MAY.monthNum] ?: emptyList()),
+                MonthSection("June $year", hashMap[Constants.Month.JUNE.monthNum] ?: emptyList()),
+                MonthSection("July $year", hashMap[Constants.Month.JULY.monthNum] ?: emptyList()),
+                MonthSection("Aug $year", hashMap[Constants.Month.AUGUST.monthNum] ?: emptyList()),
+                MonthSection("Sept $year", hashMap[Constants.Month.SEPTEMBER.monthNum] ?: emptyList()),
+                MonthSection("Oct $year", hashMap[Constants.Month.OCTOBER.monthNum] ?: emptyList()),
+                MonthSection("Nov $year", hashMap[Constants.Month.NOVEMBER.monthNum] ?: emptyList()),
+                MonthSection("Dec $year", hashMap[Constants.Month.DECEMBER.monthNum] ?: emptyList())
             )
         }
     }
@@ -124,8 +125,12 @@ class CutLogFragment : Fragment(), OnItemClickListener {
         mainRecyclerView.adapter = mainRecyclerAdaptor
 
         val itemDecoration = DividerItemDecoration(mainRecyclerView.context, DividerItemDecoration.VERTICAL)
-        itemDecoration.setDrawable(ColorDrawable(resources.getColor(R.color.light_gray)))
+        itemDecoration.setDrawable(ColorDrawable(ContextCompat.getColor(MyApplication.applicationContext(), R.color.light_gray)))
         mainRecyclerView.addItemDecoration(itemDecoration)
+
+        // set up listener for year dropdown
+        val yearDropdown = requireActivity().findViewById<Spinner>(R.id.yearDropdown)
+        yearDropdown.onItemSelectedListener = this
 
         setupListeners()
         setupViewModel(UtilFunctions.getCurrentYear())
@@ -149,7 +154,7 @@ class CutLogFragment : Fragment(), OnItemClickListener {
         runBlocking {
             launch (Dispatchers.IO) {
                 val sortedEntriesFromCurrentYear = viewModel.getEntriesFromSpecificYearSorted(year)
-                setupCutEntries(sortedEntriesFromCurrentYear)
+                setupCutEntries(sortedEntriesFromCurrentYear, year)
                 runOnUiThread {
                     mainRecyclerAdaptor.setSections(monthSections)
                 }
@@ -161,10 +166,10 @@ class CutLogFragment : Fragment(), OnItemClickListener {
      * Will set up the list of data
      * which will be displayed in the recyclerview
      */
-    private fun setupCutEntries(entries: List<CutEntry>) {
+    private fun setupCutEntries(entries: List<CutEntry>, year: Int) {
         // set up hashmap with entries for each month and create month sections
         val hashMap: HashMap<Int, List<CutEntry>> = setupHashmap(entries)
-        monthSections = setupMonthSections(hashMap)
+        monthSections = setupMonthSections(hashMap, year)
     }
 
     override fun onItemClick(entry: CutEntry): Unit = runBlocking{
@@ -191,5 +196,18 @@ class CutLogFragment : Fragment(), OnItemClickListener {
 
     private fun deleteCut(entry: CutEntry) = runBlocking {
         viewModel.deleteCuts(entry)
+    }
+
+    override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, id: Long) {
+        Log.d(Constants.TAG, "Position: $position")
+
+        val mainActivity = activity as MainActivity
+        val selectedYear = mainActivity.yearDropdownArray[position].toInt()
+        Log.d(Constants.TAG, "Selected year: $selectedYear")
+        setupViewModel(selectedYear)
+        currentYear = selectedYear
+    }
+
+    override fun onNothingSelected(p0: AdapterView<*>?) {
     }
 }

@@ -84,5 +84,15 @@ class HomeScreenTests {
         ))
         expectedString = "Your last cut has surpassed the cutting interval. You will likely need a cut."
         assertEquals(HomeFragment.getDescriptionMessage(list), expectedString)
+
+        // test date in previous year
+        newDate.add(Calendar.DAY_OF_YEAR, -10000)
+        list.clear()
+        list.add(CutEntry(
+            "4:36pm", newDate.get(Calendar.DAY_OF_MONTH), "January",
+            newDate.get(Calendar.MONTH)+1, UtilFunctions.getCurrentYear() - 1
+        ))
+        expectedString = "Your last cut has surpassed the cutting interval. You will likely need a cut."
+        assertEquals(HomeFragment.getDescriptionMessage(list), expectedString)
     }
 }
