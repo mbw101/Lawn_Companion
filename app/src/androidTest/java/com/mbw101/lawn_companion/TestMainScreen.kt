@@ -18,12 +18,14 @@ import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
 import com.mbw101.lawn_companion.database.*
+import com.mbw101.lawn_companion.notifications.AlarmReceiver
 import com.mbw101.lawn_companion.ui.AddCutActivity
 import com.mbw101.lawn_companion.ui.MainActivity
 import com.mbw101.lawn_companion.ui.SaveLocationActivity
 import com.mbw101.lawn_companion.ui.SettingsActivity
 import com.mbw101.lawn_companion.utils.ApplicationPrefs
 import com.mbw101.lawn_companion.utils.Constants
+import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.not
@@ -297,6 +299,45 @@ class TestMainScreen {
         onView(withId(R.id.yearDropdown)).check(matches(not(isDisplayed())))
         onView(withId(R.id.cutlog)).perform(click())
         onView(withId(R.id.yearDropdown)).check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun testWeatherSuitabilityTextViewConditionCheck() {
+        val prefs = ApplicationPrefs()
+        removeExistingLocation()
+        assertEquals(AlarmReceiver.preDownloadCriteriaCheckForWeatherSuitability(prefs), false)
+        addTestLocationBack()
+        assertEquals(AlarmReceiver.preDownloadCriteriaCheckForWeatherSuitability(prefs), false)
+
+        // navigate to settings and enable cutting season manually
+        onView(withId(R.id.settingsIcon)).perform(click())
+        pressPreferenceWithTitle("Enable/disable cutting season")
+        assertEquals(AlarmReceiver.preDownloadCriteriaCheckForWeatherSuitability(prefs), false)
+        pressPreferenceWithTitle("Enable/disable cutting season")
+        assertEquals(AlarmReceiver.preDownloadCriteriaCheckForWeatherSuitability(prefs), false)
+
+        prefs.setHasLocationSavedValue(true)
+        assertEquals(AlarmReceiver.preDownloadCriteriaCheckForWeatherSuitability(prefs), true)
+    }
+
+    @Test
+    fun testWeatherSuitabilityTextViewVisibility() {
+        // TODO: Pass in a mock weather data which we can make sure we show the correct string (The specific string is dependent finally on the weather)
+        val prefs = ApplicationPrefs()
+        removeExistingLocation()
+        onView(withId(R.id.weatherSuitabilityTextView)).check(matches(not(isDisplayed())))
+        addTestLocationBack()
+
+        // navigate to settings and enable cutting season manually
+        onView(withId(R.id.settingsIcon)).perform(click())
+        pressPreferenceWithTitle("Enable/disable cutting season")
+        pressBack()
+        onView(withId(R.id.weatherSuitabilityTextView)).check(matches(not(isDisplayed())))
+        onView(withId(R.id.settingsIcon)).perform(click())
+        pressPreferenceWithTitle("Enable/disable cutting season")
+        prefs.setHasLocationSavedValue(true)
+        pressBack()
+        onView(withId(R.id.weatherSuitabilityTextView)).check(matches(isDisplayed()))
     }
 
     @After

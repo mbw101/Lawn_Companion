@@ -11,13 +11,18 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.google.android.gms.internal.zzagr.runOnUiThread
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.AppDatabaseBuilder
 import com.mbw101.lawn_companion.database.CutEntry
 import com.mbw101.lawn_companion.databinding.FragmentHomeBinding
+import com.mbw101.lawn_companion.notifications.AlarmReceiver
+import com.mbw101.lawn_companion.notifications.AlarmReceiver.Companion.callWeatherAPI
 import com.mbw101.lawn_companion.utils.ApplicationPrefs
 import com.mbw101.lawn_companion.utils.Constants
 import com.mbw101.lawn_companion.utils.UtilFunctions
+import com.mbw101.lawn_companion.weather.WeatherResponse
+import com.mbw101.lawn_companion.weather.isCurrentWeatherSuitable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -31,6 +36,7 @@ class HomeFragment : Fragment() {
     private lateinit var mainTextView: TextView
     private lateinit var secondaryTextView: TextView
     private lateinit var salutationTextView: TextView
+    private lateinit var weatherSuitabilityTextView: TextView
     private val viewModel: CutEntryViewModel by viewModels()
     private var _binding: FragmentHomeBinding? = null
     private var withinCuttingSeason: Boolean = false
@@ -79,8 +85,12 @@ class HomeFragment : Fragment() {
                 }
             }
         }
-    }
 
+        // used for tracking latest weather response
+        private lateinit var weatherHttpResponse: WeatherResponse
+        private lateinit var timeOfWeatherCall: Calendar
+        private fun isWeatherCallInitialized() = ::timeOfWeatherCall.isInitialized
+    }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
@@ -108,10 +118,64 @@ class HomeFragment : Fragment() {
         mainTextView = binding.mainMessageTextView
         secondaryTextView = binding.secondaryTextView
         salutationTextView = binding.salutationTextView
+        weatherSuitabilityTextView = binding.weatherSuitabilityTextView
+
+        val preferences = ApplicationPrefs()
+        if (!AlarmReceiver.preDownloadCriteriaCheckForWeatherSuitability(preferences)) {
+            weatherSuitabilityTextView.visibility = View.INVISIBLE
+        }
+        else {
+            updateSuitabilityTextView()
+        }
 
         checkPermissionsOrIfLocationSaved()
         setCorrectSalutation()
         setupListeners()
+    }
+
+    private fun updateSuitabilityTextView() {
+        // check if we've recently updated it
+        if (!shouldCallAPI()) return
+
+        runBlocking {
+            launch(Dispatchers.IO) {
+                val httpWeatherResponse = callWeatherAPI(MyApplication.applicationContext())
+
+                if (!httpWeatherResponse.isSuccessful) {
+                    return@launch
+                }
+
+                val weatherData = httpWeatherResponse.body() ?: return@launch
+
+                weatherHttpResponse = weatherData
+                timeOfWeatherCall = Calendar.getInstance()
+
+                // update the text view with correct string
+                runOnUiThread {
+                    if (isCurrentWeatherSuitable(weatherData.current)) {
+                        weatherSuitabilityTextView.text = MyApplication.applicationContext()
+                            .getString(R.string.suitableWeatherMessage)
+                    } else {
+                        weatherSuitabilityTextView.text = MyApplication.applicationContext()
+                            .getString(R.string.unsuitableWeatherMessage)
+                    }
+                }
+            }
+        }
+    }
+
+    private val MILLIS_TO_HOURS = 3600000
+    private val HOURS_UNTIL_UPDATE = 2
+    private fun shouldCallAPI(): Boolean {
+        if (!isWeatherCallInitialized()) {
+            return true
+        }
+
+        val currentTime = Calendar.getInstance()
+        val diff: Long = currentTime.timeInMillis - timeOfWeatherCall.timeInMillis
+        val hours = diff / MILLIS_TO_HOURS
+
+        return hours >= 2
     }
 
     private fun setCorrectSalutation() {
@@ -121,6 +185,14 @@ class HomeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         checkPermissionsOrIfLocationSaved() // check if permissions have been updated when app is reopened
+        val preferences = ApplicationPrefs()
+        if (!AlarmReceiver.preDownloadCriteriaCheckForWeatherSuitability(preferences)) {
+            weatherSuitabilityTextView.visibility = View.INVISIBLE
+        }
+        else {
+            weatherSuitabilityTextView.visibility = View.VISIBLE
+            updateSuitabilityTextView()
+        }
     }
 
     private fun setupListeners() {

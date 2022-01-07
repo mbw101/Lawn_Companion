@@ -78,13 +78,14 @@ class TestFirstUse {
     }
     
     @Test
+    // Sometimes this test doesn't work on emulator due to network location
     fun testHappyPathOfAppNavigation() {
         resetAppPreferences()
         introActivityTestRule.launchActivity(customIntent)
         ensureIntroActivityIsShown()
         pressNavButtons()
         ensureSaveActivityIsShown()
-        Thread.sleep(500)
+        Thread.sleep(1000)
         pressSaveLocation()
         Thread.sleep(2000)
         pressHomeNavButton()

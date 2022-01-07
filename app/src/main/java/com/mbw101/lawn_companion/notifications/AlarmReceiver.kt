@@ -35,6 +35,65 @@ class AlarmReceiver : BroadcastReceiver() {
         // can start checking weather/cut suitability 2 days before there next desired cut frequency
         // ex: 2 weeks but would start checking on the 12th day
         const val DAYS_SINCE_DELTA = 2
+
+        // used for weather text view on home fragment
+        fun preDownloadCriteriaCheckForWeatherSuitability(preferences: ApplicationPrefs): Boolean {
+            if (!notificationsAreEnabled(preferences)
+                || !isCuttingSeasonTurnedOn(preferences)
+                || !isInCuttingSeason()
+                || !preferences.hasLocationSaved()
+            ) {
+                Log.e(Constants.TAG, "Won't show weather suitability text view on home screen")
+                return false
+            }
+            return true
+        }
+
+        fun notificationsAreEnabled(preferences: ApplicationPrefs): Boolean {
+            return preferences.isNotificationsEnabled()
+        }
+
+        fun isCuttingSeasonTurnedOn(preferences: ApplicationPrefs): Boolean {
+            return preferences.isInCuttingSeason()
+        }
+
+        fun isInCuttingSeason(): Boolean {
+            var inCuttingSeason = false
+            val db = AppDatabaseBuilder.getInstance(MyApplication.applicationContext())
+            val cuttingSeasonDatesDao = db.cuttingSeasonDatesDao()
+
+            // access result from DB function in a different coroutine scope
+            runBlocking {
+                launch (Dispatchers.IO) {
+                    inCuttingSeason = cuttingSeasonDatesDao.isInCuttingSeasonDates()
+                }
+            }
+
+            return inCuttingSeason
+        }
+
+        suspend fun callWeatherAPI(context: Context): Response<WeatherResponse> {
+            val retrofit = Retrofit.Builder()
+                .baseUrl(WeatherService.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+            val weatherService = retrofit.create(WeatherService::class.java)
+            val (lat, long) = getCoordinates(context)
+            return weatherService.getWeather(lat, long)
+        }
+
+        private fun getCoordinates(context: Context): Pair<Double, Double> {
+            val lat: Double
+            val long: Double
+
+            val repository = setupLawnLocationRepository(context)
+
+            val lawnLocation = repository.getLocation()
+            lat = lawnLocation.latitude
+            long = lawnLocation.longitude
+            Log.d(Constants.TAG, "Got $lawnLocation from DB!")
+            return Pair(lat, long)
+        }
     }
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -62,7 +121,7 @@ class AlarmReceiver : BroadcastReceiver() {
     private fun preferencesHaveHappyConditions(preferences: ApplicationPrefs): Boolean {
         if (!preferences.isInTimeOfDay()
             || !notificationsAreEnabled(preferences)
-            || !isCuttingSeasonTurnedOff(preferences)
+            || !isCuttingSeasonTurnedOn(preferences)
             || !isInCuttingSeason()
         ) {
             Log.d(Constants.TAG, "The happy conditions have not been met! Check settings configuration!")
@@ -86,29 +145,6 @@ class AlarmReceiver : BroadcastReceiver() {
         }
 
         return locationExists
-    }
-
-    private fun notificationsAreEnabled(preferences: ApplicationPrefs): Boolean {
-        return preferences.isNotificationsEnabled()
-    }
-
-    private fun isCuttingSeasonTurnedOff(preferences: ApplicationPrefs): Boolean {
-        return preferences.isInCuttingSeason()
-    }
-
-    private fun isInCuttingSeason(): Boolean {
-        var inCuttingSeason = false
-        val db = AppDatabaseBuilder.getInstance(MyApplication.applicationContext())
-        val cuttingSeasonDatesDao = db.cuttingSeasonDatesDao()
-
-        // access result from DB function in a different coroutine scope
-        runBlocking {
-            launch (Dispatchers.IO) {
-                inCuttingSeason = cuttingSeasonDatesDao.isInCuttingSeasonDates()
-            }
-        }
-
-        return inCuttingSeason
     }
 
     private fun isDataUseEnabled(preferences: ApplicationPrefs): Boolean {
@@ -177,29 +213,6 @@ class AlarmReceiver : BroadcastReceiver() {
         else {
             return connectivityManager.activeNetworkInfo?.isConnectedOrConnecting ?: false
         }
-    }
-
-    private suspend fun callWeatherAPI(context: Context): Response<WeatherResponse> {
-        val retrofit = Retrofit.Builder()
-            .baseUrl(WeatherService.BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-        val weatherService = retrofit.create(WeatherService::class.java)
-        val (lat, long) = getCoordinates(context)
-        return weatherService.getWeather(lat, long)
-    }
-
-    private fun getCoordinates(context: Context): Pair<Double, Double> {
-        val lat: Double
-        val long: Double
-
-        val repository = setupLawnLocationRepository(context)
-
-        val lawnLocation = repository.getLocation()
-        lat = lawnLocation.latitude
-        long = lawnLocation.longitude
-        Log.d(Constants.TAG, "Got $lawnLocation from DB!")
-        return Pair(lat, long)
     }
 
     private suspend fun retrieveLastCutFromDB(repository: CutEntryRepository): CutEntry? {

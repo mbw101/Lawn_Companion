@@ -60,6 +60,10 @@
     <string name="goodEvening">Good Evening!</string>
     <string name="goodNight">Good Night!</string>
 
+    <!--    Weather messages for top of screen -->
+    <string name="unsuitableWeatherMessage">The weather is not suitable for a cut. A notification won\'t be sent out.</string>
+    <string name="suitableWeatherMessage">The weather is suitable for a cut. Expect a notification soon.</string>
+
     <string name="home">Home</string>
     <string name="cutLog">Cut Log</string>
 
@@ -209,7 +213,7 @@
     <string name="desiredCutFrequencyKey">desiredCutFrequency</string>
     <string name="desiredCutFrequencyDefault">7</string>
 
-    <string name="notificationTimeOfDayCategoryTitle">Preferences for when notifications will be sent</string>
+    <string name="notificationTimeOfDayCategoryTitle">Timing of Notification Preference</string>
     <string name="morningTimeOfDayTitle">Morning (5am-12pm)</string>
     <string name="morningTimeOfDayKey">mornings</string>
     <string name="afternoonTimeOfDayTitle">Afternoon (12pm-5pm)</string>
