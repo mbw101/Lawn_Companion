@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -191,6 +192,13 @@ class CutLogFragment : Fragment(), OnItemClickListener, AdapterView.OnItemSelect
         // Create the AlertDialog object and set properties
         val alertDialog: AlertDialog = builder.create()
         alertDialog.setCancelable(false)
+        // allow back button presses when alert dialog is shown
+        alertDialog.setOnKeyListener { _, keyCode, _ ->
+            if (keyCode == KeyEvent.KEYCODE_BACK) {
+                alertDialog.dismiss()
+            }
+            true
+        }
         alertDialog.show()
     }
 

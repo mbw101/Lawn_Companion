@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -149,6 +150,7 @@ class HomeFragment : Fragment() {
 
                 weatherHttpResponse = weatherData
                 timeOfWeatherCall = Calendar.getInstance()
+                Log.e(Constants.TAG, "Weather response = $weatherHttpResponse")
 
                 // update the text view with correct string
                 runOnUiThread {
@@ -175,7 +177,7 @@ class HomeFragment : Fragment() {
         val diff: Long = currentTime.timeInMillis - timeOfWeatherCall.timeInMillis
         val hours = diff / MILLIS_TO_HOURS
 
-        return hours >= 2
+        return hours >= HOURS_UNTIL_UPDATE
     }
 
     private fun setCorrectSalutation() {

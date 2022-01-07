@@ -7,6 +7,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import android.util.Log
+import com.mbw101.lawn_companion.BuildConfig
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.*
 import com.mbw101.lawn_companion.ui.MyApplication
@@ -91,7 +92,9 @@ class AlarmReceiver : BroadcastReceiver() {
             val lawnLocation = repository.getLocation()
             lat = lawnLocation.latitude
             long = lawnLocation.longitude
-            Log.d(Constants.TAG, "Got $lawnLocation from DB!")
+            if (BuildConfig.DEBUG) {
+                Log.d(Constants.TAG, "Got $lawnLocation from DB!")
+            }
             return Pair(lat, long)
         }
     }

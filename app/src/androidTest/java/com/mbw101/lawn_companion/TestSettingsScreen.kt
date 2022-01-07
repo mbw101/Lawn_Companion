@@ -22,6 +22,7 @@ import com.mbw101.lawn_companion.ui.SetDatesActivity
 import com.mbw101.lawn_companion.ui.SettingsActivity
 import com.mbw101.lawn_companion.utils.ApplicationPrefs
 import com.mbw101.lawn_companion.utils.Constants
+import com.mbw101.lawn_companion.utils.UtilFunctions
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -45,6 +46,8 @@ class TestSettingsScreen {
 
     @get:Rule
     var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_COARSE_LOCATION)
+
+    private val currentYear = UtilFunctions.getCurrentYear()
 
     companion object {
         fun tapSetCuttingSeasonDates() {
@@ -282,20 +285,20 @@ class TestSettingsScreen {
         tapSetCuttingSeasonDates()
         ensureSetDatesActivityIsShown()
         onView(withId(R.id.startDateSelector)).perform(click())
-        TestSetDatesActivity.setDate(2021, Calendar.MARCH + 1, 14)
+        TestSetDatesActivity.setDate(currentYear, Calendar.MARCH + 1, 14)
         onView(withId(R.id.endDateSelector)).perform(click())
-        TestSetDatesActivity.setDate(2021, Calendar.OCTOBER + 1, 31)
+        TestSetDatesActivity.setDate(currentYear, Calendar.OCTOBER + 1, 31)
 
-        onView(withId(R.id.startDateSelector)).check(matches(withText("2021/3/14")))
-        onView(withId(R.id.endDateSelector)).check(matches(withText("2021/10/31")))
+        onView(withId(R.id.startDateSelector)).check(matches(withText("$currentYear/3/14")))
+        onView(withId(R.id.endDateSelector)).check(matches(withText("$currentYear/10/31")))
 
         // test formatting again after closing the activity
         onView(withId(R.id.saveDatesButton)).perform(click())
         Thread.sleep(1000)
         tapSetCuttingSeasonDates()
         Thread.sleep(200)
-        onView(withId(R.id.startDateSelector)).check(matches(withText("2021/3/14")))
-        onView(withId(R.id.endDateSelector)).check(matches(withText("2021/10/31")))
+        onView(withId(R.id.startDateSelector)).check(matches(withText("$currentYear/3/14")))
+        onView(withId(R.id.endDateSelector)).check(matches(withText("$currentYear/10/31")))
     }
 
     private fun ensureSetDatesActivityIsShown() {

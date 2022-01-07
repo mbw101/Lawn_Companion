@@ -52,15 +52,11 @@ android {
             versionNameSuffix "DEBUG"
             resValue "string", "app_version",
                     "${defaultConfig.versionName} - ${versionNameSuffix}"
-            // add the API key from the gradle.properties file
-            buildConfigField 'String', 'OPEN_WEATHER_MAP_API_KEY', open_weather_map_api_key
         }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             resValue "string", "app_version", "${defaultConfig.versionName}"
-            // add the API key from the gradle.properties file
-            buildConfigField 'String', 'OPEN_WEATHER_MAP_API_KEY', open_weather_map_api_key
         }
     }
     compileOptions {

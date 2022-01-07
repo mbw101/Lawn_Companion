@@ -8,6 +8,7 @@ import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.mbw101.lawn_companion.BuildConfig
 import com.mbw101.lawn_companion.database.LawnLocation
 import com.mbw101.lawn_companion.database.LawnLocationRepository
 import com.mbw101.lawn_companion.database.setupLawnLocationRepository
@@ -85,7 +86,9 @@ class SaveLocationActivity : AppCompatActivity(), LocationListener {
     }
 
     override fun onLocationChanged(location: Location) {
-        Log.e(Constants.TAG, "Network Location = $location")
+        if (BuildConfig.DEBUG) {
+            Log.e(Constants.TAG, "Network Location = $location")
+        }
         createCoroutineForDB(location)
     }
 
@@ -108,10 +111,12 @@ class SaveLocationActivity : AppCompatActivity(), LocationListener {
     private suspend fun saveNetworkLocationIfExists(newNetworkLocation: Location?) {
         if (newNetworkLocation != null) {
             locationNetwork = newNetworkLocation
-            Log.e(
-                Constants.TAG,
-                "Network: Long: ${locationNetwork!!.longitude}, Lat: ${locationNetwork!!.latitude}"
-            )
+            if (BuildConfig.DEBUG) {
+                Log.e(
+                    Constants.TAG,
+                    "Network: Long: ${locationNetwork!!.longitude}, Lat: ${locationNetwork!!.latitude}"
+                )
+            }
 
             lawnLocationRepository.addLocation(
                 LawnLocation(locationNetwork!!.latitude, locationNetwork!!.longitude)

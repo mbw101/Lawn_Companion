@@ -54,10 +54,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentEnd="true"
-                android:gravity="center_horizontal"
+                android:layout_marginStart="12dp"
+                android:layout_toEndOf="@id/titleTextView"
+                android:gravity="center|center_vertical"
                 android:spinnerMode="dropdown"
                 android:textAlignment="center"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:paddingTop="0dp"
+                android:paddingBottom="0dp" />
 <!--            android:entries="@array/year_dropdown_test_values"-->
         </RelativeLayout>
 

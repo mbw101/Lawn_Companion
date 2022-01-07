@@ -11,6 +11,8 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.ui.MainActivity
+import java.util.concurrent.TimeUnit
+
 
 /**
 Lawn Companion
@@ -22,6 +24,7 @@ object NotificationHelper {
 
     const val CUT_NOTIFICATION_ID = 1
     const val MARK_AS_CUT_CODE = 2021
+    private const val TIMEOUT_NOTIFICATION_MINUTES: Long = 10 // represents time a notification stays shown until its dismissed (API 26 and above)
 
     /**
      * Creates the notification channels for API 26+
@@ -66,6 +69,9 @@ object NotificationHelper {
             markCutPendingIntent)
 
         val notificationManager = NotificationManagerCompat.from(context)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationBuilder.setTimeoutAfter(TimeUnit.MINUTES.toMillis(TIMEOUT_NOTIFICATION_MINUTES))
+        }
         notificationManager.notify(CUT_NOTIFICATION_ID, notificationBuilder.build())
     }
 
