@@ -192,7 +192,10 @@ class AddCutActivity : AppCompatActivity() {
         }
 
         monthDropdown.onItemSelectedListener = object : OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                if (view == null) {
+                    return
+                }
                 val cal: Calendar = Calendar.getInstance()
                 cal.set(Calendar.MONTH, position) // set the month to what they picked
                 Log.d(Constants.TAG, "Month selected = $position")
