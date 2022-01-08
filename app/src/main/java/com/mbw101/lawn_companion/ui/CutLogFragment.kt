@@ -206,7 +206,11 @@ class CutLogFragment : Fragment(), OnItemClickListener, AdapterView.OnItemSelect
         viewModel.deleteCuts(entry)
     }
 
-    override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, id: Long) {
+    override fun onItemSelected(p0: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        if (view == null) {
+            return
+        }
+
         Log.d(Constants.TAG, "Position: $position")
 
         val mainActivity = activity as MainActivity
