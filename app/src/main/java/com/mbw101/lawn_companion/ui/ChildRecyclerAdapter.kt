@@ -18,7 +18,7 @@ Date: May 16th, 2021
  */
 
 class ChildRecyclerAdapter(cutEntries: List<CutEntry>,
-                           var onItemClickListener: OnItemClickListener) :
+                           private var onItemClickListener: OnItemClickListener) :
     RecyclerView.Adapter<ChildRecyclerAdapter.ChildCustomViewHolder>() {
     var entries: List<CutEntry> = cutEntries
 

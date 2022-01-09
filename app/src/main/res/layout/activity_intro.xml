@@ -14,14 +14,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="125dp"
+        android:contentDescription="@string/viewPagerDescription"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0">
-
-    </androidx.viewpager2.widget.ViewPager2>
+        app:layout_constraintVertical_bias="1.0"
+        />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
@@ -62,6 +62,7 @@
         android:paddingBottom="8dp"
         android:text="@string/nextButtonText"
         android:theme="@style/DefaultButton"
+        android:contentDescription="@string/nextButtonDescription"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

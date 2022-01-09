@@ -31,7 +31,7 @@ class DatesDatabaseTests {
 
     @Before
     fun setUp() {
-        val context: Context = ApplicationProvider.getApplicationContext<Context>()
+        val context: Context = ApplicationProvider.getApplicationContext()
         db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
             .allowMainThreadQueries()
             .build()

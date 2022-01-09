@@ -2,7 +2,9 @@ package com.mbw101.lawn_companion.utils
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.os.StrictMode
 import androidx.core.content.ContextCompat
+import com.mbw101.lawn_companion.BuildConfig
 import com.mbw101.lawn_companion.ui.MyApplication
 import org.joda.time.DateTime
 import org.joda.time.Days
@@ -34,13 +36,29 @@ object UtilFunctions {
         return cal.get(Calendar.YEAR)
     }
 
-    // returns the number of days between the two dates
+    /** returns the number of days between the two dates
+     *
+     */
     fun getNumDaysBetween(start: Calendar, end: Calendar): Int {
         // set hours and minutes to 0
-        val newStart = DateTime(start)
-        val newEnd = DateTime(end)
+        if (BuildConfig.DEBUG) {
+            var newStart: DateTime? = null
+            var newEnd: DateTime? = null
 
-        return Days.daysBetween(newStart, newEnd).days
+            // DateTime constructor results in a StrictMode policy violation
+            allowReads {
+                newStart = DateTime(start)
+                newEnd = DateTime(end)
+            }
+
+            return Days.daysBetween(newStart!!, newEnd!!).days
+        }
+        else {
+            val newStart = DateTime(start)
+            val newEnd = DateTime(end)
+
+            return Days.daysBetween(newStart, newEnd).days
+        }
     }
 
     fun sameDate(date1: Calendar, date2: Calendar): Boolean {
@@ -51,5 +69,16 @@ object UtilFunctions {
     // Finds num days since the given date (using current date)
     fun getNumDaysSince(date: Calendar): Int {
         return getNumDaysBetween(date, Calendar.getInstance())
+    }
+
+    // StrictMode testing function
+    // https://stackoverflow.com/questions/49841781/strictmode-strictmodediskreadviolation-when-creating-sharedpreference
+    fun <T> allowReads(block: () -> T): T {
+        val oldPolicy = StrictMode.allowThreadDiskReads()
+        try {
+            return block()
+        } finally {
+            StrictMode.setThreadPolicy(oldPolicy)
+        }
     }
 }

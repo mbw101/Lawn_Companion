@@ -2,8 +2,10 @@ package com.mbw101.lawn_companion.utils
 
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
+import com.mbw101.lawn_companion.BuildConfig
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.ui.MyApplication
+import com.mbw101.lawn_companion.utils.UtilFunctions.allowReads
 import java.util.*
 
 /**
@@ -124,8 +126,25 @@ class ApplicationPrefs {
     }
 
     private fun getBooleanPreferenceFromSharedPrefs(preferenceKey: String): Boolean {
-        val preferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(MyApplication.applicationContext())
-        val defaultBooleanPreferenceValue = true
-        return preferences.getBoolean(preferenceKey, defaultBooleanPreferenceValue)
+        if (BuildConfig.DEBUG) {
+            lateinit var preferences: SharedPreferences
+
+            allowReads {
+                preferences = PreferenceManager.getDefaultSharedPreferences(MyApplication.applicationContext())
+            }
+
+            val defaultBooleanPreferenceValue = true
+            var booleanPreferenceValue: Boolean = defaultBooleanPreferenceValue
+            allowReads {
+                booleanPreferenceValue = preferences.getBoolean(preferenceKey, defaultBooleanPreferenceValue)
+            }
+
+            return booleanPreferenceValue
+        }
+        else {
+            val preferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(MyApplication.applicationContext())
+            val defaultBooleanPreferenceValue = true
+            return preferences.getBoolean(preferenceKey, defaultBooleanPreferenceValue)
+        }
     }
 }

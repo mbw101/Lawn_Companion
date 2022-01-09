@@ -15,6 +15,7 @@
         android:layout_marginBottom="180dp"
         android:padding="12dp"
         android:text="@string/getStartedText"
+        android:contentDescription="@string/getStartedDescription"
         android:theme="@style/DefaultButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

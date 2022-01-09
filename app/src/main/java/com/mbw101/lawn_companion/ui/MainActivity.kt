@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.StrictMode
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
@@ -20,6 +21,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.mbw101.lawn_companion.BuildConfig
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.CutEntryRepository
 import com.mbw101.lawn_companion.database.setupCutEntryRepository
@@ -141,6 +143,16 @@ class MainActivity : AppCompatActivity() {
         NavigationUI.setupWithNavController(bottomNavView, navController)
 
         fillInYearDropdown()
+
+        if (BuildConfig.DEBUG) {
+            val policy: StrictMode.ThreadPolicy = StrictMode.ThreadPolicy.Builder()
+                .detectAll()
+                .penaltyLog()
+                .penaltyFlashScreen()
+//                .penaltyDialog()
+                .build()
+            StrictMode.setThreadPolicy(policy)
+        }
     }
 
     override fun onResume() {

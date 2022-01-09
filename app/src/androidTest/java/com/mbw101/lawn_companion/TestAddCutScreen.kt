@@ -55,6 +55,7 @@ class TestAddCutScreen {
 
     @Test
     // tests back buttons to see if main activity is shown
+    // Causes StrictMode violation
     fun testBackButton() {
         // hit back icon
         onView(withId(R.id.backIcon)).perform(click())
@@ -64,6 +65,7 @@ class TestAddCutScreen {
 
     @Test
     // tests back buttons to see if main activity is shown
+    // Causes violation with StrictMode
     fun testPhysicalBackButton() {
         // hit back button
         pressBack()
@@ -73,6 +75,7 @@ class TestAddCutScreen {
 
     @Test
     // tests add cut button see if main activity is shown
+    // Causes StrictMode violation
     fun testAddAndDeleteCut() {
         // hit add cut button
         onView(withId(R.id.addCutButton)).perform(click())

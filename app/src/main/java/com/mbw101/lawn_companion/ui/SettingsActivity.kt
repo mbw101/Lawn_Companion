@@ -13,9 +13,11 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import com.mbw101.lawn_companion.BuildConfig
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.databinding.SettingsActivityBinding
 import com.mbw101.lawn_companion.utils.Constants
+import com.mbw101.lawn_companion.utils.UtilFunctions.allowReads
 
 /**
 Lawn Companion
@@ -66,9 +68,16 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     class SettingsFragment : PreferenceFragmentCompat() {
-
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-            setPreferencesFromResource(R.xml.root_preferences, rootKey)
+            if (BuildConfig.DEBUG) {
+                // setPreferencesFromResource results in StrictMode policy violation
+                allowReads {
+                    setPreferencesFromResource(R.xml.root_preferences, rootKey)
+                }
+            }
+            else {
+                setPreferencesFromResource(R.xml.root_preferences, rootKey)
+            }
         }
 
         override fun onPreferenceTreeClick(preference: Preference?): Boolean {

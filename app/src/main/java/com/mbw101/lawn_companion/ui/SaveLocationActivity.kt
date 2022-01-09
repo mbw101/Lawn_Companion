@@ -33,7 +33,7 @@ class SaveLocationActivity : AppCompatActivity(), LocationListener {
     private lateinit var denySaveButton: Button
     private lateinit var acceptSaveButton: Button
     private lateinit var lawnLocationRepository: LawnLocationRepository
-    var locationNetwork: Location? = null
+    private var locationNetwork: Location? = null
     private lateinit var binding: ActivitySaveLocationBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {

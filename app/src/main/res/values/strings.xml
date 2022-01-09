@@ -7,6 +7,7 @@
     <string name="welcomeMessage">Welcome to Lawn Companion!</string>
     <string name="nextButtonText">Next</string>
     <string name="getStartedText">Get Started</string>
+    <string name="getStartedDescription">Get Started with the app</string>
 
     <!-- 2nd screen -->
     <string name="worryLess">Worry Less</string>
@@ -44,13 +45,22 @@
         Yes, I am home
     </string>
 
+    <string name="lawnLocationAcceptDescription">Accept saving lawn location</string>
+
     <string name="lawnLocationDeny">
         No, I am not home
     </string>
 
+    <string name="lawnLocationDenyDescription">Deny saving lawn location</string>
+
     <string name="toastNoLocationPermission">
         Lawn Companion needs location permissions in order to save a lawn location!
     </string>
+
+    <!-- Intro activity accessibility strings -->
+    <string name="viewPagerDescription">Intro screens</string>
+    <!-- TODO: Include description for the TabLayout selectors? -->
+    <string name="nextButtonDescription">Next</string>
 
     <!-- Main activity strings -->
 
@@ -96,6 +106,7 @@
     <string name="openPermissionsText">
     Open Permissions
     </string>
+    <string name="openPermissionsDescription">Open location permissions of app</string>
 
     <!-- Cut has been made text -->
     <string name="alreadyCutMessage">
@@ -123,6 +134,10 @@
         Create a lawn location
     </string>
 
+    <!-- Main Activity accessibility -->
+    <string name="yearSpinnerDescription">Cut Entry Years</string>
+    <string name="addCutFabDescription">Add Cut</string>
+
     <!-- Add new cut activity strings -->
     <string name="addCutTitle">
     Add New Cut
@@ -138,20 +153,6 @@
     </string>
     <string name="addCutText">Add Cut</string>
     <string name="futureCutsToastMessage">You cannot add future cuts!</string>
-
-    <!-- Months -->
-    <string name="january">January</string>
-    <string name="february">February</string>
-    <string name="march">March</string>
-    <string name="april">April</string>
-    <string name="may">May</string>
-    <string name="june">June</string>
-    <string name="july">July</string>
-    <string name="august">August</string>
-    <string name="september">September</string>
-    <string name="october">October</string>
-    <string name="november">November</string>
-    <string name="december">December</string>
 
     <string-array name="months">
         <item>January</item>
@@ -169,6 +170,12 @@
     </string-array>
 
     <!-- Day (Number) values -->
+
+    <!-- Add cut accessibility strings -->
+    <string name="backArrowDescription">Back arrow</string>
+    <string name="monthSpinnerDescription">Months</string>
+    <string name="daySpinnerDescription">Days</string>
+    <string name="addCutButtonDescription">Add Cut</string>
 
     <!-- Settings activity strings -->
     <string name="settingsTitle">Settings</string>
@@ -230,6 +237,7 @@
     <string name="versionNumber">Version 0.1</string>
 
     <!-- Cut log activity strings -->
+    <string name="cutEntryRowDescription">Cut Entry row</string>
     <string name="completedCut">Completed Cut</string>
     <string name="noCutMade">No Cuts Made</string>
     <string name="alertTitle">Delete cut entry?</string>
@@ -237,29 +245,19 @@
     <string name="cancelOption">Cancel</string>
     <string name="deleteOption">Delete</string>
 
-    <!--    New Cut Log-->
-    <string name="yearDropdownTitle">Year</string>
-    <string name="cutEntryDetailsTitle">Cut Entry Details</string>
-    <string name="noCutEntryBody">No entry made!\nWould you like to add one?</string>
-    <string name="denyAddOneResponse">No</string>
-    <string name="acceptAddOneResponse">Yes</string>
-    <string name="cutEntryBody">Entry made at %1$s.\nWould you like to delete it?</string>
-    <string name="denyDeleteEntry">Cancel</string>
-    <string name="acceptDeleteEntry">Delete</string>
-
     <!-- Notification strings -->
     <string name="markAsCut">Mark as cut</string>
+    <!-- TODO: Implement this in a future feature -->
     <string name="skip">Skip</string>
     <string name="cutSuggestionMessage">Hey, it\'s a great time to cut your lawn!</string>
     <string name="rainOnCutDayMessage">Hey, rain is expected near your next cutting day, so today would be a better time for a cut!</string>
+    <!-- TODO: Implement this in a future feature -->
     <string name="badWeatherOnCutDayMessage">Hey, bad weather is expected near your next cutting day, so today would be a better
         time for a cut!</string>
 
     <!-- Other strings -->
     <string name="moreThanOneCutMessage">Only one cut is allowed on a single day!</string>
     <string name="settings_icon">Settings icon</string>
-    <string name="refresh_icon">Refresh icon</string>
-    <string name="floating_action_button_for_adding_new_cuts">Floating action button for adding new cuts</string>
 
     <!--    Dialog strings-->
     <string name="permissionDialogTitle">Access to background location</string>
@@ -269,11 +267,10 @@
     <!-- SaveDatesActivity strings   -->
     <string name="saveDatesActivityTitle">Modify cutting season dates</string>
     <string name="saveDatesButtonText">Save Dates</string>
+    <string name="saveDatesButtonDescription">Save Cutting Season Dates</string>
     <string name="saveStartDate">Start Date:</string>
     <string name="saveEndDate">End Date:</string>
     <string name="startDateEditTextDefault">Enter start date here</string>
     <string name="endDateEditTextDefault">Enter end date here</string>
     <string name="datePlaceholder">%1$s/%2$s/%3$s</string>
-
-    <!-- Description for UI elements (other than text views)  for accessibility -->
 </resources>

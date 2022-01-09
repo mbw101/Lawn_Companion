@@ -57,11 +57,11 @@
                 android:layout_marginStart="12dp"
                 android:layout_toEndOf="@id/titleTextView"
                 android:gravity="center|center_vertical"
+                android:paddingTop="0dp"
+                android:paddingBottom="0dp"
                 android:spinnerMode="dropdown"
                 android:textAlignment="center"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                android:paddingTop="0dp"
-                android:paddingBottom="0dp" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 <!--            android:entries="@array/year_dropdown_test_values"-->
         </RelativeLayout>
 
@@ -99,7 +99,7 @@
         android:layout_marginEnd="@dimen/fab_margin"
         android:layout_marginBottom="@dimen/fab_margin"
         android:clickable="true"
-        android:contentDescription="@string/floating_action_button_for_adding_new_cuts"
+        android:contentDescription="@string/addCutFabDescription"
         android:focusable="true"
         app:backgroundTint="@color/medium_spring_green_darker_shade"
         app:layout_constraintBottom_toTopOf="@+id/bottomNav"

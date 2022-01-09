@@ -22,10 +22,6 @@ Date: July 1st, 2021
 // handles the mark as cut action from notification
 class AppGlobalReceiver : BroadcastReceiver() {
 
-    companion object {
-        const val NOTIFICATION_ID = "notification_id"
-    }
-
     override fun onReceive(context: Context, intent: Intent) {
         NotificationManagerCompat.from(context).cancel(NotificationHelper.CUT_NOTIFICATION_ID)
 

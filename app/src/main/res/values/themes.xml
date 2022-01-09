@@ -32,8 +32,4 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
-
-    <style name="Theme.Lawn_Companion.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="Theme.Lawn_Companion.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

@@ -84,7 +84,7 @@ class TestSetDatesActivity {
     }
 
     private fun setupDB() {
-        val context: Context = ApplicationProvider.getApplicationContext<Context>()
+        val context: Context = ApplicationProvider.getApplicationContext()
         db = AppDatabaseBuilder.getInstance(context)
         cuttingSeasonDatesDao = db.cuttingSeasonDatesDao()
     }

@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:background="@drawable/ic_baseline_arrow_back_24"
-                android:contentDescription="@string/settings_icon" />
+                android:contentDescription="@string/backArrowDescription" />
 
             <TextView
                 android:id="@+id/titleTextView"
@@ -81,7 +81,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/monthTextView"
             android:textAlignment="center"
-            android:gravity="center_horizontal" />
+            android:gravity="center_horizontal"
+            android:contentDescription="@string/monthSpinnerDescription" />
 
         <TextView
             android:id="@+id/dayTextView"
@@ -114,7 +115,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/dayTextView"
             android:textAlignment="center"
-            android:gravity="center_horizontal" />
+            android:gravity="center_horizontal"
+            android:contentDescription="@string/daySpinnerDescription" />
 
         <TextView
             android:id="@+id/timeTextView"
@@ -154,7 +156,8 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Display2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/timeTextView" />
+            app:layout_constraintTop_toBottomOf="@+id/timeTextView"
+             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

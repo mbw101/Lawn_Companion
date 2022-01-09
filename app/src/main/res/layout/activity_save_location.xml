@@ -54,6 +54,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textSize="18sp"
         android:visibility="visible"
+        android:contentDescription="@string/lawnLocationDenyDescription"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -68,6 +69,7 @@
         android:text="@string/lawnLocationAccept"
         android:textSize="18sp"
         android:visibility="visible"
+        android:contentDescription="@string/lawnLocationAcceptDescription"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

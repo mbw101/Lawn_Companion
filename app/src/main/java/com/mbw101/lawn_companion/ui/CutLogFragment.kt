@@ -15,7 +15,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.internal.zzagr.runOnUiThread
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.CutEntry
 import com.mbw101.lawn_companion.databinding.FragmentCutLogBinding
@@ -44,7 +43,7 @@ class CutLogFragment : Fragment(), OnItemClickListener, AdapterView.OnItemSelect
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-    var currentYear = UtilFunctions.getCurrentYear()
+    private var currentYear = UtilFunctions.getCurrentYear()
 
     companion object {
         // sets up the hashmap containing all entries for each respective month
@@ -151,12 +150,12 @@ class CutLogFragment : Fragment(), OnItemClickListener, AdapterView.OnItemSelect
         })
     }
 
-    fun setupViewModel(year: Int) {
+    private fun setupViewModel(year: Int) {
         runBlocking {
             launch (Dispatchers.IO) {
                 val sortedEntriesFromCurrentYear = viewModel.getEntriesFromSpecificYearSorted(year)
                 setupCutEntries(sortedEntriesFromCurrentYear, year)
-                runOnUiThread {
+                requireActivity().runOnUiThread {
                     mainRecyclerAdaptor.setSections(monthSections)
                 }
             }

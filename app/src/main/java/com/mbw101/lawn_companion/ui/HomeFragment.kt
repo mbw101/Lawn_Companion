@@ -12,7 +12,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.google.android.gms.internal.zzagr.runOnUiThread
+import com.mbw101.lawn_companion.BuildConfig
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.AppDatabaseBuilder
 import com.mbw101.lawn_companion.database.CutEntry
@@ -22,6 +22,7 @@ import com.mbw101.lawn_companion.notifications.AlarmReceiver.Companion.callWeath
 import com.mbw101.lawn_companion.utils.ApplicationPrefs
 import com.mbw101.lawn_companion.utils.Constants
 import com.mbw101.lawn_companion.utils.UtilFunctions
+import com.mbw101.lawn_companion.utils.UtilFunctions.allowReads
 import com.mbw101.lawn_companion.weather.WeatherResponse
 import com.mbw101.lawn_companion.weather.isCurrentWeatherSuitable
 import kotlinx.coroutines.Dispatchers
@@ -153,7 +154,7 @@ class HomeFragment : Fragment() {
                 Log.e(Constants.TAG, "Weather response = $weatherHttpResponse")
 
                 // update the text view with correct string
-                runOnUiThread {
+                requireActivity().runOnUiThread {
                     if (isCurrentWeatherSuitable(weatherData.current)) {
                         weatherSuitabilityTextView.text = MyApplication.applicationContext()
                             .getString(R.string.suitableWeatherMessage)
@@ -276,10 +277,22 @@ class HomeFragment : Fragment() {
     // sets up ViewModel and calls getDescriptionMessage
     private fun setupViewModel() {
         // set up view model with fragment
-        viewModel.getSortedCuts().observe(viewLifecycleOwner, { entries -> //update RecyclerView later
-            // set up text on home frag depending on if a location is saved or not
-            mainTextView.text = getDescriptionMessage(entries)
-        })
+        if (BuildConfig.DEBUG) {
+            allowReads {
+                viewModel.getSortedCuts()
+                    .observe(viewLifecycleOwner, { entries -> //update RecyclerView later
+                        // set up text on home frag depending on if a location is saved or not
+                        mainTextView.text = getDescriptionMessage(entries)
+                    })
+            }
+        }
+        else {
+            viewModel.getSortedCuts()
+                .observe(viewLifecycleOwner, { entries -> //update RecyclerView later
+                    // set up text on home frag depending on if a location is saved or not
+                    mainTextView.text = getDescriptionMessage(entries)
+                })
+        }
     }
 
     // Show permissions screen for app in settings

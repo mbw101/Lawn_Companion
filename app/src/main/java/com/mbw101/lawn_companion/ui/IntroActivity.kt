@@ -82,9 +82,6 @@ class IntroActivity : FragmentActivity() {
             viewPager.currentItem = viewPager.currentItem + 1
         }
         viewPager.registerOnPageChangeCallback(object : OnPageChangeCallback(){
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-                super.onPageScrolled(position, positionOffset, positionOffsetPixels)
-            }
 
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
@@ -121,12 +118,6 @@ class IntroActivity : FragmentActivity() {
      */
     private fun launchMainActivity() {
         val intent = Intent(MyApplication.applicationContext(), MainActivity::class.java)
-        startActivity(intent)
-        finish()
-    }
-
-    private fun launchSaveLocationActivity() {
-        val intent = Intent(MyApplication.applicationContext(), SaveLocationActivity::class.java)
         startActivity(intent)
         finish()
     }

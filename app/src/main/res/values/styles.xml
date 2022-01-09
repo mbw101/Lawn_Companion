@@ -6,11 +6,6 @@
         <item name="android:textColor">#CCC</item>
     </style>
 
-    <style name="Widget.Theme.Lawn_Companion.ButtonBar.Fullscreen" parent="">
-        <item name="android:background">@color/black_overlay</item>
-        <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
-    </style>
-
     <style name="DefaultButton" parent="android:style/Widget.Button">
         <item name="android:textSize">28sp</item>
         <item name="android:background">@color/medium_spring_green_darker_shade</item>

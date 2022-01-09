@@ -51,7 +51,8 @@ class SetDatesActivity : AppCompatActivity() {
 
     private fun setupExistingDates() {
         // Access the start and end dates from the DB
-        Toast.makeText(this, "Accessing dates...", Toast.LENGTH_SHORT).show()
+        val toast = Toast.makeText(this, "Accessing dates...", Toast.LENGTH_SHORT)
+        toast.show()
 
         startDateFromDB = null
         endDateFromDB = null
@@ -64,6 +65,8 @@ class SetDatesActivity : AppCompatActivity() {
 
                 // timer runs on a different thread than UI, so we need this UI updating code to run on the UI thread
                 runOnUiThread {
+                    toast.cancel()
+
                     if (startDateFromDB != null && endDateFromDB != null) {
                         startDateSelector.text =
                             getString(
