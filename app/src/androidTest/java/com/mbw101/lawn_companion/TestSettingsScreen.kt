@@ -24,7 +24,7 @@ import com.mbw101.lawn_companion.utils.ApplicationPrefs
 import com.mbw101.lawn_companion.utils.Constants
 import com.mbw101.lawn_companion.utils.UtilFunctions
 import org.junit.After
-import org.junit.Assert.assertEquals
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -303,6 +303,36 @@ class TestSettingsScreen {
 
     private fun ensureSetDatesActivityIsShown() {
         Intents.intended(IntentMatchers.hasComponent(hasClassName(SetDatesActivity::class.java.name)))
+    }
+
+    @Test
+    fun testNotificationPreferenceHelper() {
+        val notificationTitle = MyApplication.applicationContext().getString(R.string.notificationsTitle)
+        val prefs = ApplicationPrefs()
+        assertTrue(prefs.isNotificationsEnabled())
+        onView(withText(notificationTitle)).perform(click())
+        assertFalse(prefs.isNotificationsEnabled())
+        onView(withText(notificationTitle)).perform(click())
+    }
+
+    @Test
+    fun testWifiPreferenceHelper() {
+        val dataAccessTitle = MyApplication.applicationContext().getString(R.string.weatherDataAccessTitle)
+        val prefs = ApplicationPrefs()
+        assertTrue(prefs.isDataUseEnabled())
+        onView(withText(dataAccessTitle)).perform(click())
+        assertFalse(prefs.isDataUseEnabled())
+        onView(withText(dataAccessTitle)).perform(click())
+    }
+
+    @Test
+    fun testInCuttingSeasonPreferenceHelper() {
+        val cuttingSeasonTitle = MyApplication.applicationContext().getString(R.string.cuttingSeasonTitle)
+        val prefs = ApplicationPrefs()
+        assertTrue(prefs.isInCuttingSeason())
+        onView(withText(cuttingSeasonTitle)).perform(click())
+        assertFalse(prefs.isInCuttingSeason())
+        onView(withText(cuttingSeasonTitle)).perform(click())
     }
 
     @After

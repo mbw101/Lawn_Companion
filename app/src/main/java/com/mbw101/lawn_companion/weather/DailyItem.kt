@@ -8,7 +8,7 @@ data class DailyItem(val rain: Double = 0.0,
                      val uvi: Double = 0.0,
                      val pressure: Int = 0,
                      val clouds: Int = 0,
-                     val feelsLike: FeelsLike,
+                     val feelsLike: FeelsLike?, // FeelsLike?
                      val windGust: Double = 0.0,
                      val dt: Int = 0,
                      val pop: Double = 0.0,
@@ -24,7 +24,6 @@ fun isSingleDaySuitable(singleDayWeather: DailyItem): Boolean {
 
     if (!isWeatherDescriptionSuitable(singleDayWeather.weather!![0])) return false
     if (!isTemperatureSuitable(singleDayWeather.temp)) return false
-    if (!isFeelsLikeSuitable(singleDayWeather.feelsLike)) return false
     if (!isSuitableRainPercentage(singleDayWeather.pop)) return false
 
     return true
@@ -37,5 +36,6 @@ fun isSuitableRainPercentage(chanceOfRain: Double): Boolean {
 
 private fun isNullArguments(singleDayWeather: DailyItem): Boolean {
     if (singleDayWeather.weather == null) return true
+
     return false
 }

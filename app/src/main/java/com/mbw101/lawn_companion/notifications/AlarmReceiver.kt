@@ -73,12 +73,16 @@ class AlarmReceiver : BroadcastReceiver() {
             return inCuttingSeason
         }
 
-        suspend fun callWeatherAPI(context: Context): Response<WeatherResponse> {
+        private fun buildWeatherAPI(): WeatherService {
             val retrofit = Retrofit.Builder()
                 .baseUrl(WeatherService.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
-            val weatherService = retrofit.create(WeatherService::class.java)
+            return retrofit.create(WeatherService::class.java)
+        }
+
+        // passing in the weatherAPI allows us to pass in a mock to it
+        suspend fun callWeatherAPI(context: Context, weatherService: WeatherService = buildWeatherAPI()): Response<WeatherResponse> {
             val (lat, long) = getCoordinates(context)
             return weatherService.getWeather(lat, long)
         }

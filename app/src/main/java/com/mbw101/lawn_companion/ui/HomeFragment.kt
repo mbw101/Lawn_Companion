@@ -127,6 +127,7 @@ class HomeFragment : Fragment() {
             weatherSuitabilityTextView.visibility = View.INVISIBLE
         }
         else {
+            weatherSuitabilityTextView.visibility = View.VISIBLE
             updateSuitabilityTextView()
         }
 
@@ -137,7 +138,11 @@ class HomeFragment : Fragment() {
 
     private fun updateSuitabilityTextView() {
         // check if we've recently updated it
-        if (!shouldCallAPI()) return
+        if (!shouldCallAPI()) {
+            // the suitability text gets reset when switching fragments, so we must update it based on the weather
+            updateWeatherSuitabilityText(weatherHttpResponse)
+            return
+        }
 
         runBlocking {
             launch(Dispatchers.IO) {
@@ -155,15 +160,19 @@ class HomeFragment : Fragment() {
 
                 // update the text view with correct string
                 requireActivity().runOnUiThread {
-                    if (isCurrentWeatherSuitable(weatherData.current)) {
-                        weatherSuitabilityTextView.text = MyApplication.applicationContext()
-                            .getString(R.string.suitableWeatherMessage)
-                    } else {
-                        weatherSuitabilityTextView.text = MyApplication.applicationContext()
-                            .getString(R.string.unsuitableWeatherMessage)
-                    }
+                    updateWeatherSuitabilityText(weatherData)
                 }
             }
+        }
+    }
+
+    private fun updateWeatherSuitabilityText(weatherData: WeatherResponse) {
+        if (isCurrentWeatherSuitable(weatherData.current)) {
+            weatherSuitabilityTextView.text = MyApplication.applicationContext()
+                .getString(R.string.suitableWeatherMessage)
+        } else {
+            weatherSuitabilityTextView.text = MyApplication.applicationContext()
+                .getString(R.string.unsuitableWeatherMessage)
         }
     }
 

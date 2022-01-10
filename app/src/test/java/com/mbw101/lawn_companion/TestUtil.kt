@@ -72,4 +72,10 @@ class TestUtil {
         date2.set(2021, Calendar.MARCH, 1) // Jan 1st, 2021
         assertEquals(UtilFunctions.sameDate(date1, date2), true)
     }
+
+    @Test
+    fun testGetYearHelper() {
+        val cal = Calendar.getInstance()
+        assertEquals(UtilFunctions.getCurrentYear(), cal.get(Calendar.YEAR))
+    }
 }

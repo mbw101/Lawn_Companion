@@ -11,7 +11,6 @@ fun isFeelsLikeSuitable(feelsLikeTemp: FeelsLike): Boolean {
         return false
     }
 
-    // TODO: Add range checks in the future
     return true
 }
 
