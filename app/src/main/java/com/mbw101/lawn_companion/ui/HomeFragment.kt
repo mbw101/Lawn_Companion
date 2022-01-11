@@ -123,13 +123,7 @@ class HomeFragment : Fragment() {
         weatherSuitabilityTextView = binding.weatherSuitabilityTextView
 
         val preferences = ApplicationPrefs()
-        if (!AlarmReceiver.preDownloadCriteriaCheckForWeatherSuitability(preferences)) {
-            weatherSuitabilityTextView.visibility = View.INVISIBLE
-        }
-        else {
-            weatherSuitabilityTextView.visibility = View.VISIBLE
-            updateSuitabilityTextView()
-        }
+        performSuitabilityTextViewWork(preferences)
 
         checkPermissionsOrIfLocationSaved()
         setCorrectSalutation()
@@ -198,8 +192,17 @@ class HomeFragment : Fragment() {
         super.onResume()
         checkPermissionsOrIfLocationSaved() // check if permissions have been updated when app is reopened
         val preferences = ApplicationPrefs()
+        performSuitabilityTextViewWork(preferences)
+    }
+
+    private fun performSuitabilityTextViewWork(preferences: ApplicationPrefs) {
         if (!AlarmReceiver.preDownloadCriteriaCheckForWeatherSuitability(preferences)) {
             weatherSuitabilityTextView.visibility = View.INVISIBLE
+        }
+        else if (!AlarmReceiver.connectionTypeMatchesPreferences(preferences, MyApplication.applicationContext())) {
+            weatherSuitabilityTextView.visibility = View.VISIBLE
+            weatherSuitabilityTextView.text =
+                getString(R.string.noConnectionAvailableWeatherMessage)
         }
         else {
             weatherSuitabilityTextView.visibility = View.VISIBLE

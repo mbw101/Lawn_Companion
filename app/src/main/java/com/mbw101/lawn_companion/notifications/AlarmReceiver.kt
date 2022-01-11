@@ -47,6 +47,7 @@ class AlarmReceiver : BroadcastReceiver() {
                 Log.e(Constants.TAG, "Won't show weather suitability text view on home screen")
                 return false
             }
+
             return true
         }
 
@@ -101,6 +102,58 @@ class AlarmReceiver : BroadcastReceiver() {
             }
             return Pair(lat, long)
         }
+
+        fun connectionTypeMatchesPreferences(
+            preferences: ApplicationPrefs,
+            context: Context
+        ): Boolean {
+            if (!hasInternetConnection(context)) {
+                Log.e(Constants.TAG, "Has no internet connection!")
+                return false
+            }
+            if (!isDataUseEnabled(preferences)) {
+                return isUsingWifiConnection(context)
+            }
+
+            Log.e(Constants.TAG, "Connection type matches preferences!")
+            return true
+        }
+
+        private fun hasInternetConnection(context: Context): Boolean {
+            // determines whether the user has an internet connection
+            val connectivityManager =
+                context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                val network = connectivityManager.activeNetwork ?: return false
+                val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+
+                // include Wi-Fi or data in this check
+                return activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) || activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+            }
+            else {
+                return connectivityManager.activeNetworkInfo?.isConnectedOrConnecting ?: false
+            }
+        }
+
+        private fun isDataUseEnabled(preferences: ApplicationPrefs): Boolean {
+            return preferences.isDataUseEnabled()
+        }
+
+        private fun isUsingWifiConnection(context: Context): Boolean {
+            if (isUsingDataConnection(context)) {
+                Log.d(Constants.TAG, "Has data connection but preference says not to use data!")
+                return false
+            }
+
+            Log.d(Constants.TAG, "Connection type matches preferences!")
+            return true
+        }
+
+        private fun isUsingDataConnection(context: Context): Boolean {
+            val connectivityManager =
+                context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            return connectivityManager.isActiveNetworkMetered
+        }
     }
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -154,10 +207,6 @@ class AlarmReceiver : BroadcastReceiver() {
         return locationExists
     }
 
-    private fun isDataUseEnabled(preferences: ApplicationPrefs): Boolean {
-        return preferences.isDataUseEnabled()
-    }
-
     private fun runNotificationCoroutineWork(repository: CutEntryRepository, preferences: ApplicationPrefs, context: Context)
     = runBlocking {
         // starts a new coroutine, so we can access the DB concurrently without blocking the current thread (UI)
@@ -172,53 +221,6 @@ class AlarmReceiver : BroadcastReceiver() {
             } else {
                 Log.d(Constants.TAG, "Connection type does not match preferences!")
             }
-        }
-    }
-
-    private fun connectionTypeMatchesPreferences(
-        preferences: ApplicationPrefs,
-        context: Context
-    ): Boolean {
-        if (!hasInternetConnection(context)) {
-            Log.d(Constants.TAG, "Has no internet connection!")
-            return false
-        }
-        if (!isDataUseEnabled(preferences)) {
-            return isUsingWifiConnection(context)
-        }
-
-        Log.d(Constants.TAG, "Connection type matches preferences!")
-        return true
-    }
-
-    private fun isUsingWifiConnection(context: Context): Boolean {
-        if (isUsingDataConnection(context)) {
-            Log.d(Constants.TAG, "Has data connection but preference says not to use data!")
-            return false
-        }
-
-        Log.d(Constants.TAG, "Connection type matches preferences!")
-        return true
-    }
-
-    private fun isUsingDataConnection(context: Context): Boolean {
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        return connectivityManager.isActiveNetworkMetered
-    }
-
-    private fun hasInternetConnection(context: Context): Boolean {
-        // determines whether the user has an internet connection
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val network = connectivityManager.activeNetwork ?: return false
-            val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
-
-            return activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
-        }
-        else {
-            return connectivityManager.activeNetworkInfo?.isConnectedOrConnecting ?: false
         }
     }
 

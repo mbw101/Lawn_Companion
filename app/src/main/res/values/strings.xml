@@ -73,6 +73,7 @@
     <!--    Weather messages for top of screen -->
     <string name="unsuitableWeatherMessage">The weather is not suitable for a cut. A notification won\'t be sent out.</string>
     <string name="suitableWeatherMessage">The weather is suitable for a cut. Expect a notification soon.</string>
+    <string name="noConnectionAvailableWeatherMessage">The weather can\'t be checked as either a connection doesn\'t exist or doesn\'t match the preference chosen.</string>
 
     <string name="home">Home</string>
     <string name="cutLog">Cut Log</string>
