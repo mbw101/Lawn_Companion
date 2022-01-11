@@ -91,15 +91,24 @@ class CutDatabaseTest {
     fun testFindLastCut() {
         runBlocking {
             cutEntryDao.insertAll(
-                CutEntry("4:36pm", 17, "September", 9, UtilFunctions.getCurrentYear()),
-                CutEntry("4:36pm", 5, "October", 10, UtilFunctions.getCurrentYear()),
-                CutEntry("4:36pm", 28, "September", 9, UtilFunctions.getCurrentYear()),
-                CutEntry("4:36pm", 1, "October", 10, UtilFunctions.getCurrentYear())
+                CutEntry("4:36pm", 17, "September", 9, UtilFunctions.getCurrentYear() - 1),
+                CutEntry("4:36pm", 5, "October", 10, UtilFunctions.getCurrentYear() - 1),
+                CutEntry("4:36pm", 28, "September", 9, UtilFunctions.getCurrentYear() - 1),
+                CutEntry("4:36pm", 1, "October", 10, UtilFunctions.getCurrentYear() - 1)
             )
 
-            val returnedEntry = cutEntryDao.getLastCut()
+            var returnedEntry = cutEntryDao.getMostRecentCut()
             assertEquals(returnedEntry!!.month_name, "October")
             assertEquals(returnedEntry.day_number, 5)
+
+            // test case where there are entries in the previous year and one in the current year
+            cutEntryDao.insertAll(
+                CutEntry("8:00am", 11, "January", 1, UtilFunctions.getCurrentYear()),
+            )
+
+            returnedEntry = cutEntryDao.getMostRecentCut()
+            assertEquals(returnedEntry!!.month_name, "January")
+            assertEquals(returnedEntry.day_number, 11)
         }
     }
 
@@ -225,11 +234,11 @@ class CutDatabaseTest {
 
             // delete both the october cuts and check each time afterwards
             cutEntryDao.deleteCuts(CutEntry("4:36pm", 1, "October", 10, UtilFunctions.getCurrentYear()))
-            var returnedEntry = cutEntryDao.getLastCut()
+            var returnedEntry = cutEntryDao.getMostRecentCut()
             assertEquals(returnedEntry!!.month_name, "October")
 
             cutEntryDao.deleteCuts(CutEntry("4:36pm", 5, "October", 10, UtilFunctions.getCurrentYear()))
-            returnedEntry = cutEntryDao.getLastCut()
+            returnedEntry = cutEntryDao.getMostRecentCut()
             assertEquals(returnedEntry!!.month_name, "September")
 
             // check size after deleting

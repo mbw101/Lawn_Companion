@@ -268,19 +268,19 @@ class AlarmReceiver : BroadcastReceiver() {
         val minDaysSince = preferences.getDesiredCutFrequency() - DAYS_SINCE_DELTA
 
         // go through many checks and include the weather for determining the right time for a cut
-        if (daysSince < minDaysSince) {
-            Log.d(Constants.TAG, "The minimum days since last cut has NOT been surpassed yet!")
+        if (daysSince in 0 until minDaysSince) {
+            Log.e(Constants.TAG, "The minimum days since last cut has NOT been surpassed yet!")
             return false
         }
 
         if (weatherData == null) {
-            Log.d(Constants.TAG, "The weather data is null!")
+            Log.e(Constants.TAG, "The weather data is null!")
             return false
         }
 
-        Log.d(Constants.TAG, "Checking if current weather object of weather data is suitable")
+        Log.e(Constants.TAG, "Checking if current weather object of weather data is suitable")
         if (!isCurrentWeatherSuitable(weatherData.current)) {
-            Log.d(Constants.TAG, "The Current weather data is NOT suitable for a cut!")
+            Log.e(Constants.TAG, "The Current weather data is NOT suitable for a cut!")
             return false
         }
 

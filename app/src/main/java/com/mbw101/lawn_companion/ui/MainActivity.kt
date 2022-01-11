@@ -207,7 +207,8 @@ class MainActivity : AppCompatActivity() {
                     findNavController(R.id.nav_host_fragment).navigate(R.id.cutlog)
                     titleTextView.text = getString(R.string.cutLog)
                     yearDropdown.visibility = View.VISIBLE
-                    // clear all entries and update them again
+                    // switch year dropdown value to the most recent year
+                    yearDropdown.setSelection(0)
                     true
                 }
                 else -> true

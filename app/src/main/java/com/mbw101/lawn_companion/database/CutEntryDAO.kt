@@ -42,11 +42,13 @@ interface CutEntryDAO {
     @Query("SELECT * FROM cuts_table WHERE month_name = :month AND day_number = :day")
     suspend fun getSpecificCut(month: String, day: Int): CutEntry?
 
-    @Query("SELECT * FROM cuts_table ORDER BY month_num DESC, day_number DESC LIMIT 1")
-    suspend fun getLastCut(): CutEntry? // returns a single Cut Entry
+    // this query finds the most recent cut that's in the DB. Since the UI does not allow for future entries,
+    // we can assume that the most recent cut will be the cut with the largest year, month, and day values
+    @Query("SELECT * FROM cuts_table ORDER BY year DESC, month_num DESC, day_number DESC LIMIT 1")
+    suspend fun getMostRecentCut(): CutEntry? // returns a single Cut Entry
 
-    @Query("SELECT * FROM cuts_table ORDER BY month_num DESC, day_number DESC LIMIT 1")
-    suspend fun getLastCutAsync(): CutEntry? // returns a single Cut Entry (synchronously) for the broadcast receiver
+    @Query("SELECT * FROM cuts_table ORDER BY year DESC, month_num DESC, day_number DESC LIMIT 1")
+    suspend fun getMostRecentCutAsync(): CutEntry? // returns a single Cut Entry (synchronously) for the broadcast receiver
 
     @Query("SELECT * FROM cuts_table ORDER BY millis DESC LIMIT 1")
     suspend fun getLastCutMillis(): CutEntry? // returns a single Cut Entry by utilizing the millis member

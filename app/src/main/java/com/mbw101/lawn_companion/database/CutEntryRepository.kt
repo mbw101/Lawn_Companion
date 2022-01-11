@@ -15,8 +15,8 @@ class CutEntryRepository @Inject constructor(private val cutEntryDAO: CutEntryDA
     // handles calling the DAO methods
     fun getCuts() = cutEntryDAO.getAllCuts()
     fun getSortedCuts() = cutEntryDAO.getAllCutsSorted()
-    suspend fun getLastCut() = cutEntryDAO.getLastCut()
-    suspend fun getLastCutSync() = cutEntryDAO.getLastCutAsync()
+    suspend fun getLastCut() = cutEntryDAO.getMostRecentCut()
+    suspend fun getLastCutSync() = cutEntryDAO.getMostRecentCutAsync()
     suspend fun getCutsByMonth(monthNum: Int) = cutEntryDAO.findByMonthNum(monthNum)
     suspend fun getCutsByYearSorted(year: Int) = cutEntryDAO.getEntriesFromSpecificYearSortedAsync(year)
     suspend fun getLastEntryFromSpecificYear(year: Int) = cutEntryDAO.getLastEntryFromSpecificYear(year)
