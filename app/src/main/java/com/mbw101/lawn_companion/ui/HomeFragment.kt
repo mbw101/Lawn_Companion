@@ -162,8 +162,17 @@ class HomeFragment : Fragment() {
 
     private fun updateWeatherSuitabilityText(weatherData: WeatherResponse) {
         if (isCurrentWeatherSuitable(weatherData.current)) {
-            weatherSuitabilityTextView.text = MyApplication.applicationContext()
-                .getString(R.string.suitableWeatherMessage)
+            val appContext = MyApplication.applicationContext()
+            val hasSkippedNotification = ApplicationPrefs().shouldSkipNotification()
+
+            weatherSuitabilityTextView.text =
+                if (hasSkippedNotification) {
+                    appContext.getString(R.string.suitableWeatherMessage) + " " + appContext.getString(R.string.skippedNotificationMessage)
+                }
+                else {
+                    appContext.getString(R.string.suitableWeatherMessage) + " " + appContext.getString(R.string.expectNotificationMessage)
+                }
+
         } else {
             weatherSuitabilityTextView.text = MyApplication.applicationContext()
                 .getString(R.string.unsuitableWeatherMessage)

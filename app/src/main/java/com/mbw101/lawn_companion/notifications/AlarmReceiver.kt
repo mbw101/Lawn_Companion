@@ -183,6 +183,7 @@ class AlarmReceiver : BroadcastReceiver() {
             || !notificationsAreEnabled(preferences)
             || !isCuttingSeasonTurnedOn(preferences)
             || !isInCuttingSeason()
+            || preferences.shouldSkipNotification()
         ) {
             Log.d(Constants.TAG, "The happy conditions have not been met! Check settings configuration!")
             return false

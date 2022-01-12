@@ -340,6 +340,28 @@ class TestMainScreen {
         onView(withId(R.id.weatherSuitabilityTextView)).check(matches(isDisplayed()))
     }
 
+    @Test
+    fun testSKipNotificationText() {
+        // ensure that the weather suitability contains the correct substring
+        val prefs = ApplicationPrefs()
+        prefs.setHasLocationSavedValue(true)
+        // check without a skip date saved
+        onView(withId(R.id.home)).perform(click()).check(matches(isDisplayed())) // updates home fragment
+        onView(withId(R.id.weatherSuitabilityTextView)).check(matches(withText(containsString("Expect a notification"))))
+
+        // save skipped date as today's date and check for skipped
+        prefs.saveSkipDate()
+        onView(withId(R.id.home)).perform(click()).check(matches(isDisplayed()))
+        onView(withId(R.id.weatherSuitabilityTextView)).check(matches(withText(containsString("skipped"))))
+
+        // save skipped date with yesterday's date
+        prefs.clearPreferences()
+        prefs.setHasLocationSavedValue(true)
+        prefs.saveSkipDate("2022-01-11")
+        onView(withId(R.id.home)).perform(click()).check(matches(isDisplayed()))
+        onView(withId(R.id.weatherSuitabilityTextView)).check(matches(withText(containsString("Expect a notification"))))
+    }
+
     @After
     fun release() {
         Intents.release()

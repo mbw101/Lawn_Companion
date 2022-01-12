@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import com.mbw101.lawn_companion.BuildConfig
 import com.mbw101.lawn_companion.R
+import com.mbw101.lawn_companion.notifications.NotificationHelper
 import com.mbw101.lawn_companion.ui.MyApplication
 import com.mbw101.lawn_companion.utils.UtilFunctions.allowReads
 import java.util.*
@@ -34,6 +35,19 @@ class ApplicationPrefs {
     fun setNotFirstTime(b: Boolean) {
         val mEditor = mPreferences.edit()
         mEditor.putBoolean(Constants.IS_FIRST_TIME, b).apply()
+    }
+
+    /**
+     *  compares skip date with current date and returns true
+     *  if notification should be skipped
+     */
+    fun shouldSkipNotification(): Boolean {
+        return mPreferences.getString(Constants.SKIP_DATE_KEY, "").equals(NotificationHelper.createSkipDateString())
+    }
+
+    fun saveSkipDate(skipDate: String = NotificationHelper.createSkipDateString()) {
+        val editor = mPreferences.edit()
+        editor.putString(Constants.SKIP_DATE_KEY, skipDate).apply()
     }
 
     fun clearPreferences() {

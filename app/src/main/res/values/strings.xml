@@ -72,7 +72,9 @@
 
     <!--    Weather messages for top of screen -->
     <string name="unsuitableWeatherMessage">The weather is not suitable for a cut. A notification won\'t be sent out.</string>
-    <string name="suitableWeatherMessage">The weather is suitable for a cut. Expect a notification soon.</string>
+    <string name="suitableWeatherMessage">The weather is suitable for a cut.</string>
+    <string name="expectNotificationMessage">Expect a notification soon.</string>
+    <string name="skippedNotificationMessage">Today\'s notification has been skipped.</string>
     <string name="noConnectionAvailableWeatherMessage">The weather can\'t be checked as either a connection doesn\'t exist or doesn\'t match the preference chosen.</string>
 
     <string name="home">Home</string>
@@ -248,11 +250,10 @@
 
     <!-- Notification strings -->
     <string name="markAsCut">Mark as cut</string>
-    <!-- TODO: Implement this in a future feature -->
-    <string name="skip">Skip</string>
+    <string name="skipCut">Skip until tomorrow</string>
     <string name="cutSuggestionMessage">Hey, it\'s a great time to cut your lawn!</string>
+    <!-- TODO: Implement these in a future feature -->
     <string name="rainOnCutDayMessage">Hey, rain is expected near your next cutting day, so today would be a better time for a cut!</string>
-    <!-- TODO: Implement this in a future feature -->
     <string name="badWeatherOnCutDayMessage">Hey, bad weather is expected near your next cutting day, so today would be a better
         time for a cut!</string>
 

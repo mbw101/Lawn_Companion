@@ -11,6 +11,8 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.ui.MainActivity
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 
@@ -24,6 +26,7 @@ object NotificationHelper {
 
     const val CUT_NOTIFICATION_ID = 1
     const val MARK_AS_CUT_CODE = 2021
+    const val SKIP_CODE = 2022
     private const val TIMEOUT_NOTIFICATION_MINUTES: Long = 10 // represents time a notification stays shown until its dismissed (API 26 and above)
 
     /**
@@ -60,13 +63,18 @@ object NotificationHelper {
             getNotificationBuilder(context, channelId, title, message, autoCancel)
 
         // Add 2 actions: Mark as cut and skip
-        val markCutPendingIntent = createPendingIntentForAction(context)
-        // TODO: Add the skip button in the future
+        val markCutPendingIntent = createPendingIntentForMarkCutAction(context)
+        val skipCutPendingIntent = createPendingIntentForSkipAction(context)
 
         notificationBuilder.addAction(
             R.drawable.indicator_selected,
             context.getString(R.string.markAsCut),
             markCutPendingIntent)
+
+        notificationBuilder.addAction(
+            R.drawable.indicator_selected,
+            context.getString(R.string.skipCut),
+            skipCutPendingIntent)
 
         val notificationManager = NotificationManagerCompat.from(context)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -100,15 +108,39 @@ object NotificationHelper {
         }
     }
 
+    // TODO: In the future, refactor these 2 methods by making a general function for a pending action and call that with these 2 methods
+    // passing in the request code and action name
     /**
      * Creates the pending intent for the "Mark as cut" action on the notification.
      */
-    private fun createPendingIntentForAction(context: Context): PendingIntent? {
+    private fun createPendingIntentForMarkCutAction(context: Context): PendingIntent? {
         // create an Intent to update the CutEntry database if "Mark as cut"" action is clicked
         val markCutIntent = Intent(context, AppGlobalReceiver::class.java).apply {
             action = context.getString(R.string.markAsCut)
         }
 
         return PendingIntent.getBroadcast(context, MARK_AS_CUT_CODE, markCutIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+    }
+
+    /**
+     * Creates the pending intent for the "Skip until tomorrow" action on the notification.
+     */
+    private fun createPendingIntentForSkipAction(context: Context): PendingIntent? {
+        // create an intent to update the CutEntry database if "Mark as cut"" action is clicked
+        val skipCutIntent = Intent(context, AppGlobalReceiver::class.java).apply {
+            action = context.getString(R.string.skipCut)
+        }
+
+        return PendingIntent.getBroadcast(context, SKIP_CODE, skipCutIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+    }
+
+    /**
+     * Returns a string with the format of YYYY-MM-DD.
+     * The skip date is the date that a cut notification was skipped
+     */
+    fun createSkipDateString(): String {
+        val dateFormatter = SimpleDateFormat("yyyy-MM-DD", Locale.getDefault())
+        val date = Date()
+        return dateFormatter.format(date)
     }
 }

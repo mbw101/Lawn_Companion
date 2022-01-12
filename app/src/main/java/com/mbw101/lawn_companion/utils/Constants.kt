@@ -13,6 +13,7 @@ object Constants {
     val months: Array<String> = arrayOf("Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec")
     const val IS_FIRST_TIME = "is_first_time"
     const val HAS_LOCATION_SAVED = "has_location_saved"
+    const val SKIP_DATE_KEY = "skip_date"
     const val APPLICATION_PREFS = "app_preference"
     const val TAG = "LAWN COMPANION"
 
