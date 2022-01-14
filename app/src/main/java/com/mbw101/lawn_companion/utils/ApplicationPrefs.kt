@@ -96,7 +96,7 @@ class ApplicationPrefs {
         return getBooleanPreferenceFromSharedPrefs(MyApplication.applicationContext().getString(R.string.cuttingSeasonKey))
     }
 
-    fun isNotificationsEnabled(): Boolean {
+    fun areNotificationsEnabled(): Boolean {
         return getBooleanPreferenceFromSharedPrefs(MyApplication.applicationContext().getString(R.string.notificationPreferenceKey))
     }
 
@@ -139,7 +139,24 @@ class ApplicationPrefs {
         return getBooleanPreferenceFromSharedPrefs(MyApplication.applicationContext().getString(R.string.nightTimeOfDayKey))
     }
 
-    private fun getBooleanPreferenceFromSharedPrefs(preferenceKey: String): Boolean {
+    fun saveBoolPreferenceValueInSharedPrefs(preferenceKey: String, value: Boolean) {
+        if (BuildConfig.DEBUG) {
+            lateinit var preferences: SharedPreferences
+
+            allowReads {
+                preferences =
+                    PreferenceManager.getDefaultSharedPreferences(MyApplication.applicationContext())
+                val mEditor = preferences.edit()
+                mEditor.putBoolean(preferenceKey, value).apply()
+            }
+        }
+
+    }
+
+    /**
+     *      Defaults to true for boolean return value
+     */
+    fun getBooleanPreferenceFromSharedPrefs(preferenceKey: String): Boolean {
         if (BuildConfig.DEBUG) {
             lateinit var preferences: SharedPreferences
 

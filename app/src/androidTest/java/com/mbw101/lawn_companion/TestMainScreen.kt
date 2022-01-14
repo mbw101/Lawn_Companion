@@ -19,17 +19,16 @@ import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
 import com.mbw101.lawn_companion.database.*
 import com.mbw101.lawn_companion.notifications.AlarmReceiver
-import com.mbw101.lawn_companion.ui.AddCutActivity
-import com.mbw101.lawn_companion.ui.MainActivity
-import com.mbw101.lawn_companion.ui.SaveLocationActivity
-import com.mbw101.lawn_companion.ui.SettingsActivity
+import com.mbw101.lawn_companion.ui.*
 import com.mbw101.lawn_companion.utils.ApplicationPrefs
 import com.mbw101.lawn_companion.utils.Constants
-import junit.framework.Assert.assertEquals
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.not
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -284,7 +283,7 @@ class TestMainScreen {
 
     private fun removeExistingLocation() {
         runBlocking {
-            lawnLocationRepository.deleteAllCuts()
+            lawnLocationRepository.deleteAllLocations()
         }
     }
 
@@ -341,10 +340,20 @@ class TestMainScreen {
     }
 
     @Test
-    fun testSKipNotificationText() {
+    // Depends upon the weather of the lawn location on the device
+    fun testWeatherSuitabilityTextViewString() {
         // ensure that the weather suitability contains the correct substring
         val prefs = ApplicationPrefs()
         prefs.setHasLocationSavedValue(true)
+        val lawnLocationRepository = setupLawnLocationRepository(MyApplication.applicationContext())
+        // Cuba coordinates - Jamaica was having rainy weather in Kingston :(
+        runBlocking {
+            launch(Dispatchers.IO) {
+                lawnLocationRepository.deleteAllLocations()
+                lawnLocationRepository.addLocation(LawnLocation(21.9188, -78.6330))
+            }
+        }
+
         // check without a skip date saved
         onView(withId(R.id.home)).perform(click()).check(matches(isDisplayed())) // updates home fragment
         onView(withId(R.id.weatherSuitabilityTextView)).check(matches(withText(containsString("Expect a notification"))))
@@ -360,6 +369,11 @@ class TestMainScreen {
         prefs.saveSkipDate("2022-01-11")
         onView(withId(R.id.home)).perform(click()).check(matches(isDisplayed()))
         onView(withId(R.id.weatherSuitabilityTextView)).check(matches(withText(containsString("Expect a notification"))))
+
+        // Disable notifications in preferences and check suitability textview
+        prefs.saveBoolPreferenceValueInSharedPrefs(MyApplication.applicationContext().getString(R.string.notificationPreferenceKey), false)
+        onView(withId(R.id.home)).perform(click()).check(matches(isDisplayed()))
+        onView(withId(R.id.weatherSuitabilityTextView)).check(matches(withText(containsString("Notifications are disabled"))))
     }
 
     @After

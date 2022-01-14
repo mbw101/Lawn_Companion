@@ -1,9 +1,10 @@
 package com.mbw101.lawn_companion
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.mbw101.lawn_companion.ui.MyApplication
 import com.mbw101.lawn_companion.utils.ApplicationPrefs
-import junit.framework.Assert.assertFalse
-import junit.framework.Assert.assertTrue
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
@@ -25,5 +26,17 @@ class PreferencesTests {
         assertFalse(preferences.shouldSkipNotification())
         preferences.saveSkipDate("2022-01-11")
         assertFalse(preferences.shouldSkipNotification())
+    }
+
+    @Test
+    fun testSaveBoolPreference() {
+        val preferences = ApplicationPrefs()
+        val testKey = MyApplication.applicationContext().getString(R.string.notificationPreferenceKey)
+
+        assertTrue(preferences.getBooleanPreferenceFromSharedPrefs(testKey))
+        assertTrue(preferences.areNotificationsEnabled())
+        preferences.saveBoolPreferenceValueInSharedPrefs(testKey, false)
+        assertFalse(preferences.getBooleanPreferenceFromSharedPrefs(testKey))
+        assertFalse(preferences.areNotificationsEnabled())
     }
 }

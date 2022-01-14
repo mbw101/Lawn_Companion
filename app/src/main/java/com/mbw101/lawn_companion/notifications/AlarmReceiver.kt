@@ -39,8 +39,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
         // used for weather text view on home fragment
         fun preDownloadCriteriaCheckForWeatherSuitability(preferences: ApplicationPrefs): Boolean {
-            if (!notificationsAreEnabled(preferences)
-                || !isCuttingSeasonTurnedOn(preferences)
+            if (!isCuttingSeasonTurnedOn(preferences)
                 || !isInCuttingSeason()
                 || !preferences.hasLocationSaved()
             ) {
@@ -52,7 +51,7 @@ class AlarmReceiver : BroadcastReceiver() {
         }
 
         fun notificationsAreEnabled(preferences: ApplicationPrefs): Boolean {
-            return preferences.isNotificationsEnabled()
+            return preferences.areNotificationsEnabled()
         }
 
         fun isCuttingSeasonTurnedOn(preferences: ApplicationPrefs): Boolean {

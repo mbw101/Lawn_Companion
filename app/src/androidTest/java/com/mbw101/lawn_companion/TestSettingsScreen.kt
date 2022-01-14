@@ -309,9 +309,9 @@ class TestSettingsScreen {
     fun testNotificationPreferenceHelper() {
         val notificationTitle = MyApplication.applicationContext().getString(R.string.notificationsTitle)
         val prefs = ApplicationPrefs()
-        assertTrue(prefs.isNotificationsEnabled())
+        assertTrue(prefs.areNotificationsEnabled())
         onView(withText(notificationTitle)).perform(click())
-        assertFalse(prefs.isNotificationsEnabled())
+        assertFalse(prefs.areNotificationsEnabled())
         onView(withText(notificationTitle)).perform(click())
     }
 

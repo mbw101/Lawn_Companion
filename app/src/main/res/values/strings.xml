@@ -75,6 +75,7 @@
     <string name="suitableWeatherMessage">The weather is suitable for a cut.</string>
     <string name="expectNotificationMessage">Expect a notification soon.</string>
     <string name="skippedNotificationMessage">Today\'s notification has been skipped.</string>
+    <string name="disabledNotificationsMessage">Notifications are disabled.</string>
     <string name="noConnectionAvailableWeatherMessage">The weather can\'t be checked as either a connection doesn\'t exist or doesn\'t match the preference chosen.</string>
 
     <string name="home">Home</string>

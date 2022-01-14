@@ -111,21 +111,7 @@ class SetDatesActivity : AppCompatActivity() {
             val month: Int = cal.get(Calendar.MONTH)
             val year: Int = cal.get(Calendar.YEAR)
 
-            // date picker dialog
-            val picker = DatePickerDialog(this,
-                { _, yearPicked, monthOfYear, dayOfMonth ->
-                    startDateSelector.text =
-                        getString(R.string.datePlaceholder, yearPicked.toString(), (monthOfYear + 1).toString(), dayOfMonth.toString())
-                    selectedStartDate = Calendar.getInstance()
-                    selectedStartDate!!.set(Calendar.YEAR, yearPicked)
-                    selectedStartDate!!.set(Calendar.MONTH, monthOfYear)
-                    selectedStartDate!!.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-                },
-                year,
-                month,
-                day
-            )
-            picker.show()
+            showDatePickerDialog(year, month, day, startDateSelector, true)
         }
 
         endDateSelector.setOnClickListener {
@@ -133,21 +119,9 @@ class SetDatesActivity : AppCompatActivity() {
             val day: Int = cal.get(Calendar.DAY_OF_MONTH)
             val month: Int = cal.get(Calendar.MONTH)
             val year: Int = cal.get(Calendar.YEAR)
+
             // date picker dialog
-            val picker = DatePickerDialog(this,
-                { _, yearPicked, monthOfYear, dayOfMonth ->
-                    endDateSelector.text =
-                        getString(R.string.datePlaceholder, yearPicked.toString(), (monthOfYear + 1).toString(), dayOfMonth.toString()) // ISO date format (YYYY-MM-DD)
-                    selectedEndDate = Calendar.getInstance()
-                    selectedEndDate!!.set(Calendar.YEAR, yearPicked)
-                    selectedEndDate!!.set(Calendar.MONTH, monthOfYear)
-                    selectedEndDate!!.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-                },
-                year,
-                month,
-                day
-            )
-            picker.show()
+            showDatePickerDialog(year, month, day, endDateSelector, false)
         }
 
         saveDatesButton.setOnClickListener {
@@ -170,6 +144,48 @@ class SetDatesActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun showDatePickerDialog(year: Int, month: Int, day: Int, textView: TextView, isStartDate: Boolean) {
+        val picker = DatePickerDialog(
+            this,
+            { _, yearPicked, monthOfYear, dayOfMonth ->
+                textView.text =
+                    getString(
+                        R.string.datePlaceholder,
+                        yearPicked.toString(),
+                        (monthOfYear + 1).toString(),
+                        dayOfMonth.toString()
+                    )
+                if (isStartDate) {
+                    selectedStartDate = Calendar.getInstance()
+                    selectedStartDate!!.set(Calendar.YEAR, yearPicked)
+                    selectedStartDate!!.set(Calendar.MONTH, monthOfYear)
+                    selectedStartDate!!.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                }
+                else {
+                    selectedEndDate = Calendar.getInstance()
+                    selectedEndDate!!.set(Calendar.YEAR, yearPicked)
+                    selectedEndDate!!.set(Calendar.MONTH, monthOfYear)
+                    selectedEndDate!!.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                }
+            },
+            year,
+            month,
+            day
+        )
+        // set min and max dates and first and last days of the current year
+        // doesn't let user enter date outside of current year for cutting season
+        val minDate = Calendar.getInstance()
+        minDate.set(Calendar.MONTH, Calendar.JANUARY)
+        minDate.set(Calendar.DAY_OF_MONTH, 1)
+        val maxDate = Calendar.getInstance()
+        maxDate.set(Calendar.MONTH, Calendar.DECEMBER)
+        maxDate.set(Calendar.DAY_OF_MONTH, 31)
+
+        picker.datePicker.minDate = minDate.timeInMillis
+        picker.datePicker.maxDate = maxDate.timeInMillis
+        picker.show()
     }
 
     // we want date on the DatePicker to be consistent with what's on the text view

@@ -19,8 +19,8 @@ class LawnLocationRepository @Inject constructor(private val lawnLocationDAO: La
         return false
     }
     suspend fun addLocation(lawnLocation: LawnLocation) = lawnLocationDAO.insertAll(lawnLocation)
-    suspend fun deleteCuts(vararg locations: LawnLocation) = lawnLocationDAO.deleteLocations(*locations)
-    suspend fun deleteAllCuts() = lawnLocationDAO.deleteAll()
+    suspend fun deleteLocations(vararg locations: LawnLocation) = lawnLocationDAO.deleteLocations(*locations)
+    suspend fun deleteAllLocations() = lawnLocationDAO.deleteAll()
 }
 
 fun setupLawnLocationRepository(context: Context): LawnLocationRepository {
