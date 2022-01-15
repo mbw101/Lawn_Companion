@@ -7,7 +7,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.mbw101.lawn_companion.utils.UtilFunctions
 import kotlinx.coroutines.runBlocking
 import org.junit.After
-import org.junit.Assert.assertEquals
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -232,17 +232,46 @@ class CutDatabaseTest {
                 CutEntry("4:36pm", 1, "October", 10, UtilFunctions.getCurrentYear())
             )
 
+            var listOfEntries: List<CutEntry> = cutEntryDao.getAllCutsSortedAsync().reversed()
+            println(cutEntryDao.getAllCutsSortedAsync())
+
             // delete both the october cuts and check each time afterwards
-            cutEntryDao.deleteCuts(CutEntry("4:36pm", 1, "October", 10, UtilFunctions.getCurrentYear()))
+            cutEntryDao.deleteCutById(listOfEntries[0].id)
+            println("Deleting ID = ${listOfEntries[0].id}")
+            println(cutEntryDao.getAllCutsSortedAsync())
             var returnedEntry = cutEntryDao.getMostRecentCut()
+            assertEquals(cutEntryDao.getNumEntries(), 3)
             assertEquals(returnedEntry!!.month_name, "October")
 
-            cutEntryDao.deleteCuts(CutEntry("4:36pm", 5, "October", 10, UtilFunctions.getCurrentYear()))
+            listOfEntries = cutEntryDao.getAllCutsSortedAsync().reversed()
+            cutEntryDao.deleteCutById(listOfEntries[0].id)
+            println("Deleting ID = ${listOfEntries[0].id}")
             returnedEntry = cutEntryDao.getMostRecentCut()
+            println(cutEntryDao.getAllCutsSortedAsync())
+            assertEquals(cutEntryDao.getNumEntries(), 2)
             assertEquals(returnedEntry!!.month_name, "September")
 
             // check size after deleting
             assertEquals(cutEntryDao.getNumEntries(), 2)
+        }
+    }
+
+    @Test
+    fun testNotesOnCutEntry() {
+        runBlocking {
+            val note = "Hello world"
+            cutEntryDao.insertAll(
+                CutEntry("4:36pm", 5, "October", 10, UtilFunctions.getCurrentYear(), note)
+            )
+
+            assertNotNull(cutEntryDao.getMostRecentCut()!!.note)
+            assertEquals(cutEntryDao.getMostRecentCut()!!.note, note)
+
+            cutEntryDao.insertAll(
+                CutEntry("4:36pm", 5, "December", 12, UtilFunctions.getCurrentYear()),
+            )
+
+            assertNull(cutEntryDao.getMostRecentCut()!!.note)
         }
     }
 

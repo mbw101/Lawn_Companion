@@ -174,6 +174,37 @@ class CutLogFragment : Fragment(), OnItemClickListener, AdapterView.OnItemSelect
 
     override fun onItemClick(entry: CutEntry): Unit = runBlocking{
         Log.d(Constants.TAG, "onItemClick: $entry")
+        val noteToShow = entry.note ?: getString(R.string.noCutEntryNote)
+
+        // show dialog with note of cut entry
+        val builder = AlertDialog.Builder(context)
+            .setTitle(getString(R.string.cutEntryDetailsDialog))
+//            .setIcon(R.drawable.ic_notificationicon24)
+            .setMessage(getString(R.string.cutEntryNote) + " " + noteToShow)
+            .setPositiveButton(R.string.deleteOption) { _, _ ->
+                showConfirmationDialog(entry)
+            }
+            .setNegativeButton(R.string.editCutEntryAction) { _, _ ->
+                // TODO: Open up an edit activity that reuses the AddCutActivity
+                // passing in entry as data in intent
+//                val intent = Intent(activity, EditCutActivity::class.java)
+//                intent.putExtra
+            }
+            .setNeutralButton(R.string.cancelOption) { _, _ ->
+            }
+
+        val alertDialog: AlertDialog = builder.create()
+        // allow back button presses when alert dialog is shown
+        alertDialog.setOnKeyListener { _, keyCode, _ ->
+            if (keyCode == KeyEvent.KEYCODE_BACK) {
+                alertDialog.dismiss()
+            }
+            true
+        }
+        alertDialog.show()
+    }
+
+    private fun showConfirmationDialog(entry: CutEntry) {
         val builder = AlertDialog.Builder(context)
         builder.setTitle(R.string.alertTitle)
             .setPositiveButton(R.string.deleteOption) { _, _ ->
@@ -202,7 +233,7 @@ class CutLogFragment : Fragment(), OnItemClickListener, AdapterView.OnItemSelect
     }
 
     private fun deleteCut(entry: CutEntry) = runBlocking {
-        viewModel.deleteCuts(entry)
+        viewModel.deleteCutById(entry.id)
     }
 
     override fun onItemSelected(p0: AdapterView<*>?, view: View?, position: Int, id: Long) {

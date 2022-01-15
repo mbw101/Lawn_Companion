@@ -22,6 +22,7 @@ import com.mbw101.lawn_companion.database.AppDatabaseBuilder
 import com.mbw101.lawn_companion.database.CutEntry
 import com.mbw101.lawn_companion.database.CutEntryDAO
 import com.mbw101.lawn_companion.ui.MainActivity
+import com.mbw101.lawn_companion.utils.Constants
 import com.mbw101.lawn_companion.utils.UtilFunctions
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.Matcher
@@ -149,11 +150,29 @@ class TestCutLogScreen {
         // delete cut entry
         onView(withId(R.id.cutlog_recyclerview)).perform(
             RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(8, click()))
-        onView(withId(android.R.id.button1)).perform(click())
+        onView(withId(Constants.AlertDialogButton.POSITIVE.resId)).perform(click()) // for cut entry details
+        onView(withId(Constants.AlertDialogButton.POSITIVE.resId)).perform(click()) // for confirmation alert dialog
 
         // that entry should be gone now
         onView(withId(R.id.cutlog_recyclerview))
             .check(matches(not(withViewAtPosition(MONTH_TO_TEST, hasDescendant(allOf(withText("Completed Cut"), isDisplayed()))))))
+    }
+
+    @Test
+    fun testShowEditScreen() {
+        mainActivityTestRule.launchActivity(customIntent)
+        addTestEntryInSameYear()
+        navigateToCutLog()
+        ensureCutLogIsDisplayed()
+        // make sure entry is there first
+        onView(withId(R.id.cutlog_recyclerview))
+            .check(matches(withViewAtPosition(MONTH_TO_TEST, hasDescendant(allOf(withText("Completed Cut"), isDisplayed())))))
+
+        // delete cut entry
+        onView(withId(R.id.cutlog_recyclerview)).perform(
+            RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(8, click()))
+        onView(withId(Constants.AlertDialogButton.NEGATIVE.resId)).perform(click()) // for cut entry details
+        // TODO: Ensure edit screen shows up
     }
 
     @After

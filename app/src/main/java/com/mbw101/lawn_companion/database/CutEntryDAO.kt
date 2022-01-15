@@ -89,8 +89,11 @@ interface CutEntryDAO {
     suspend fun updateCut(vararg cuts: CutEntry)
 
     // delete queries
+    @Query("DELETE FROM cuts_table WHERE id = :cutId")
+    suspend fun deleteCutById(cutId: Int)
+
     @Delete
-    suspend fun deleteCuts(vararg cuts: CutEntry): Int
+    suspend fun deleteCuts(vararg cuts: CutEntry)
 
     // Clears all entries in the "cuts" table
     @Query("DELETE FROM cuts_table")

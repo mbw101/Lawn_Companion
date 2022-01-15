@@ -30,6 +30,7 @@ class AddCutActivity : AppCompatActivity() {
     private lateinit var dayDropdown: Spinner
     private lateinit var backIcon: ImageView
     private lateinit var selectedTimeTextView: TextView
+    private lateinit var noteEditText: EditText
     private lateinit var addCutButton: Button
     private lateinit var cutTime: Calendar
     private lateinit var binding: ActivityAddCutBinding
@@ -59,6 +60,7 @@ class AddCutActivity : AppCompatActivity() {
         backIcon = binding.backIcon
         selectedTimeTextView = binding.selectedTimeTextView
         addCutButton = binding.addCutButton
+        noteEditText = binding.noteEditText
 
         fillDropdownMenus()
         setMonthSelection()
@@ -229,11 +231,13 @@ class AddCutActivity : AppCompatActivity() {
         // access the correct time from the selected time text view
         val cutTimeString = DateUtils.formatDateTime(this, cutTime.timeInMillis, DateUtils.FORMAT_SHOW_TIME)
         Log.d(Constants.TAG, "Time of cut: $cutTimeString")
+        val note: String? = if (noteEditText.text.isNotEmpty()) noteEditText.text.toString() else null
         val cutEntry = CutEntry(
             cutTimeString,
             dayDropdown.selectedItemPosition+1,
             Constants.months[monthDropdown.selectedItemPosition],
-            monthDropdown.selectedItemPosition+1, UtilFunctions.getCurrentYear()
+            monthDropdown.selectedItemPosition+1, UtilFunctions.getCurrentYear(),
+            note
         )
 
         cutEntryViewModel.addEntry(cutEntry)

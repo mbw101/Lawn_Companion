@@ -1,5 +1,7 @@
 package com.mbw101.lawn_companion.utils
 
+import androidx.annotation.IdRes
+
 /**
 Lawn Companion
 Created by Malcolm Wright
@@ -30,6 +32,12 @@ object Constants {
         OCTOBER(10),
         NOVEMBER(11),
         DECEMBER(12),
+    }
+
+    enum class AlertDialogButton(@IdRes val resId: Int) {
+        POSITIVE(android.R.id.button1),
+        NEGATIVE(android.R.id.button2),
+        NEUTRAL(android.R.id.button3)
     }
 
     const val MORNING_HOUR_START_TIME = 5 // am
