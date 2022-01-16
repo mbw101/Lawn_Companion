@@ -1,6 +1,7 @@
 package com.mbw101.lawn_companion.ui
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
@@ -187,8 +188,9 @@ class CutLogFragment : Fragment(), OnItemClickListener, AdapterView.OnItemSelect
             .setNegativeButton(R.string.editCutEntryAction) { _, _ ->
                 // TODO: Open up an edit activity that reuses the AddCutActivity
                 // passing in entry as data in intent
-//                val intent = Intent(activity, EditCutActivity::class.java)
-//                intent.putExtra
+                val intent = Intent(activity, EditCutActivity::class.java)
+                intent.putExtra(getString(R.string.cutEntryIntentKey), entry)
+                startActivity(intent)
             }
             .setNeutralButton(R.string.cancelOption) { _, _ ->
             }

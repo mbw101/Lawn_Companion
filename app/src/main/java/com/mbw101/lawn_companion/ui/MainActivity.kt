@@ -60,16 +60,29 @@ class MainActivity : AppCompatActivity() {
         fun setupNotificationAlarmManager() {
             // Pass in the pending intent
             val intent = Intent(MyApplication.applicationContext(), AlarmReceiver::class.java)
-            val pendingIntent = PendingIntent.getBroadcast(
-                MyApplication.applicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT
-            )
+            val pendingIntent =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    PendingIntent.getBroadcast(
+                        MyApplication.applicationContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE
+                    )
+                } else {
+                    PendingIntent.getBroadcast(
+                        MyApplication.applicationContext(),
+                        0,
+                        intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                    )
+                }
+
             val alarmManager: AlarmManager =
-                MyApplication.applicationContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                MyApplication.applicationContext()
+                    .getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
             // set notification
             AlarmScheduler.scheduleAlarmManager(
                 Calendar.getInstance().get(Calendar.DAY_OF_WEEK),
-                pendingIntent, alarmManager)
+                pendingIntent, alarmManager
+            )
         }
 
         fun createNotificationChannel(context: Context) {
@@ -104,7 +117,9 @@ class MainActivity : AppCompatActivity() {
 
         if (ActivityCompat.checkSelfPermission(
                 this,
-                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 // TODO: Cause of issue in espresso UI tests
 //                requestPermissions(
@@ -194,7 +209,7 @@ class MainActivity : AppCompatActivity() {
     private fun setListeners() {
         // bottom navigation listener
         bottomNav.setOnNavigationItemSelectedListener { item ->
-            when(item.itemId) {
+            when (item.itemId) {
                 R.id.home -> {
                     // navigate to the home fragment
                     findNavController(R.id.nav_host_fragment).navigate(R.id.home)

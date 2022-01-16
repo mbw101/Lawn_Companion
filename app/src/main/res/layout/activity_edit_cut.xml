@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.AddCutActivity"
+    tools:context=".ui.EditCutActivity"
     android:theme="@style/Theme.Lawn_Companion">
 
     <androidx.appcompat.widget.Toolbar
@@ -49,7 +49,8 @@
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar"
         android:background="@color/background_black"
-        android:theme="@style/Theme.Lawn_Companion.NoActionBar">
+        android:theme="@style/Theme.Lawn_Companion.NoActionBar"
+        android:id="@+id/editCutLayout">
 
         <TextView
             android:id="@+id/monthTextView"
@@ -173,7 +174,7 @@
             android:inputType="textCapSentences|textAutoCorrect"
             android:minHeight="48dp"
             android:textAlignment="center"
-            app:layout_constraintBottom_toTopOf="@+id/addCutButton"
+            app:layout_constraintBottom_toTopOf="@+id/saveEditButton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"

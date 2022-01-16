@@ -39,8 +39,8 @@ interface CutEntryDAO {
     suspend fun findByMonthNum(month_num: Int): List<CutEntry>?
 
     // (returns a single Cut Entry)
-    @Query("SELECT * FROM cuts_table WHERE month_name = :month AND day_number = :day")
-    suspend fun getSpecificCut(month: String, day: Int): CutEntry?
+    @Query("SELECT * FROM cuts_table WHERE year = :year AND month_name = :month AND day_number = :day")
+    suspend fun getSpecificCut(year: Int, month: String, day: Int): CutEntry?
 
     // this query finds the most recent cut that's in the DB. Since the UI does not allow for future entries,
     // we can assume that the most recent cut will be the cut with the largest year, month, and day values
@@ -76,11 +76,18 @@ interface CutEntryDAO {
         return yearDropdownArray
     }
 
+    // check for existing cut entry
+    @Query("SELECT * FROM cuts_table ")
+    suspend fun hasExistingCut(cut: CutEntry): Boolean {
+        getSpecificCut(cut.year, cut.month_name, cut.day_number) ?: return false
+        return true
+    }
+
     // insertion queries
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAll(vararg cuts: CutEntry)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAll(cuts: List<CutEntry>) // same as above method but with a list instead
 
     // update query

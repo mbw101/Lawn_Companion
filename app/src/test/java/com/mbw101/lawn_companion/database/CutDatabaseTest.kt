@@ -311,6 +311,20 @@ class CutDatabaseTest {
         assertEquals(cutEntryDao.getYearDropdownArray(), listOf("2021", "2020", "2019", "2018"))
     }
 
+    @Test
+    fun hasExistingEntry() {
+        val testCut = CutEntry("4:36pm", 17, "September", 9, 2021)
+        val sameDayCut = CutEntry("2:56pm", 17, "September", 9, 2021)
+        val sameDayCutDiffYear = CutEntry("2:56pm", 17, "September", 9, 2020)
+        runBlocking {
+            assertFalse(cutEntryDao.hasExistingCut(testCut))
+            cutEntryDao.insertAll(testCut)
+            assertTrue(cutEntryDao.hasExistingCut(testCut))
+            assertTrue(cutEntryDao.hasExistingCut(sameDayCut))
+            assertFalse(cutEntryDao.hasExistingCut(sameDayCutDiffYear))
+        }
+    }
+
     @After
     fun tearDown() {
         db.close()

@@ -24,6 +24,7 @@ class CutEntryRepository @Inject constructor(private val cutEntryDAO: CutEntryDA
     suspend fun deleteCutById(id: Int) = cutEntryDAO.deleteCutById(id)
     suspend fun deleteAllCuts() = cutEntryDAO.deleteAll()
     suspend fun getYearDropdownArray() = cutEntryDAO.getYearDropdownArray()
+    suspend fun updateCuts(vararg cutEntries: CutEntry) = cutEntryDAO.updateCut(*cutEntries)
 
     suspend fun hasANewYearOccurredSinceLastCut(): Boolean {
         val currentYearCuts = cutEntryDAO.getEntriesFromSpecificYearSortedAsync(UtilFunctions.getCurrentYear())
@@ -34,6 +35,8 @@ class CutEntryRepository @Inject constructor(private val cutEntryDAO: CutEntryDA
         }
         return false
     }
+
+    suspend fun hasCutEntry(entry: CutEntry) = cutEntryDAO.hasExistingCut(entry)
 }
 
 fun setupCutEntryRepository(context: Context): CutEntryRepository {

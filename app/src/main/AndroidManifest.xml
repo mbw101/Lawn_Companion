@@ -54,6 +54,11 @@
             android:theme="@style/myPreferencesTheme"
             android:exported="false"
             android:screenOrientation="portrait" />
+        <activity android:name=".ui.EditCutActivity"
+            android:parentActivityName=".ui.MainActivity"
+            android:theme="@style/Theme.Lawn_Companion"
+            android:exported="false"
+            android:screenOrientation="portrait" />
 
         <!-- Used for when the user presses the action button on the cut notification -->
         <receiver android:name=".notifications.AppGlobalReceiver" android:exported="false" />

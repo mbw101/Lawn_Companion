@@ -172,7 +172,8 @@ class TestCutLogScreen {
         onView(withId(R.id.cutlog_recyclerview)).perform(
             RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(8, click()))
         onView(withId(Constants.AlertDialogButton.NEGATIVE.resId)).perform(click()) // for cut entry details
-        // TODO: Ensure edit screen shows up
+        // Ensure edit screen shows up
+        onView(withId(R.id.editCutLayout)).check(matches(isDisplayed()))
     }
 
     @After
