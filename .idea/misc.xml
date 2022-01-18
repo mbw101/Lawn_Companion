@@ -6,7 +6,7 @@
         <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/drawable/custom_spinner.xml" value="0.23854166666666668" />
         <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/drawable/ic_baseline_refresh_32.xml" value="0.1125" />
         <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout-land/fragment_home.xml" value="0.21472663139329806" />
-        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout/activity_add_cut.xml" value="0.25" />
+        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout/activity_add_cut.xml" value="0.14" />
         <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout/activity_edit_cut.xml" value="0.2111111111111111" />
         <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout/activity_intro.xml" value="0.25" />
         <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout/activity_main.xml" value="0.22" />
@@ -33,5 +33,12 @@
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
+  </component>
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+        <option name="scale" value="0.14" />
+      </ProjectState>
+    </option>
   </component>
 </project>
