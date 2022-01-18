@@ -107,27 +107,29 @@ class HomeFragment : Fragment() {
     }
 
     private fun init() {
-        // check if in cutting season
         val dbBuilder = AppDatabaseBuilder.getInstance(MyApplication.applicationContext())
-        runBlocking {
-            launch (Dispatchers.IO) {
-                withinCuttingSeason = dbBuilder.cuttingSeasonDatesDao().isInCuttingSeasonDates()
-            }
-        }
-
         openPermissions = binding.openPermissionsButton
         createLawnLocationButton = binding.createLawnLocationButton
         mainTextView = binding.mainMessageTextView
         secondaryTextView = binding.secondaryTextView
         salutationTextView = binding.salutationTextView
         weatherSuitabilityTextView = binding.weatherSuitabilityTextView
-
-        val preferences = ApplicationPrefs()
-        performSuitabilityTextViewWork(preferences)
-
-        checkPermissionsOrIfLocationSaved()
-        setCorrectSalutation()
         setupListeners()
+        setCorrectSalutation()
+
+        showProgressBar()
+        runBlocking {
+            launch (Dispatchers.IO) {
+                // check if in cutting season
+                withinCuttingSeason = dbBuilder.cuttingSeasonDatesDao().isInCuttingSeasonDates()
+                val preferences = ApplicationPrefs()
+                requireActivity().runOnUiThread {
+                    checkPermissionsOrIfLocationSaved()
+                    performSuitabilityTextViewWork(preferences)
+                    hideProgressBar()
+                }
+            }
+        }
     }
 
     private fun updateSuitabilityTextView() {
@@ -199,13 +201,6 @@ class HomeFragment : Fragment() {
 
     private fun setCorrectSalutation() {
         salutationTextView.text = getSalutation()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        checkPermissionsOrIfLocationSaved() // check if permissions have been updated when app is reopened
-        val preferences = ApplicationPrefs()
-        performSuitabilityTextViewWork(preferences)
     }
 
     private fun performSuitabilityTextViewWork(preferences: ApplicationPrefs) {
@@ -327,5 +322,21 @@ class HomeFragment : Fragment() {
         val uri: Uri = Uri.fromParts("package", MyApplication.applicationContext().packageName, null)
         intent.data = uri
         startActivity(intent)
+    }
+
+    private fun showProgressBar() {
+        if (binding != null) {
+            val progressBar = binding.progressBar
+            progressBar.visibility = View.VISIBLE
+            binding.homeFragmentContent.visibility = View.INVISIBLE
+        }
+    }
+
+    private fun hideProgressBar() {
+        if (binding != null) {
+            val progressBar = binding.progressBar
+            progressBar.visibility = View.INVISIBLE
+            binding.homeFragmentContent.visibility = View.VISIBLE
+        }
     }
 }

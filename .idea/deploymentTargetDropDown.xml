@@ -3,7 +3,7 @@
   <component name="deploymentTargetDropDown">
     <targetSelectedWithDropDown>
       <Target>
-        <type value="COLD_BOOT_TARGET" />
+        <type value="QUICK_BOOT_TARGET" />
         <deviceKey>
           <Key>
             <type value="VIRTUAL_DEVICE_PATH" />
@@ -12,6 +12,6 @@
         </deviceKey>
       </Target>
     </targetSelectedWithDropDown>
-    <timeTargetWasSelectedWithDropDown value="2022-01-14T18:56:49.193130300Z" />
+    <timeTargetWasSelectedWithDropDown value="2022-01-16T22:17:32.530217500Z" />
   </component>
 </project>

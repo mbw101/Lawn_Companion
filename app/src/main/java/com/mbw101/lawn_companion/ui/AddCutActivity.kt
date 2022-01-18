@@ -232,7 +232,7 @@ class AddCutActivity : AppCompatActivity() {
         // access the correct time from the selected time text view
         val cutTimeString = DateUtils.formatDateTime(this, cutTime.timeInMillis, DateUtils.FORMAT_SHOW_TIME)
         Log.d(Constants.TAG, "Time of cut: $cutTimeString")
-        val note: String? = if (noteEditText.text.isNotEmpty()) noteEditText.text.toString() else null
+        val note: String? = if (noteEditText.text.isNotEmpty() && noteEditText.text.isNotBlank()) noteEditText.text.toString() else null
         val cutEntry = CutEntry(
             cutTimeString,
             dayDropdown.selectedItemPosition+1,

@@ -81,6 +81,18 @@ android {
         viewBinding true
         dataBinding = true
     }
+
+    // fixes the annotation issues when compiling with Gradle locally
+    if (project.hasProperty('kapt')) {
+        // Reference for 'kapt' DSL: https://kotlinlang.org/docs/reference/kapt.html#java-compiler-options
+        kapt {
+            // we expect this closure to run over a org.jetbrains.kotlin.gradle.plugin.KaptExtension
+            javacOptions {
+                option("-source", "8")
+                option("-target", "8")
+            }
+        }
+    }
 }
 
 dependencies {
@@ -112,6 +124,7 @@ dependencies {
     implementation "androidx.room:room-ktx:2.4.0"
     testImplementation "androidx.arch.core:core-testing:2.1.0"
     testImplementation "androidx.room:room-testing:2.4.0"
+    implementation 'javax.annotation:javax.annotation-api:1.3.2'
 
     // api
     implementation 'com.squareup.retrofit2:retrofit:2.7.0'

@@ -130,7 +130,7 @@ class LastIntroScreenFragment : Fragment(), View.OnClickListener {
         AlertDialog.Builder(context)
             .setTitle(getString(R.string.permissionDialogTitle))
             .setMessage(getString(R.string.permissionDialogContent))
-            .setPositiveButton(android.R.string.ok) { _, i -> //Prompt the user once explanation has been shown
+            .setPositiveButton(android.R.string.ok) { _, _ -> //Prompt the user once explanation has been shown
                 // request perms again
                 requestPermissions(
                     arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
@@ -139,7 +139,7 @@ class LastIntroScreenFragment : Fragment(), View.OnClickListener {
                 Log.d(Constants.TAG, "ACCEPTED LOCATION PERMISSION")
                 launchSaveLocationActivity()
             }
-            .setNegativeButton(android.R.string.cancel) { _, i -> //Prompt the user once explanation has been shown
+            .setNegativeButton(android.R.string.cancel) { _, _ -> //Prompt the user once explanation has been shown
                 launchMainActivity()
             }
             .create()

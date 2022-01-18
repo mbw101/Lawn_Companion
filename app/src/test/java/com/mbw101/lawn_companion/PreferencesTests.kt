@@ -36,6 +36,7 @@ class PreferencesTests {
         assertTrue(preferences.getBooleanPreferenceFromSharedPrefs(testKey))
         assertTrue(preferences.areNotificationsEnabled())
         preferences.saveBoolPreferenceValueInSharedPrefs(testKey, false)
+        // Causing build to fail on CI github
         assertFalse(preferences.getBooleanPreferenceFromSharedPrefs(testKey))
         assertFalse(preferences.areNotificationsEnabled())
     }

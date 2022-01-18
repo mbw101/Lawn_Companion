@@ -16,9 +16,9 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.navigation.Navigation
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import androidx.navigation.ui.NavigationUI
+import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mbw101.lawn_companion.BuildConfig
@@ -46,6 +46,7 @@ Date: 2021-05-14
 class MainActivity : AppCompatActivity() {
 
     private lateinit var bottomNav: BottomNavigationView
+    private lateinit var navController: NavController
     private lateinit var settingsIcon: ImageView
     private lateinit var yearDropdown: Spinner
     private lateinit var titleTextView: TextView
@@ -145,7 +146,6 @@ class MainActivity : AppCompatActivity() {
      */
     private fun init() {
         // initialize components
-        bottomNav = binding.bottomNav
         settingsIcon = binding.settingsIcon
         titleTextView = binding.titleTextView
         addCutFAB = binding.addCutFAB
@@ -153,9 +153,9 @@ class MainActivity : AppCompatActivity() {
         yearDropdown.visibility = View.INVISIBLE
 
         // set up bottom navigation
-        val navController = Navigation.findNavController(this, R.id.nav_host_fragment)
-        val bottomNavView = binding.bottomNav
-        NavigationUI.setupWithNavController(bottomNavView, navController)
+        navController = findNavController(R.id.nav_host_fragment)
+        bottomNav = binding.bottomNav
+        bottomNav.setupWithNavController(navController)
 
         fillInYearDropdown()
 
@@ -208,25 +208,20 @@ class MainActivity : AppCompatActivity() {
 
     private fun setListeners() {
         // bottom navigation listener
-        bottomNav.setOnNavigationItemSelectedListener { item ->
-            when (item.itemId) {
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
                 R.id.home -> {
                     // navigate to the home fragment
-                    findNavController(R.id.nav_host_fragment).navigate(R.id.home)
                     titleTextView.text = getString(R.string.home)
                     yearDropdown.visibility = View.INVISIBLE
-                    true
                 }
                 R.id.cutlog -> {
                     // navigate to the cut log fragment
-                    findNavController(R.id.nav_host_fragment).navigate(R.id.cutlog)
                     titleTextView.text = getString(R.string.cutLog)
                     yearDropdown.visibility = View.VISIBLE
                     // switch year dropdown value to the most recent year
                     yearDropdown.setSelection(0)
-                    true
                 }
-                else -> true
             }
         }
 

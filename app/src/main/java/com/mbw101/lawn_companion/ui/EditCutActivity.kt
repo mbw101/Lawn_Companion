@@ -42,7 +42,7 @@ class EditCutActivity : AppCompatActivity()  {
         setContentView(view)
 
         // Get CutEntry from intent passed in
-        cutEntry = intent.getParcelableExtra<CutEntry>(getString(R.string.cutEntryIntentKey))!!
+        cutEntry = intent.getParcelableExtra(getString(R.string.cutEntryIntentKey))!!
         init()
         fillDropdownMenus(cutEntry)
         fillEntryData(cutEntry)
@@ -87,7 +87,7 @@ class EditCutActivity : AppCompatActivity()  {
         cutEntry.day_number = dayDropdown.selectedItem.toString().toInt()
         cutEntry.month_name = Constants.months[monthDropdown.selectedItemPosition]
         cutEntry.month_number = monthDropdown.selectedItemPosition + 1
-        cutEntry.note = if (noteEditText.text.toString().isNotEmpty()) noteEditText.text.toString() else null
+        cutEntry.note = if (noteEditText.text.toString().isNotEmpty() && noteEditText.text.isNotBlank()) noteEditText.text.toString() else null
 
         runBlocking {
             launch (Dispatchers.IO) {

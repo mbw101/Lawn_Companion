@@ -118,7 +118,7 @@ class IntroActivity : FragmentActivity() {
      * screen
      */
     private fun setupTabLayout() {
-        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+        TabLayoutMediator(tabLayout, viewPager) { tab, _ ->
             viewPager.setCurrentItem(tab.position, true)
         }.attach()
         tabLayout.tabMode = TabLayout.MODE_SCROLLABLE
