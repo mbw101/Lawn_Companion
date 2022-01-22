@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.mbw101.lawn_companion.utils.Constants
+import com.mbw101.lawn_companion.utils.UtilFunctions
 import java.util.*
 
 /**
@@ -82,6 +83,28 @@ interface CuttingSeasonDatesDao {
 
     suspend fun isOutsideOfCuttingSeasonDates(): Boolean {
         return !isInCuttingSeasonDates()
+    }
+
+    // removes the existing cutting season dates
+    // and inserts new dates with updated years
+    suspend fun updateCuttingSeasonYears() {
+        val startDate: CuttingSeasonDate? = getStartDate()
+        val endDate: CuttingSeasonDate? = getEndDate()
+        val currentYear = UtilFunctions.getCurrentYear()
+        if (startDate == null && endDate == null) {
+            return
+        }
+
+        if (startDate!!.calendarValue.get(Calendar.YEAR) == currentYear &&
+                endDate!!.calendarValue.get(Calendar.YEAR) == currentYear) {
+            // we don't need to update the years
+            return
+        }
+
+        deleteAll()
+        startDate.calendarValue.set(Calendar.YEAR, currentYear)
+        endDate!!.calendarValue.set(Calendar.YEAR, currentYear)
+        insertAll(startDate, endDate)
     }
 
     // insertion queries

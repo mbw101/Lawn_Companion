@@ -118,10 +118,14 @@ class HomeFragment : Fragment() {
         setCorrectSalutation()
 
         showProgressBar()
+        val cuttingSeasonDatesDao = dbBuilder.cuttingSeasonDatesDao()
         runBlocking {
             launch (Dispatchers.IO) {
+                // update cutting season years
+                cuttingSeasonDatesDao.updateCuttingSeasonYears()
+
                 // check if in cutting season
-                withinCuttingSeason = dbBuilder.cuttingSeasonDatesDao().isInCuttingSeasonDates()
+                withinCuttingSeason = cuttingSeasonDatesDao.isInCuttingSeasonDates()
                 val preferences = ApplicationPrefs()
                 requireActivity().runOnUiThread {
                     checkPermissionsOrIfLocationSaved()
@@ -276,20 +280,19 @@ class HomeFragment : Fragment() {
      */
     private fun getSalutation(): String {
         val cal: Calendar = Calendar.getInstance()
-        val hourOfDay = cal.get(Calendar.HOUR_OF_DAY)
 
-         when (hourOfDay) {
+        return when (cal.get(Calendar.HOUR_OF_DAY)) {
             in Constants.MORNING_HOUR_START_TIME..Constants.MORNING_HOUR_END_TIME -> {
-                return getString(R.string.goodMorning)
+                getString(R.string.goodMorning)
             }
             in Constants.AFTERNOON_HOUR_START_TIME..Constants.AFTERNOON_HOUR_END_TIME -> {
-                return getString(R.string.goodAfternoon)
+                getString(R.string.goodAfternoon)
             }
             in Constants.EVENING_HOUR_START_TIME..Constants.EVENING_HOUR_END_TIME -> {
-                return getString(R.string.goodEvening)
+                getString(R.string.goodEvening)
             }
             else -> { // between NIGHT_HOUR_START_TIME downTo Constants.NIGHT_HOUR_END_TIME
-                return getString(R.string.goodNight)
+                getString(R.string.goodNight)
             }
         }
     }

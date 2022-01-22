@@ -245,7 +245,7 @@ class CutLogFragment : Fragment(), OnItemClickListener, AdapterView.OnItemSelect
 
         Log.d(Constants.TAG, "Position: $position")
 
-        val mainActivity = activity as MainActivity
+        val mainActivity = activity as MainActivity? ?: return
         val selectedYear = mainActivity.yearDropdownArray[position].toInt()
         Log.d(Constants.TAG, "Selected year: $selectedYear")
         setupViewModel(selectedYear)

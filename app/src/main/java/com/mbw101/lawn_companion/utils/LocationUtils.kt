@@ -4,10 +4,8 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
-import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
-import android.util.Log
 import androidx.core.app.ActivityCompat
 
 /**
@@ -18,21 +16,6 @@ Date: 2021-07-30
 
 object LocationUtils {
     private lateinit var locationManager: LocationManager
-
-    @SuppressLint("MissingPermission")
-    fun getLastKnownLocation(context: Context): Location? {
-        setupLocationManager(context)
-        if (hasNoLocationPermissions(context)) {
-            Log.d(Constants.TAG, "No location permissions!")
-            return null
-        }
-
-        if (hasNetworkProvider()) {
-            return locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-        }
-        Log.d(Constants.TAG, "Has no network provider!")
-        return null
-    }
 
     @SuppressLint("MissingPermission")
     fun requestLocation(context: Context, locationListener: LocationListener) {

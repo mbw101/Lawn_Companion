@@ -1,11 +1,9 @@
 package com.mbw101.lawn_companion.ui
 
-import android.Manifest
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
@@ -14,7 +12,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -89,7 +86,7 @@ class MainActivity : AppCompatActivity() {
         fun createNotificationChannel(context: Context) {
             NotificationHelper.createNotificationChannel(
                 context,
-                NotificationManagerCompat.IMPORTANCE_DEFAULT, true,
+                NotificationManagerCompat.IMPORTANCE_HIGH, true,
                 context.getString(R.string.app_name), "Notification channel"
             )
         }
@@ -116,20 +113,20 @@ class MainActivity : AppCompatActivity() {
 
         setupNotificationAlarmManager()
 
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//        if (ActivityCompat.checkSelfPermission(
+//                this,
+//                Manifest.permission.ACCESS_COARSE_LOCATION
+//            ) != PackageManager.PERMISSION_GRANTED
+//        ) {
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 // TODO: Cause of issue in espresso UI tests
-//                requestPermissions(
-//                    arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
-//                    MY_PERMISSIONS_REQUEST_LOCATION
-//                )
-            }
-            return
-        }
+////                requestPermissions(
+////                    arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
+////                    MY_PERMISSIONS_REQUEST_LOCATION
+////                )
+//            }
+//            return
+//        }
     }
 
     private fun retrieveYearsList() {

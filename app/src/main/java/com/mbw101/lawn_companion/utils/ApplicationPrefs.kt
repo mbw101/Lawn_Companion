@@ -106,19 +106,18 @@ class ApplicationPrefs {
 
     fun isInTimeOfDay(): Boolean {
         val cal = Calendar.getInstance()
-        val hourOfDay = cal.get(Calendar.HOUR_OF_DAY)
-        when (hourOfDay) {
+        return when (cal.get(Calendar.HOUR_OF_DAY)) {
             in Constants.MORNING_HOUR_START_TIME..Constants.MORNING_HOUR_END_TIME -> {
-                return areMorningsSelected()
+                areMorningsSelected()
             }
             in Constants.AFTERNOON_HOUR_START_TIME..Constants.AFTERNOON_HOUR_END_TIME -> {
-                return areAfternoonsSelected()
+                areAfternoonsSelected()
             }
             in Constants.EVENING_HOUR_START_TIME..Constants.EVENING_HOUR_END_TIME -> {
-                return areEveningsSelected()
+                areEveningsSelected()
             }
             else -> { // between NIGHT_HOUR_START_TIME downTo Constants.NIGHT_HOUR_END_TIME
-                return areNightsSelected()
+                areNightsSelected()
             }
         }
     }

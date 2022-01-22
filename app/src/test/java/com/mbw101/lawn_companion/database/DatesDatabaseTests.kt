@@ -4,9 +4,10 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.mbw101.lawn_companion.utils.UtilFunctions
 import kotlinx.coroutines.runBlocking
 import org.junit.After
-import org.junit.Assert.assertEquals
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -191,14 +192,16 @@ class DatesDatabaseTests {
         return Pair(startVal, endVal)
     }
 
-    private fun setupStartEndCalendars(): Pair<Calendar, Calendar> {
+    private fun setupStartEndCalendars(year: Int = UtilFunctions.getCurrentYear()): Pair<Calendar, Calendar> {
         val startDate: Calendar = Calendar.getInstance()
         val endDate: Calendar = Calendar.getInstance()
 
         startDate.set(Calendar.MONTH, startDateMonth)
         startDate.set(Calendar.DAY_OF_MONTH, startDateDay)
+        startDate.set(Calendar.YEAR, year)
         endDate.set(Calendar.MONTH, endDateMonth)
         endDate.set(Calendar.DAY_OF_MONTH, endDateDay)
+        endDate.set(Calendar.YEAR, year)
         return Pair(startDate, endDate)
     }
 
@@ -329,6 +332,35 @@ class DatesDatabaseTests {
         insertDatesIntoDB(startVal, endVal)
         assertEquals(cuttingSeasonDatesDao.isOutsideOfCuttingSeasonDates(), true)
         assertEquals(cuttingSeasonDatesDao.isInCuttingSeasonDates(), false)
+    }
+
+    @Test
+    fun testUpdateYears() {
+        val currentYear = UtilFunctions.getCurrentYear()
+        val previousYear = currentYear - 1
+
+        val calendars: Pair<Calendar, Calendar> = setupStartEndCalendars(previousYear)
+        val dates: Pair<CuttingSeasonDate, CuttingSeasonDate> = buildDates(calendars.first, calendars.second)
+        assertEquals(dates.first.calendarValue.get(Calendar.YEAR), previousYear)
+        assertEquals(dates.second.calendarValue.get(Calendar.YEAR), previousYear)
+
+        runBlocking {
+            insertDatesIntoDB(dates.first, dates.second)
+            assertTrue(cuttingSeasonDatesDao.hasStartDate())
+            assertTrue(cuttingSeasonDatesDao.hasEndDate())
+
+            // change to current year
+            cuttingSeasonDatesDao.updateCuttingSeasonYears()
+
+            val startDate = cuttingSeasonDatesDao.getStartDate()
+            val endDate = cuttingSeasonDatesDao.getEndDate()
+            assertTrue(cuttingSeasonDatesDao.hasStartDate())
+            assertTrue(cuttingSeasonDatesDao.hasEndDate())
+            assertNotNull(startDate)
+            assertNotNull(endDate)
+            assertEquals(startDate!!.calendarValue.get(Calendar.YEAR), currentYear)
+            assertEquals(endDate!!.calendarValue.get(Calendar.YEAR), currentYear)
+        }
     }
 
     @After

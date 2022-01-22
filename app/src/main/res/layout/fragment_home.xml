@@ -21,10 +21,14 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/homeFragmentContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/homeFragmentContent"
-        android:visibility="invisible">
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/salutationTextView"

@@ -1,7 +1,9 @@
 package com.mbw101.lawn_companion.database
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import com.mbw101.lawn_companion.utils.Constants
 
 /**
 Lawn Companion
@@ -76,11 +78,15 @@ interface CutEntryDAO {
         return yearDropdownArray
     }
 
+    @Query("SELECT * from cuts_table WHERE id = :cutId")
+    suspend fun findById(cutId: Int): CutEntry?
+
     // check for existing cut entry
-    @Query("SELECT * FROM cuts_table ")
     suspend fun hasExistingCut(cut: CutEntry): Boolean {
         getSpecificCut(cut.year, cut.month_name, cut.day_number) ?: return false
-        return true
+        val entry: CutEntry? = findById(cut.id)
+        Log.e(Constants.TAG, "Entry = $entry")
+        return entry == null
     }
 
     // insertion queries

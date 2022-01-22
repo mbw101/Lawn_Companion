@@ -2,10 +2,11 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-parcelize'
+    id 'kotlin-kapt'
+    id 'jacoco'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
 }
-
-apply plugin: 'kotlin-kapt'
-apply plugin: 'jacoco'
 
 android {
     compileSdkVersion 31
@@ -44,7 +45,7 @@ android {
 
         applicationId 'com.mbw101.lawn_companion'
         versionCode 1
-        versionName '0.9'
+        versionName '1.0'
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
 
@@ -59,7 +60,7 @@ android {
         }
 
         debug {
-            versionNameSuffix "DEBUG"
+            versionNameSuffix "BETA"
             resValue "string", "app_version",
                     "${defaultConfig.versionName} - ${versionNameSuffix}"
             testCoverageEnabled true
@@ -173,4 +174,10 @@ dependencies {
 
     // used for improved date calculations
     implementation 'joda-time:joda-time:2.9.4'
+
+    // Import the Firebase BoM (see: https://firebase.google.com/docs/android/learn-more#bom)
+    implementation platform('com.google.firebase:firebase-bom:29.0.3')
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    // Firebase Crashlytics (Kotlin)
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
 }

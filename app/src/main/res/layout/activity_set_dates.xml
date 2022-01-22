@@ -47,20 +47,20 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar"
-        android:theme="@style/Theme.Lawn_Companion.NoActionBar"
-        android:background="@color/background_black">
+        android:background="@color/background_black"
+        android:theme="@style/Theme.Lawn_Companion.NoActionBar">
 
         <TextView
             android:id="@+id/startDateTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="121dp"
+            android:layout_marginTop="70dp"
+            android:paddingStart="15dp"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
-            android:paddingStart="15dp"
             android:text="@string/saveStartDate"
-            android:textColor="@color/floral_white"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/floral_white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -69,20 +69,20 @@
             android:id="@+id/startDateSelector"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/floral_white"
-            android:text="@string/startDateEditTextDefault"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="21dp"
+            android:gravity="center_horizontal"
             android:paddingStart="15dp"
             android:paddingLeft="25dp"
             android:paddingRight="25dp"
+            android:text="@string/startDateEditTextDefault"
+            android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Display2"
+            android:textColor="@color/floral_white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/startDateTextView"
-            android:textAlignment="center"
-            android:gravity="center_horizontal" />
+            app:layout_constraintTop_toBottomOf="@+id/startDateTextView" />
 
         <TextView
             android:id="@+id/endDateTextView"
@@ -105,29 +105,29 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="21dp"
+            android:gravity="center_horizontal"
             android:paddingStart="25dp"
             android:paddingLeft="25dp"
             android:paddingRight="25dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Display2"
             android:text="@string/endDateEditTextDefault"
-            android:textColor="@color/floral_white"
+            android:textAlignment="center"
 
+            android:textAppearance="@style/TextAppearance.AppCompat.Display2"
+            android:textColor="@color/floral_white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/endDateTextView"
-            android:textAlignment="center"
-            android:gravity="center_horizontal" />
+            app:layout_constraintTop_toBottomOf="@+id/endDateTextView" />
 
         <Button
             android:id="@+id/saveDatesButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="28dp"
+            android:layout_marginBottom="70dp"
+            android:contentDescription="@string/saveDatesButtonDescription"
             android:padding="12dp"
             android:text="@string/saveDatesButtonText"
-            android:contentDescription="@string/saveDatesButtonDescription"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

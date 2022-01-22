@@ -45,18 +45,18 @@
 
     <!--    The add cut part of the activity -->
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/editCutLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar"
         android:background="@color/background_black"
-        android:theme="@style/Theme.Lawn_Companion.NoActionBar"
-        android:id="@+id/editCutLayout">
+        android:theme="@style/Theme.Lawn_Companion.NoActionBar">
 
         <TextView
             android:id="@+id/monthTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="68dp"
+            android:layout_marginTop="25dp"
             android:paddingStart="15dp"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
@@ -91,7 +91,7 @@
             android:id="@+id/dayTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="43dp"
+            android:layout_marginTop="40dp"
             android:paddingStart="15dp"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
@@ -155,7 +155,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="38dp"
+            android:layout_marginTop="21dp"
             android:text="TextView"
             android:textAppearance="@style/TextAppearance.AppCompat.Display2"
             app:layout_constraintEnd_toEndOf="parent"
@@ -178,7 +178,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/selectedTimeTextView" />
+            app:layout_constraintTop_toBottomOf="@+id/selectedTimeTextView"
+            app:layout_constraintVertical_bias="0.77" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

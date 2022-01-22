@@ -104,10 +104,9 @@ class TestMainScreen {
 
     private fun calculateExpectedMessage(): String {
         val cal: Calendar = Calendar.getInstance()
-        // Get time and get corresponding message
-        val hourOfDay = cal.get(Calendar.HOUR_OF_DAY)
 
-        return when (hourOfDay) {
+        // Get time and get corresponding message
+        return when (cal.get(Calendar.HOUR_OF_DAY)) {
             in Constants.MORNING_HOUR_START_TIME..Constants.MORNING_HOUR_END_TIME -> {
                 goodMorning
             }

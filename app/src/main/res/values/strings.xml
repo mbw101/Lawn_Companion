@@ -12,14 +12,14 @@
     <!-- 2nd screen -->
     <string name="worryLess">Worry Less</string>
     <string name="SecondIntroMessage">
-    Lawn Companion decides on the ideal time to
+    Lawn Companion sends out a notification on an ideal day to
     cut your lawn!
     </string>
 
     <!-- 3rd screen -->
     <string name="saveTime">Save Time</string>
     <string name="ThirdIntroMessage">
-    Lawn Companion takes the weather into account!
+    Lawn Companion takes relevant weather data for your lawn into account!
     </string>
 
     <!-- 4th screen/location permission part -->

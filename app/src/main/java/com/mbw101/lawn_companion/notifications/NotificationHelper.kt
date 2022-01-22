@@ -25,8 +25,8 @@ Date: June 29th, 2021
 object NotificationHelper {
 
     const val CUT_NOTIFICATION_ID = 1
-    const val MARK_AS_CUT_CODE = 2021
-    const val SKIP_CODE = 2022
+    private const val MARK_AS_CUT_CODE = 2021
+    private const val SKIP_CODE = 2022
     private const val TIMEOUT_NOTIFICATION_MINUTES: Long = 10 // represents time a notification stays shown until its dismissed (API 26 and above)
 
     /**
@@ -90,7 +90,7 @@ object NotificationHelper {
             setContentText(message) // content
             color = ContextCompat.getColor(context, R.color.medium_spring_green_darker_shade)
 //            setStyle(NotificationCompat.BigTextStyle().bigText(bigText))
-            priority = NotificationCompat.PRIORITY_DEFAULT // default
+            priority = NotificationCompat.PRIORITY_HIGH
             setAutoCancel(autoCancel) // auto cancels notification when taped
 
             // create intent to open main activity
@@ -119,7 +119,12 @@ object NotificationHelper {
             action = context.getString(R.string.markAsCut)
         }
 
-        return PendingIntent.getBroadcast(context, MARK_AS_CUT_CODE, markCutIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PendingIntent.getBroadcast(context, MARK_AS_CUT_CODE, markCutIntent, PendingIntent.FLAG_IMMUTABLE)
+        }
+        else {
+            PendingIntent.getBroadcast(context, MARK_AS_CUT_CODE, markCutIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        }
     }
 
     /**
@@ -131,7 +136,12 @@ object NotificationHelper {
             action = context.getString(R.string.skipCut)
         }
 
-        return PendingIntent.getBroadcast(context, SKIP_CODE, skipCutIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PendingIntent.getBroadcast(context, SKIP_CODE, skipCutIntent, PendingIntent.FLAG_IMMUTABLE)
+        }
+        else {
+            PendingIntent.getBroadcast(context, SKIP_CODE, skipCutIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        }
     }
 
     /**
