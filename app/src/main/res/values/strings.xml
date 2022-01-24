@@ -279,4 +279,5 @@
     <string name="datePlaceholder">%1$s/%2$s/%3$s</string>
     <string name="cutEntryIntentKey">cutEntry</string>
     <string name="moreThanOneCutToastMsg">You can\'t have more than one cut on the same day!</string>
+    <string name="yearDropdownDescription">Select year value for cut log</string>
 </resources>

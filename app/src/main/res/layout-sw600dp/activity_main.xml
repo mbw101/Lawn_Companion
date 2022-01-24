@@ -36,7 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:background="@drawable/ic_baseline_settings_32"
+                android:background="@drawable/ic_baseline_settings_48"
                 android:contentDescription="@string/settings_icon"
                 android:foregroundGravity="center_vertical" />
 
@@ -47,7 +47,7 @@
                 android:layout_centerInParent="true"
                 android:gravity="center|center_vertical"
                 android:text="@string/home"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
 
             <Spinner
                 android:id="@+id/yearDropdown"
@@ -56,13 +56,13 @@
                 android:layout_alignParentEnd="true"
                 android:layout_marginStart="12dp"
                 android:layout_toEndOf="@id/titleTextView"
+                android:contentDescription="@string/yearDropdownDescription"
                 android:gravity="center|center_vertical"
                 android:paddingTop="0dp"
                 android:paddingBottom="0dp"
                 android:spinnerMode="dropdown"
                 android:textAlignment="center"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                android:contentDescription="@string/yearDropdownDescription"/>
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 <!--            android:entries="@array/year_dropdown_test_values"-->
         </RelativeLayout>
 

@@ -173,6 +173,7 @@
             android:inputType="textCapSentences|textAutoCorrect"
             android:minHeight="48dp"
             android:textAlignment="center"
+            android:maxLength="@integer/maxNoteLength"
             app:layout_constraintBottom_toTopOf="@+id/addCutButton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
