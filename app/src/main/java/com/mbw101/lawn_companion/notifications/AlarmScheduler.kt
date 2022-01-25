@@ -2,11 +2,8 @@ package com.mbw101.lawn_companion.notifications
 
 import android.app.AlarmManager
 import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
 import android.util.Log
 import com.mbw101.lawn_companion.BuildConfig
-import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.utils.ApplicationPrefs
 import com.mbw101.lawn_companion.utils.Constants
 import java.util.*
@@ -20,22 +17,6 @@ Date: 2021-07-01
 
 // Used for scheduling alarms for cuts
 object AlarmScheduler {
-
-    // Creates a pending intent for the alarm
-    private fun createPendingIntent(context: Context, day: String?): PendingIntent? {
-        // creates intent with AlarmReceiver as the destination
-        val intent = Intent(context.applicationContext, AlarmReceiver::class.java).apply {
-            // set action
-            action = context.getString(R.string.markAsCut)
-
-            // this has to be unique, so we use day to help
-            // if not unique, it will override a pending intent
-            type = "$day"
-        }
-
-        // we need to use getBroadcast here because a BroadcastReceiver is our target
-        return PendingIntent.getBroadcast(context, NotificationHelper.MARK_AS_CUT_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-    }
 
     /**
      * Schedules a single alarm
@@ -59,13 +40,13 @@ object AlarmScheduler {
             val prefs = ApplicationPrefs()
             if (BuildConfig.DEBUG) {
                 alarmMgr.setInexactRepeating(
-                    AlarmManager.RTC_WAKEUP,
+                    AlarmManager.RTC,
                     datetimeToAlarm.timeInMillis,
-                    prefs.getWeatherCheckFrequencyInMillis().toLong(), alarmIntent) // (1000 * 60 * 2).toLong()
+                    (1000 * 60 * 2).toLong(), alarmIntent) // (1000 * 60 * 2).toLong()
             }
             else {
                 alarmMgr.setInexactRepeating(
-                    AlarmManager.RTC_WAKEUP,
+                    AlarmManager.RTC,
                     datetimeToAlarm.timeInMillis,
                     prefs.getWeatherCheckFrequencyInMillis().toLong(), alarmIntent)
             }

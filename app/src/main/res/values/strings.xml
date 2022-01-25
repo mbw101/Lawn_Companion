@@ -7,18 +7,19 @@
     <string name="welcomeMessage">Welcome to Lawn Companion!</string>
     <string name="nextButtonText">Next</string>
     <string name="getStartedText">Get Started</string>
+    <string name="getStartedDescription">Get Started with the app</string>
 
     <!-- 2nd screen -->
     <string name="worryLess">Worry Less</string>
     <string name="SecondIntroMessage">
-    Lawn Companion decides on the ideal time to
+    Lawn Companion sends out a notification on an ideal day to
     cut your lawn!
     </string>
 
     <!-- 3rd screen -->
     <string name="saveTime">Save Time</string>
     <string name="ThirdIntroMessage">
-    Lawn Companion takes the weather into account!
+    Lawn Companion takes relevant weather data for your lawn into account!
     </string>
 
     <!-- 4th screen/location permission part -->
@@ -28,22 +29,38 @@
     </string>
 
     <!--  5th screen - Saves the lawn location  -->
-    <string name="fifthScreenTitle">
-        Can Lawn Companion save your current location, so it can use it for accurate weather data?
+    <string name="lawnLocationTitle">
+        Save Lawn Location?
     </string>
 
-    <string name="fifthScreenContent">
-        Lawn Companion saves your location locally, so it can retrieve the current weather forecast for your city (and lawn) no
-        matter where you are located! You can adjust this location at any moment in the settings.
+    <string name="lawnLocationBodyText">
+        Lawn Companion saves your location locally, so it can retrieve the relevant weather forecast for your lawn no matter where you are!
     </string>
 
-    <string name="fifthScreenAccept">
+    <string name="lawnLocationDisclaimer">
+        Lawn Companion never shares your lawn location.
+    </string>
+
+    <string name="lawnLocationAccept">
         Yes, I am home
     </string>
 
-    <string name="fifthScreenDeny">
+    <string name="lawnLocationAcceptDescription">Accept saving lawn location</string>
+
+    <string name="lawnLocationDeny">
         No, I am not home
     </string>
+
+    <string name="lawnLocationDenyDescription">Deny saving lawn location</string>
+
+    <string name="toastNoLocationPermission">
+        Lawn Companion needs location permissions in order to save a lawn location!
+    </string>
+
+    <!-- Intro activity accessibility strings -->
+    <string name="viewPagerDescription">Intro screens</string>
+    <!-- TODO: Include description for the TabLayout selectors? -->
+    <string name="nextButtonDescription">Next</string>
 
     <!-- Main activity strings -->
 
@@ -52,6 +69,14 @@
     <string name="goodAfternoon">Good Afternoon!</string>
     <string name="goodEvening">Good Evening!</string>
     <string name="goodNight">Good Night!</string>
+
+    <!--    Weather messages for top of screen -->
+    <string name="unsuitableWeatherMessage">The weather is not suitable for a cut. A notification won\'t be sent out.</string>
+    <string name="suitableWeatherMessage">The weather is suitable for a cut.</string>
+    <string name="expectNotificationMessage">Expect a notification soon.</string>
+    <string name="skippedNotificationMessage">Today\'s notification has been skipped.</string>
+    <string name="disabledNotificationsMessage">Notifications are disabled.</string>
+    <string name="noConnectionAvailableWeatherMessage">The weather can\'t be checked as either a connection doesn\'t exist or doesn\'t match the preference chosen.</string>
 
     <string name="home">Home</string>
     <string name="cutLog">Cut Log</string>
@@ -85,6 +110,7 @@
     <string name="openPermissionsText">
     Open Permissions
     </string>
+    <string name="openPermissionsDescription">Open location permissions of app</string>
 
     <!-- Cut has been made text -->
     <string name="alreadyCutMessage">
@@ -112,35 +138,18 @@
         Create a lawn location
     </string>
 
+    <!-- Main Activity accessibility -->
+    <string name="yearSpinnerDescription">Cut Entry Years</string>
+    <string name="addCutFabDescription">Add Cut</string>
+
     <!-- Add new cut activity strings -->
-    <string name="addCutTitle">
-    Add New Cut
-    </string>
-    <string name="enterMonthText">
-    Enter Month:
-    </string>
-    <string name="enterDayText">
-    Enter Day:
-    </string>
-    <string name="enterTimeText">
-    Enter Time:
-    </string>
+    <string name="addCutTitle">Add New Cut</string>
+    <string name="enterMonthText">Enter Month:</string>
+    <string name="enterDayText">Enter Day:</string>
+    <string name="enterTimeText">Enter Time:</string>
+    <string name="enterNoteDescription">Add note to cut entry (optional)</string>
     <string name="addCutText">Add Cut</string>
     <string name="futureCutsToastMessage">You cannot add future cuts!</string>
-
-    <!-- Months -->
-    <string name="january">January</string>
-    <string name="february">February</string>
-    <string name="march">March</string>
-    <string name="april">April</string>
-    <string name="may">May</string>
-    <string name="june">June</string>
-    <string name="july">July</string>
-    <string name="august">August</string>
-    <string name="september">September</string>
-    <string name="october">October</string>
-    <string name="november">November</string>
-    <string name="december">December</string>
 
     <string-array name="months">
         <item>January</item>
@@ -158,6 +167,12 @@
     </string-array>
 
     <!-- Day (Number) values -->
+
+    <!-- Add cut accessibility strings -->
+    <string name="backArrowDescription">Back arrow</string>
+    <string name="monthSpinnerDescription">Months</string>
+    <string name="daySpinnerDescription">Days</string>
+    <string name="addCutButtonDescription">Add Cut</string>
 
     <!-- Settings activity strings -->
     <string name="settingsTitle">Settings</string>
@@ -202,7 +217,7 @@
     <string name="desiredCutFrequencyKey">desiredCutFrequency</string>
     <string name="desiredCutFrequencyDefault">7</string>
 
-    <string name="notificationTimeOfDayCategoryTitle">Preferences for when notifications will be sent</string>
+    <string name="notificationTimeOfDayCategoryTitle">Timing of Notification Preference</string>
     <string name="morningTimeOfDayTitle">Morning (5am-12pm)</string>
     <string name="morningTimeOfDayKey">mornings</string>
     <string name="afternoonTimeOfDayTitle">Afternoon (12pm-5pm)</string>
@@ -219,17 +234,27 @@
     <string name="versionNumber">Version 0.1</string>
 
     <!-- Cut log activity strings -->
+    <string name="cutEntryRowDescription">Cut Entry row</string>
     <string name="completedCut">Completed Cut</string>
     <string name="noCutMade">No Cuts Made</string>
+    <string name="cutEntryDetailsDialog">Cut Entry Details</string>
+    <string name="cutEntryNote">Note:</string>
+    <string name="noCutEntryNote">No note was made for this cut entry.</string>
+    <string name="editCutEntryAction">Edit</string>
     <string name="alertTitle">Delete cut entry?</string>
     <string name="alertMessage">This will delete the selected cut entry from the Cut Log!</string>
-    <string name="cancelOption">Cancel</string>
-    <string name="deleteOption">Delete</string>
+    <string name="cancelOption">Cancel</string> <!-- neutral option for first dialog and negative for second dialog -->
+    <string name="deleteOption">Delete</string> <!-- Positive option-->
+
+    <!-- Edit Cut Activity -->
+    <string name="editCutTitle">Edit Cut</string>
+    <string name="saveButtonText">Save</string>
 
     <!-- Notification strings -->
     <string name="markAsCut">Mark as cut</string>
-    <string name="skip">Skip</string>
+    <string name="skipCut">Skip until tomorrow</string>
     <string name="cutSuggestionMessage">Hey, it\'s a great time to cut your lawn!</string>
+    <!-- TODO: Implement these in a future feature -->
     <string name="rainOnCutDayMessage">Hey, rain is expected near your next cutting day, so today would be a better time for a cut!</string>
     <string name="badWeatherOnCutDayMessage">Hey, bad weather is expected near your next cutting day, so today would be a better
         time for a cut!</string>
@@ -237,8 +262,6 @@
     <!-- Other strings -->
     <string name="moreThanOneCutMessage">Only one cut is allowed on a single day!</string>
     <string name="settings_icon">Settings icon</string>
-    <string name="refresh_icon">Refresh icon</string>
-    <string name="floating_action_button_for_adding_new_cuts">Floating action button for adding new cuts</string>
 
     <!--    Dialog strings-->
     <string name="permissionDialogTitle">Access to background location</string>
@@ -248,10 +271,13 @@
     <!-- SaveDatesActivity strings   -->
     <string name="saveDatesActivityTitle">Modify cutting season dates</string>
     <string name="saveDatesButtonText">Save Dates</string>
+    <string name="saveDatesButtonDescription">Save Cutting Season Dates</string>
     <string name="saveStartDate">Start Date:</string>
     <string name="saveEndDate">End Date:</string>
     <string name="startDateEditTextDefault">Enter start date here</string>
     <string name="endDateEditTextDefault">Enter end date here</string>
     <string name="datePlaceholder">%1$s/%2$s/%3$s</string>
-
+    <string name="cutEntryIntentKey">cutEntry</string>
+    <string name="moreThanOneCutToastMsg">You can\'t have more than one cut on the same day!</string>
+    <string name="yearDropdownDescription">Select year value for cut log</string>
 </resources>

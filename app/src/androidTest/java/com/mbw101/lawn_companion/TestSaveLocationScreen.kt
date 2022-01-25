@@ -30,13 +30,16 @@ Date: 2021-08-20
 class TestSaveLocationScreen {
 
     @get:Rule
-    val mainActivityTestRule: ActivityTestRule<SaveLocationActivity> = ActivityTestRule(SaveLocationActivity::class.java)
+    val saveActivityTestRule: ActivityTestRule<MainActivity> = ActivityTestRule(MainActivity::class.java)
 
-    @get:Rule
-    var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION,
-        android.Manifest.permission.ACCESS_COARSE_LOCATION)
+    @get:Rule var coarsePermissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_COARSE_LOCATION)//,
+//        android.Manifest.permission.ACCESS_COARSE_LOCATION)
 
     companion object {
+        fun ensureActivityIsShown(className: String) {
+            Intents.intended(IntentMatchers.hasComponent(className))
+        }
+
         fun ensureMainActivityIsShown() {
             Intents.intended(IntentMatchers.hasComponent(MainActivity::class.java.name))
         }
@@ -49,6 +52,9 @@ class TestSaveLocationScreen {
 
     @Test
     fun testDeny() {
+        Espresso.onView(ViewMatchers.withId(R.id.settingsIcon)).perform(ViewActions.click())
+        TestMainScreen.pressPreferenceWithTitle("Create a lawn location")
+        ensureActivityIsShown(SaveLocationActivity::class.java.name)
         Espresso.onView(ViewMatchers.withId(R.id.denySaveLocationButton)).perform(ViewActions.click())
         // test to see if main activity appeared on screen
         ensureMainActivityIsShown()
@@ -56,6 +62,9 @@ class TestSaveLocationScreen {
 
     @Test
     fun testAccept() {
+        Espresso.onView(ViewMatchers.withId(R.id.settingsIcon)).perform(ViewActions.click())
+        TestMainScreen.pressPreferenceWithTitle("Create a lawn location")
+        ensureActivityIsShown(SaveLocationActivity::class.java.name)
         Espresso.onView(ViewMatchers.withId(R.id.acceptSaveLocationButton)).perform(ViewActions.click())
         // test to see if main activity appeared on screen
         Timer().schedule(1500) {

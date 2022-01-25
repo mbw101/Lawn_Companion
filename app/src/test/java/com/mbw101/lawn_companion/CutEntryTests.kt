@@ -1,6 +1,6 @@
 package com.mbw101.lawn_companion
 
-import androidx.test.runner.AndroidJUnit4
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.mbw101.lawn_companion.database.CutEntry
 import com.mbw101.lawn_companion.ui.AddCutActivity
 import com.mbw101.lawn_companion.ui.CutLogFragment
@@ -18,7 +18,7 @@ Created by Malcolm Wright
 Date: June 17th, 2021
  */
 
-@RunWith(AndroidJUnit4::class)
+@RunWith(AndroidJUnit4 ::class)
 @Config(sdk = [28])
 class CutEntryTests {
 
@@ -37,7 +37,6 @@ class CutEntryTests {
 
             // March
             CutEntry("4:36pm", 25, "March", 3, UtilFunctions.getCurrentYear()),
-//            CutEntry("4:36pm", 25, "March", 3),
 
             // april
             CutEntry("4:36pm", 25, "april", 4, UtilFunctions.getCurrentYear()),
@@ -80,7 +79,7 @@ class CutEntryTests {
 
         // use hashmap to get month sections
         val hashMap = CutLogFragment.setupHashmap(entries)
-        val monthSections = CutLogFragment.setupMonthSections(hashMap)
+        val monthSections = CutLogFragment.setupMonthSections(hashMap, UtilFunctions.getCurrentYear())
 
         // test values inside the monthSection list
         assertEquals(monthSections.size, 12) // 12 months
@@ -91,11 +90,13 @@ class CutEntryTests {
         assertEquals(monthSections[4].items.size, 2)
         assertEquals(monthSections[5].items.size, 0)
         // rest of the months will have 0 entries
+        for (i in 6..11) {
+            assertEquals(monthSections[i].items.size, 0)
+        }
     }
 
     @Test
     fun testDateValidity() {
-//        val currentDate = Calendar.getInstance()
         val newDate = Calendar.getInstance()
         assertEquals(AddCutActivity.checkDateValidity(newDate), true)
         newDate.add(Calendar.DAY_OF_MONTH, -1)

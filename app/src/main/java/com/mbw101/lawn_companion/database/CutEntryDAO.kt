@@ -1,7 +1,9 @@
 package com.mbw101.lawn_companion.database
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import com.mbw101.lawn_companion.utils.Constants
 
 /**
 Lawn Companion
@@ -14,6 +16,12 @@ interface CutEntryDAO {
     // get cuts queries (all sorted)
     @Query("SELECT * FROM cuts_table")
     fun getAllCuts(): LiveData<List<CutEntry>>
+
+    @Query("SELECT * FROM cuts_table")
+    fun getAllCutsRegularReturn(): List<CutEntry>
+
+    @Query("SELECT * FROM cuts_table ORDER BY year DESC")
+    fun getAllCutsOrderedByYear(): List<CutEntry>
 
     // get cuts queries (all sorted) Jan-Dec order
     @Query("SELECT * FROM cuts_table ORDER BY month_num ASC, day_number ASC")
@@ -33,14 +41,16 @@ interface CutEntryDAO {
     suspend fun findByMonthNum(month_num: Int): List<CutEntry>?
 
     // (returns a single Cut Entry)
-    @Query("SELECT * FROM cuts_table WHERE month_name = :month AND day_number = :day")
-    suspend fun getSpecificCut(month: String, day: Int): CutEntry?
+    @Query("SELECT * FROM cuts_table WHERE year = :year AND month_name = :month AND day_number = :day")
+    suspend fun getSpecificCut(year: Int, month: String, day: Int): CutEntry?
 
-    @Query("SELECT * FROM cuts_table ORDER BY month_num DESC, day_number DESC LIMIT 1")
-    suspend fun getLastCut(): CutEntry? // returns a single Cut Entry
+    // this query finds the most recent cut that's in the DB. Since the UI does not allow for future entries,
+    // we can assume that the most recent cut will be the cut with the largest year, month, and day values
+    @Query("SELECT * FROM cuts_table ORDER BY year DESC, month_num DESC, day_number DESC LIMIT 1")
+    suspend fun getMostRecentCut(): CutEntry? // returns a single Cut Entry
 
-    @Query("SELECT * FROM cuts_table ORDER BY month_num DESC, day_number DESC LIMIT 1")
-    suspend fun getLastCutAsync(): CutEntry? // returns a single Cut Entry (synchronously) for the broadcast receiver
+    @Query("SELECT * FROM cuts_table ORDER BY year DESC, month_num DESC, day_number DESC LIMIT 1")
+    suspend fun getMostRecentCutAsync(): CutEntry? // returns a single Cut Entry (synchronously) for the broadcast receiver
 
     @Query("SELECT * FROM cuts_table ORDER BY millis DESC LIMIT 1")
     suspend fun getLastCutMillis(): CutEntry? // returns a single Cut Entry by utilizing the millis member
@@ -54,11 +64,36 @@ interface CutEntryDAO {
     @Query("SELECT * FROM cuts_table WHERE year = :year ORDER BY month_num DESC, day_number DESC")
     suspend fun getLastEntryFromSpecificYear(year: Int): CutEntry?
 
+    suspend fun getYearDropdownArray(): List<String> {
+        val entries: List<CutEntry> = getAllCutsOrderedByYear()
+        val yearDropdownArray: MutableList<String> = mutableListOf()
+
+        // Not very efficient but takes into account every possible year (ex: non-consecutive years)
+        for (entry in entries) {
+            if (!yearDropdownArray.contains(entry.year.toString())) {
+                yearDropdownArray.add(entry.year.toString())
+            }
+        }
+
+        return yearDropdownArray
+    }
+
+    @Query("SELECT * from cuts_table WHERE id = :cutId")
+    suspend fun findById(cutId: Int): CutEntry?
+
+    // check for existing cut entry
+    suspend fun hasExistingCut(cut: CutEntry): Boolean {
+        getSpecificCut(cut.year, cut.month_name, cut.day_number) ?: return false
+        val entry: CutEntry? = findById(cut.id)
+        Log.e(Constants.TAG, "Entry = $entry")
+        return entry == null
+    }
+
     // insertion queries
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAll(vararg cuts: CutEntry)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAll(cuts: List<CutEntry>) // same as above method but with a list instead
 
     // update query
@@ -67,8 +102,11 @@ interface CutEntryDAO {
     suspend fun updateCut(vararg cuts: CutEntry)
 
     // delete queries
+    @Query("DELETE FROM cuts_table WHERE id = :cutId")
+    suspend fun deleteCutById(cutId: Int)
+
     @Delete
-    suspend fun deleteCuts(vararg cuts: CutEntry): Int
+    suspend fun deleteCuts(vararg cuts: CutEntry)
 
     // Clears all entries in the "cuts" table
     @Query("DELETE FROM cuts_table")

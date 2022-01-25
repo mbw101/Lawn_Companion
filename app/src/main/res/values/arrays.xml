@@ -29,4 +29,8 @@
         <item>21</item>
         <item>30</item>
     </string-array>
+    <string-array name="year_dropdown_test_values">
+        <item>2021</item>
+        <item>2020</item>
+    </string-array>
 </resources>

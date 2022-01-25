@@ -1,17 +1,23 @@
 package com.mbw101.lawn_companion.ui
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import com.mbw101.lawn_companion.BuildConfig
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.databinding.SettingsActivityBinding
 import com.mbw101.lawn_companion.utils.Constants
+import com.mbw101.lawn_companion.utils.UtilFunctions.allowReads
 
 /**
 Lawn Companion
@@ -62,16 +68,30 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     class SettingsFragment : PreferenceFragmentCompat() {
-
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-            setPreferencesFromResource(R.xml.root_preferences, rootKey)
+            if (BuildConfig.DEBUG) {
+                // setPreferencesFromResource results in StrictMode policy violation
+                allowReads {
+                    setPreferencesFromResource(R.xml.root_preferences, rootKey)
+                }
+            }
+            else {
+                setPreferencesFromResource(R.xml.root_preferences, rootKey)
+            }
         }
 
         override fun onPreferenceTreeClick(preference: Preference?): Boolean {
             val preferenceTitle: String = preference?.title as String
             Log.d(Constants.TAG, "Preference title = $preferenceTitle")
-            if (preferenceTitle.contains("lawn location")) { // getString(R.string.
-                openSaveLocationActivity()
+            if (preferenceTitle.contains("lawn location")) {
+                if (ActivityCompat.checkSelfPermission(MyApplication.applicationContext(),
+                        Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    openSaveLocationActivity()
+                }
+                else {
+                    Toast.makeText(MyApplication.applicationContext(), getString(R.string.toastNoLocationPermission), Toast.LENGTH_SHORT)
+                        .show()
+                }
             }
             else if (preferenceTitle.contains("Cutting Season Dates")) {
                 openSetDatesActivity()

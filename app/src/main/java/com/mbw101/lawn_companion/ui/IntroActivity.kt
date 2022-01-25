@@ -2,8 +2,10 @@ package com.mbw101.lawn_companion.ui
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.Button
 import androidx.fragment.app.Fragment
@@ -44,7 +46,16 @@ class IntroActivity : FragmentActivity() {
         val view = binding.root
         setContentView(view)
 
-        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        @Suppress("DEPRECATION")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            window.insetsController?.hide(WindowInsets.Type.statusBars())
+        }
+        else {
+            window.setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN
+            )
+        }
 
         // start the introduction
         init()
@@ -82,9 +93,6 @@ class IntroActivity : FragmentActivity() {
             viewPager.currentItem = viewPager.currentItem + 1
         }
         viewPager.registerOnPageChangeCallback(object : OnPageChangeCallback(){
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-                super.onPageScrolled(position, positionOffset, positionOffsetPixels)
-            }
 
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
@@ -110,7 +118,7 @@ class IntroActivity : FragmentActivity() {
      * screen
      */
     private fun setupTabLayout() {
-        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+        TabLayoutMediator(tabLayout, viewPager) { tab, _ ->
             viewPager.setCurrentItem(tab.position, true)
         }.attach()
         tabLayout.tabMode = TabLayout.MODE_SCROLLABLE
@@ -121,12 +129,6 @@ class IntroActivity : FragmentActivity() {
      */
     private fun launchMainActivity() {
         val intent = Intent(MyApplication.applicationContext(), MainActivity::class.java)
-        startActivity(intent)
-        finish()
-    }
-
-    private fun launchSaveLocationActivity() {
-        val intent = Intent(MyApplication.applicationContext(), SaveLocationActivity::class.java)
         startActivity(intent)
         finish()
     }

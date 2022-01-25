@@ -6,7 +6,7 @@ Created by Malcolm Wright
 Date: 2021-07-12
  */
 
-const val MIN_CUTTING_HUMIDITY = 45
+const val MIN_CUTTING_HUMIDITY = 0
 const val MAX_CUTTING_HUMIDITY = 85
 
 data class Current(val sunrise: Int = 0,
@@ -31,7 +31,7 @@ fun isCurrentWeatherSuitable(current: Current): Boolean {
     if (!isWithinDayTempRange(current.temp)) return false
     if (!isWithinHumidityRange(current.humidity)) return false
 
-    // TODO: Implement UV Index range check
+    // TODO: Implement UV Index range check in future
 
     return true
 }

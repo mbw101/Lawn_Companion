@@ -3,17 +3,17 @@ package com.mbw101.lawn_companion.database
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.runner.AndroidJUnit4
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.mbw101.lawn_companion.utils.UtilFunctions
-import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.runBlocking
 import org.junit.After
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 
-@RunWith(AndroidJUnit4::class)
+@RunWith(AndroidJUnit4 ::class)
 @Config(sdk = [28])
 class CutDatabaseTest {
 
@@ -22,7 +22,7 @@ class CutDatabaseTest {
 
     @Before
     fun setUp() {
-        val context: Context = ApplicationProvider.getApplicationContext<Context>()
+        val context: Context = ApplicationProvider.getApplicationContext()
         db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
             .allowMainThreadQueries()
             .build()
@@ -58,7 +58,7 @@ class CutDatabaseTest {
             CutEntry("4:36pm", 28, "September", 9, UtilFunctions.getCurrentYear()),
             CutEntry("4:36pm", 5, "October", 10, UtilFunctions.getCurrentYear()))
 
-        var returnedEntries: List<CutEntry>? = null
+        var returnedEntries: List<CutEntry>?
         runBlocking {
             returnedEntries = cutEntryDao.findByMonthName("October")
             assertEquals(returnedEntries!!.size, 1)
@@ -91,15 +91,24 @@ class CutDatabaseTest {
     fun testFindLastCut() {
         runBlocking {
             cutEntryDao.insertAll(
-                CutEntry("4:36pm", 17, "September", 9, UtilFunctions.getCurrentYear()),
-                CutEntry("4:36pm", 5, "October", 10, UtilFunctions.getCurrentYear()),
-                CutEntry("4:36pm", 28, "September", 9, UtilFunctions.getCurrentYear()),
-                CutEntry("4:36pm", 1, "October", 10, UtilFunctions.getCurrentYear())
+                CutEntry("4:36pm", 17, "September", 9, UtilFunctions.getCurrentYear() - 1),
+                CutEntry("4:36pm", 5, "October", 10, UtilFunctions.getCurrentYear() - 1),
+                CutEntry("4:36pm", 28, "September", 9, UtilFunctions.getCurrentYear() - 1),
+                CutEntry("4:36pm", 1, "October", 10, UtilFunctions.getCurrentYear() - 1)
             )
 
-            val returnedEntry = cutEntryDao.getLastCut()
+            var returnedEntry = cutEntryDao.getMostRecentCut()
             assertEquals(returnedEntry!!.month_name, "October")
             assertEquals(returnedEntry.day_number, 5)
+
+            // test case where there are entries in the previous year and one in the current year
+            cutEntryDao.insertAll(
+                CutEntry("8:00am", 11, "January", 1, UtilFunctions.getCurrentYear()),
+            )
+
+            returnedEntry = cutEntryDao.getMostRecentCut()
+            assertEquals(returnedEntry!!.month_name, "January")
+            assertEquals(returnedEntry.day_number, 11)
         }
     }
 
@@ -223,18 +232,46 @@ class CutDatabaseTest {
                 CutEntry("4:36pm", 1, "October", 10, UtilFunctions.getCurrentYear())
             )
 
+            var listOfEntries: List<CutEntry> = cutEntryDao.getAllCutsSortedAsync().reversed()
+            println(cutEntryDao.getAllCutsSortedAsync())
+
             // delete both the october cuts and check each time afterwards
-            cutEntryDao.deleteCuts(CutEntry("4:36pm", 1, "October", 10, UtilFunctions.getCurrentYear()))
-            var returnedEntry = cutEntryDao.getLastCut()
+            cutEntryDao.deleteCutById(listOfEntries[0].id)
+            println("Deleting ID = ${listOfEntries[0].id}")
+            println(cutEntryDao.getAllCutsSortedAsync())
+            var returnedEntry = cutEntryDao.getMostRecentCut()
+            assertEquals(cutEntryDao.getNumEntries(), 3)
             assertEquals(returnedEntry!!.month_name, "October")
 
-            cutEntryDao.deleteCuts(CutEntry("4:36pm", 5, "October", 10, UtilFunctions.getCurrentYear()))
-            returnedEntry = cutEntryDao.getLastCut()
+            listOfEntries = cutEntryDao.getAllCutsSortedAsync().reversed()
+            cutEntryDao.deleteCutById(listOfEntries[0].id)
+            println("Deleting ID = ${listOfEntries[0].id}")
+            returnedEntry = cutEntryDao.getMostRecentCut()
+            println(cutEntryDao.getAllCutsSortedAsync())
+            assertEquals(cutEntryDao.getNumEntries(), 2)
             assertEquals(returnedEntry!!.month_name, "September")
 
             // check size after deleting
-            val remainingEntries = cutEntryDao.getAllCuts()
             assertEquals(cutEntryDao.getNumEntries(), 2)
+        }
+    }
+
+    @Test
+    fun testNotesOnCutEntry() {
+        runBlocking {
+            val note = "Hello world"
+            cutEntryDao.insertAll(
+                CutEntry("4:36pm", 5, "October", 10, UtilFunctions.getCurrentYear(), note)
+            )
+
+            assertNotNull(cutEntryDao.getMostRecentCut()!!.note)
+            assertEquals(cutEntryDao.getMostRecentCut()!!.note, note)
+
+            cutEntryDao.insertAll(
+                CutEntry("4:36pm", 5, "December", 12, UtilFunctions.getCurrentYear()),
+            )
+
+            assertNull(cutEntryDao.getMostRecentCut()!!.note)
         }
     }
 
@@ -250,8 +287,42 @@ class CutDatabaseTest {
         cutEntryDao.deleteAll()
 
         // check size after deleting
-        val remainingEntries = cutEntryDao.getAllCuts()
         assertEquals(cutEntryDao.getNumEntries(), 0)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testGetYearDropdownArray() = runBlocking {
+        assertEquals(cutEntryDao.getYearDropdownArray().size, 0)
+        assertEquals(cutEntryDao.getYearDropdownArray(), emptyList<String>())
+
+        cutEntryDao.insertAll(CutEntry("4:36pm", 17, "September", 9, 2021),
+            CutEntry("4:36pm", 5, "October", 10, 2021),
+            CutEntry("4:36pm", 28, "September", 9, 2020),
+            CutEntry("4:36pm", 1, "October", 10, 2020))
+        cutEntryDao.insertAll(CutEntry("4:36pm", 17, "September", 9, 2018))
+
+        assertEquals(cutEntryDao.getYearDropdownArray().size, 3)
+        assertEquals(cutEntryDao.getYearDropdownArray(), listOf("2021", "2020", "2018"))
+
+        cutEntryDao.insertAll(CutEntry("4:36pm", 17, "September", 9, 2019))
+
+        assertEquals(cutEntryDao.getYearDropdownArray().size, 4)
+        assertEquals(cutEntryDao.getYearDropdownArray(), listOf("2021", "2020", "2019", "2018"))
+    }
+
+    @Test
+    fun hasExistingEntry() {
+        val testCut = CutEntry("4:36pm", 17, "September", 9, 2021)
+        val sameDayCut = CutEntry("2:56pm", 17, "September", 9, 2021)
+        val sameDayCutDiffYear = CutEntry("2:56pm", 17, "September", 9, 2020)
+        runBlocking {
+            assertFalse(cutEntryDao.hasExistingCut(testCut))
+            cutEntryDao.insertAll(testCut)
+            assertTrue(cutEntryDao.hasExistingCut(testCut))
+            assertTrue(cutEntryDao.hasExistingCut(sameDayCut))
+            assertFalse(cutEntryDao.hasExistingCut(sameDayCutDiffYear))
+        }
     }
 
     @After

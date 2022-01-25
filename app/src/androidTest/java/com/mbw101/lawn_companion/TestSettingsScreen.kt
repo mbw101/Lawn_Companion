@@ -15,14 +15,16 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
+import androidx.test.rule.GrantPermissionRule
 import com.mbw101.lawn_companion.ui.MainActivity
 import com.mbw101.lawn_companion.ui.MyApplication
 import com.mbw101.lawn_companion.ui.SetDatesActivity
 import com.mbw101.lawn_companion.ui.SettingsActivity
 import com.mbw101.lawn_companion.utils.ApplicationPrefs
 import com.mbw101.lawn_companion.utils.Constants
+import com.mbw101.lawn_companion.utils.UtilFunctions
 import org.junit.After
-import org.junit.Assert.assertEquals
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -41,6 +43,11 @@ Date: 2021-06-26
 class TestSettingsScreen {
     @get:Rule
     val settingsActivityTestRule: ActivityTestRule<SettingsActivity> = ActivityTestRule(SettingsActivity::class.java)
+
+    @get:Rule
+    var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_COARSE_LOCATION)
+
+    private val currentYear = UtilFunctions.getCurrentYear()
 
     companion object {
         fun tapSetCuttingSeasonDates() {
@@ -216,25 +223,27 @@ class TestSettingsScreen {
         // mornings, afternoons, and evenings are true by default while nights are false
         val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
         val prefs = ApplicationPrefs()
-        if (currentHour in Constants.MORNING_HOUR_START_TIME..Constants.MORNING_HOUR_END_TIME) {
-            assertEquals(prefs.isInTimeOfDay(), true)
-            tapMorningsPreference()
-            assertEquals(prefs.isInTimeOfDay(), false)
-        }
-        else if (currentHour in Constants.AFTERNOON_HOUR_START_TIME..Constants.AFTERNOON_HOUR_END_TIME) {
-            assertEquals(prefs.isInTimeOfDay(), true)
-            tapAfternoonPreference()
-            assertEquals(prefs.isInTimeOfDay(), false)
-        }
-        else if (currentHour in Constants.EVENING_HOUR_START_TIME..Constants.EVENING_HOUR_END_TIME) {
-            assertEquals(prefs.isInTimeOfDay(), true)
-            tapEveningsPreference()
-            assertEquals(prefs.isInTimeOfDay(), false)
-        }
-        else if (currentHour in Constants.NIGHT_HOUR_START_TIME downTo Constants.NIGHT_HOUR_END_TIME) {
-            assertEquals(prefs.isInTimeOfDay(), false)
-            tapNightsPreference()
-            assertEquals(prefs.isInTimeOfDay(), true)
+        when (currentHour) {
+            in Constants.MORNING_HOUR_START_TIME..Constants.MORNING_HOUR_END_TIME -> {
+                assertEquals(prefs.isInTimeOfDay(), true)
+                tapMorningsPreference()
+                assertEquals(prefs.isInTimeOfDay(), false)
+            }
+            in Constants.AFTERNOON_HOUR_START_TIME..Constants.AFTERNOON_HOUR_END_TIME -> {
+                assertEquals(prefs.isInTimeOfDay(), true)
+                tapAfternoonPreference()
+                assertEquals(prefs.isInTimeOfDay(), false)
+            }
+            in Constants.EVENING_HOUR_START_TIME..Constants.EVENING_HOUR_END_TIME -> {
+                assertEquals(prefs.isInTimeOfDay(), true)
+                tapEveningsPreference()
+                assertEquals(prefs.isInTimeOfDay(), false)
+            }
+            in Constants.NIGHT_HOUR_START_TIME downTo Constants.NIGHT_HOUR_END_TIME -> {
+                assertEquals(prefs.isInTimeOfDay(), false)
+                tapNightsPreference()
+                assertEquals(prefs.isInTimeOfDay(), true)
+            }
         }
     }
 
@@ -278,24 +287,54 @@ class TestSettingsScreen {
         tapSetCuttingSeasonDates()
         ensureSetDatesActivityIsShown()
         onView(withId(R.id.startDateSelector)).perform(click())
-        TestSetDatesActivity.setDate(2021, Calendar.MARCH + 1, 14)
+        TestSetDatesActivity.setDate(currentYear, Calendar.MARCH + 1, 14)
         onView(withId(R.id.endDateSelector)).perform(click())
-        TestSetDatesActivity.setDate(2021, Calendar.OCTOBER + 1, 31)
+        TestSetDatesActivity.setDate(currentYear, Calendar.OCTOBER + 1, 31)
 
-        onView(withId(R.id.startDateSelector)).check(matches(withText("14/3/2021")))
-        onView(withId(R.id.endDateSelector)).check(matches(withText("31/10/2021")))
+        onView(withId(R.id.startDateSelector)).check(matches(withText("$currentYear/3/14")))
+        onView(withId(R.id.endDateSelector)).check(matches(withText("$currentYear/10/31")))
 
         // test formatting again after closing the activity
         onView(withId(R.id.saveDatesButton)).perform(click())
         Thread.sleep(1000)
         tapSetCuttingSeasonDates()
         Thread.sleep(200)
-        onView(withId(R.id.startDateSelector)).check(matches(withText("14/3/2021")))
-        onView(withId(R.id.endDateSelector)).check(matches(withText("31/10/2021")))
+        onView(withId(R.id.startDateSelector)).check(matches(withText("$currentYear/3/14")))
+        onView(withId(R.id.endDateSelector)).check(matches(withText("$currentYear/10/31")))
     }
 
     private fun ensureSetDatesActivityIsShown() {
         Intents.intended(IntentMatchers.hasComponent(hasClassName(SetDatesActivity::class.java.name)))
+    }
+
+    @Test
+    fun testNotificationPreferenceHelper() {
+        val notificationTitle = MyApplication.applicationContext().getString(R.string.notificationsTitle)
+        val prefs = ApplicationPrefs()
+        assertTrue(prefs.areNotificationsEnabled())
+        onView(withText(notificationTitle)).perform(click())
+        assertFalse(prefs.areNotificationsEnabled())
+        onView(withText(notificationTitle)).perform(click())
+    }
+
+    @Test
+    fun testWifiPreferenceHelper() {
+        val dataAccessTitle = MyApplication.applicationContext().getString(R.string.weatherDataAccessTitle)
+        val prefs = ApplicationPrefs()
+        assertTrue(prefs.isDataUseEnabled())
+        onView(withText(dataAccessTitle)).perform(click())
+        assertFalse(prefs.isDataUseEnabled())
+        onView(withText(dataAccessTitle)).perform(click())
+    }
+
+    @Test
+    fun testInCuttingSeasonPreferenceHelper() {
+        val cuttingSeasonTitle = MyApplication.applicationContext().getString(R.string.cuttingSeasonTitle)
+        val prefs = ApplicationPrefs()
+        assertTrue(prefs.isInCuttingSeason())
+        onView(withText(cuttingSeasonTitle)).perform(click())
+        assertFalse(prefs.isInCuttingSeason())
+        onView(withText(cuttingSeasonTitle)).perform(click())
     }
 
     @After

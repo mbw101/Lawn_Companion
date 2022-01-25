@@ -17,18 +17,18 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
-import com.mbw101.lawn_companion.database.LawnLocation
-import com.mbw101.lawn_companion.database.LawnLocationRepository
-import com.mbw101.lawn_companion.database.setupLawnLocationRepository
-import com.mbw101.lawn_companion.ui.AddCutActivity
-import com.mbw101.lawn_companion.ui.MainActivity
-import com.mbw101.lawn_companion.ui.SaveLocationActivity
-import com.mbw101.lawn_companion.ui.SettingsActivity
+import com.mbw101.lawn_companion.database.*
+import com.mbw101.lawn_companion.notifications.AlarmReceiver
+import com.mbw101.lawn_companion.ui.*
 import com.mbw101.lawn_companion.utils.ApplicationPrefs
 import com.mbw101.lawn_companion.utils.Constants
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.containsString
+import org.hamcrest.CoreMatchers.not
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -50,20 +50,27 @@ class TestMainScreen {
     private val goodEvening = "Good Evening!"
     private val goodNight = "Good Night!"
     private lateinit var lawnLocationRepository: LawnLocationRepository
+    private lateinit var cuttingSeasonDateRepository: CuttingSeasonDateRepository
+    private lateinit var cutEntryRepository: CutEntryRepository
 
     @get:Rule
     val mainActivityTestRule: ActivityTestRule<MainActivity> = ActivityTestRule(MainActivity::class.java)
 
-    @get:Rule var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION,
-    android.Manifest.permission.ACCESS_COARSE_LOCATION)
+    @get:Rule var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_COARSE_LOCATION)
 
     companion object {
         fun ensureSaveLocationActivityIsShown() {
             intended(hasComponent(SaveLocationActivity::class.java.name))
         }
 
-        fun tapRefresh() {
-            onView(withId(R.id.refreshIcon)).perform(click())
+        fun pressPreferenceWithTitle(title: String) {
+            onView(withId(androidx.preference.R.id.recycler_view))
+                .perform(
+                    actionOnItem<RecyclerView.ViewHolder>(
+                        hasDescendant(withText(title)),
+                        click()
+                    )
+                )
         }
     }
 
@@ -74,7 +81,13 @@ class TestMainScreen {
         setupLocationDB()
         runBlocking {
             createMockLocationEntry()
+            setNewCuttingSeasonDates()
         }
+    }
+
+    private suspend fun setNewCuttingSeasonDates() {
+        cuttingSeasonDateRepository.insertStartDate(Calendar.getInstance())
+        cuttingSeasonDateRepository.insertEndDate(Calendar.getInstance())
     }
 
     private suspend fun createMockLocationEntry() {
@@ -83,16 +96,17 @@ class TestMainScreen {
     }
 
     private fun setupLocationDB() {
-        val context: Context = ApplicationProvider.getApplicationContext<Context>()
+        val context: Context = ApplicationProvider.getApplicationContext()
         lawnLocationRepository = setupLawnLocationRepository(context)
+        cuttingSeasonDateRepository = setupCuttingSeasonDateRepository(context)
+        cutEntryRepository = setupCutEntryRepository(context)
     }
 
     private fun calculateExpectedMessage(): String {
         val cal: Calendar = Calendar.getInstance()
-        // Get time and get corresponding message
-        val hourOfDay = cal.get(Calendar.HOUR_OF_DAY)
 
-        return when (hourOfDay) {
+        // Get time and get corresponding message
+        return when (cal.get(Calendar.HOUR_OF_DAY)) {
             in Constants.MORNING_HOUR_START_TIME..Constants.MORNING_HOUR_END_TIME -> {
                 goodMorning
             }
@@ -135,14 +149,14 @@ class TestMainScreen {
     @Test
     // tests both fragments in the bottom nav
     fun testBottomNav() {
-        onView(withId(R.id.cutLog)).perform(click()).check(matches(isDisplayed())) // open cut log fragment and test visibility
+        onView(withId(R.id.cutlog)).perform(click()).check(matches(isDisplayed())) // open cut log fragment and test visibility
         // test going back
         pressBack()
         // check to see if home fragment is there
         onView(withId(R.id.homeConstraintLayout)).check(matches(isDisplayed()))
 
         // go back to cut log and move back to home once more
-        onView(withId(R.id.cutLog)).perform(click())
+        onView(withId(R.id.cutlog)).perform(click())
         onView(withId(R.id.home)).perform(click()).check(matches(isDisplayed())) // open home fragment and test visibility
     }
 
@@ -150,9 +164,12 @@ class TestMainScreen {
     fun testTurningOffCutSeason() {
         val appPrefs = ApplicationPrefs()
         appPrefs.setHasLocationSavedValue(true)// turns off the lawn location prompt
+        runBlocking {
+            cutEntryRepository.deleteAllCuts()
+        }
         onView(withId(R.id.home)).perform(click()).check(matches(isDisplayed())) // removes the permissions text
         mainTextViewContainsText("No cuts have been made yet. Add a new cut to get started!")
-
+        Thread.sleep(3000)
         // navigate to settings screen
         onView(withId(R.id.settingsIcon)).perform(click())
 
@@ -181,10 +198,12 @@ class TestMainScreen {
     @Test
     fun testTurningOffCutSeasonWithoutLocationSaved() {
         removeExistingLocation()
+        TestFirstUse.resetAppPreferences()
 
         onView(withId(R.id.home)).perform(click()).check(matches(isDisplayed())) // removes the permissions text
 
-        mainTextViewContainsText("There is no current lawn location saved. Add a location to receive notifications")
+        mainTextViewContainsText("No cuts have been made yet. Add a new cut to get started!")
+        secondaryTextViewContainsText("There is no current lawn location saved. Add a location to receive notifications")
 
         onView(withId(R.id.createLawnLocationButton)).perform(click())
 
@@ -225,6 +244,11 @@ class TestMainScreen {
             .check(matches(withText(containsString(textToTest))))
     }
 
+    private fun secondaryTextViewContainsText(textToTest: String) {
+        onView(withId(R.id.secondaryTextView))
+            .check(matches(withText(containsString(textToTest))))
+    }
+
     private fun pressCuttingSeasonPreference() {
         onView(withId(androidx.preference.R.id.recycler_view))
             .perform(
@@ -237,11 +261,12 @@ class TestMainScreen {
 
     @Test
     fun testLawnLocationButtonVisibility() {
+        TestFirstUse.resetAppPreferences()
         removeExistingLocation()
 
         onView(withId(R.id.home)).perform(click()) // press home to update text
 
-        mainTextViewContainsText("There is no current lawn location saved. Add a location to receive notifications.")
+        secondaryTextViewContainsText("There is no current lawn location saved. Add a location to receive notifications.")
 
         // test button text
         onView(withId(R.id.createLawnLocationButton)).check(matches(isCompletelyDisplayed()))
@@ -257,7 +282,7 @@ class TestMainScreen {
 
     private fun removeExistingLocation() {
         runBlocking {
-            lawnLocationRepository.deleteAllCuts()
+            lawnLocationRepository.deleteAllLocations()
         }
     }
 
@@ -268,21 +293,86 @@ class TestMainScreen {
     }
 
     @Test
-    fun testRefreshButton() {
-        ensureRefreshWorksWithHomeFrag()
-        ensureRefreshWorksWithLog()
+    fun testYeardropdownVisibility() {
+        onView(withId(R.id.yearDropdown)).check(matches(not(isDisplayed())))
+        onView(withId(R.id.cutlog)).perform(click())
+        onView(withId(R.id.yearDropdown)).check(matches(isDisplayed()))
     }
 
-    private fun ensureRefreshWorksWithLog() {
-        onView(withId(R.id.cutLog)).perform(click()).check(matches(isDisplayed()))
-        tapRefresh()
-        onView(withId(R.id.cutLogConstraintLayout)).check(matches(isDisplayed()))
+    @Test
+    fun testWeatherSuitabilityTextViewConditionCheck() {
+        val prefs = ApplicationPrefs()
+        removeExistingLocation()
+        assertEquals(AlarmReceiver.preDownloadCriteriaCheckForWeatherSuitability(prefs), false)
+        addTestLocationBack()
+        assertEquals(AlarmReceiver.preDownloadCriteriaCheckForWeatherSuitability(prefs), false)
+
+        // navigate to settings and enable cutting season manually
+        onView(withId(R.id.settingsIcon)).perform(click())
+        pressPreferenceWithTitle("Enable/disable cutting season")
+        assertEquals(AlarmReceiver.preDownloadCriteriaCheckForWeatherSuitability(prefs), false)
+        pressPreferenceWithTitle("Enable/disable cutting season")
+        assertEquals(AlarmReceiver.preDownloadCriteriaCheckForWeatherSuitability(prefs), false)
+
+        prefs.setHasLocationSavedValue(true)
+        assertEquals(AlarmReceiver.preDownloadCriteriaCheckForWeatherSuitability(prefs), true)
     }
 
-    private fun ensureRefreshWorksWithHomeFrag() {
-        onView(withId(R.id.homeConstraintLayout)).check(matches(isDisplayed()))
-        tapRefresh()
+    @Test
+    fun testWeatherSuitabilityTextViewVisibility() {
+        // TODO: Pass in a mock weather data which we can make sure we show the correct string (The specific string is dependent finally on the weather)
+        val prefs = ApplicationPrefs()
+        removeExistingLocation()
+        onView(withId(R.id.weatherSuitabilityTextView)).check(matches(not(isDisplayed())))
+        addTestLocationBack()
+
+        // navigate to settings and enable cutting season manually
+        onView(withId(R.id.settingsIcon)).perform(click())
+        pressPreferenceWithTitle("Enable/disable cutting season")
+        pressBack()
+        onView(withId(R.id.weatherSuitabilityTextView)).check(matches(not(isDisplayed())))
+        onView(withId(R.id.settingsIcon)).perform(click())
+        pressPreferenceWithTitle("Enable/disable cutting season")
+        prefs.setHasLocationSavedValue(true)
+        pressBack()
+        onView(withId(R.id.weatherSuitabilityTextView)).check(matches(isDisplayed()))
+    }
+
+    @Test
+    // Depends upon the weather of the lawn location on the device
+    fun testWeatherSuitabilityTextViewString() {
+        // ensure that the weather suitability contains the correct substring
+        val prefs = ApplicationPrefs()
+        prefs.setHasLocationSavedValue(true)
+        val lawnLocationRepository = setupLawnLocationRepository(MyApplication.applicationContext())
+        // Cuba coordinates - Jamaica was having rainy weather in Kingston :(
+        runBlocking {
+            launch(Dispatchers.IO) {
+                lawnLocationRepository.deleteAllLocations()
+                lawnLocationRepository.addLocation(LawnLocation(21.9188, -78.6330))
+            }
+        }
+
+        // check without a skip date saved
+        onView(withId(R.id.home)).perform(click()).check(matches(isDisplayed())) // updates home fragment
+        onView(withId(R.id.weatherSuitabilityTextView)).check(matches(withText(containsString("Expect a notification"))))
+
+        // save skipped date as today's date and check for skipped
+        prefs.saveSkipDate()
         onView(withId(R.id.home)).perform(click()).check(matches(isDisplayed()))
+        onView(withId(R.id.weatherSuitabilityTextView)).check(matches(withText(containsString("skipped"))))
+
+        // save skipped date with yesterday's date
+        prefs.clearPreferences()
+        prefs.setHasLocationSavedValue(true)
+        prefs.saveSkipDate("2022-01-11")
+        onView(withId(R.id.home)).perform(click()).check(matches(isDisplayed()))
+        onView(withId(R.id.weatherSuitabilityTextView)).check(matches(withText(containsString("Expect a notification"))))
+
+        // Disable notifications in preferences and check suitability textview
+        prefs.saveBoolPreferenceValueInSharedPrefs(MyApplication.applicationContext().getString(R.string.notificationPreferenceKey), false)
+        onView(withId(R.id.home)).perform(click()).check(matches(isDisplayed()))
+        onView(withId(R.id.weatherSuitabilityTextView)).check(matches(withText(containsString("Notifications are disabled"))))
     }
 
     @After

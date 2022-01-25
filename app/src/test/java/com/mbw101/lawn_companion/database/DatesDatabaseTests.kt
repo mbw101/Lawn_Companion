@@ -3,10 +3,11 @@ package com.mbw101.lawn_companion.database
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.runner.AndroidJUnit4
-import junit.framework.Assert.assertEquals
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.mbw101.lawn_companion.utils.UtilFunctions
 import kotlinx.coroutines.runBlocking
 import org.junit.After
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -18,20 +19,20 @@ Lawn Companion
 Created by Malcolm Wright
 Date: 2021-09-18
  */
-@RunWith(AndroidJUnit4::class)
+@RunWith(AndroidJUnit4 ::class)
 @Config(sdk = [28])
 class DatesDatabaseTests {
 
     private lateinit var db: AppDatabase
     private lateinit var cuttingSeasonDatesDao: CuttingSeasonDatesDao
-    private val startDateMonth = Calendar.OCTOBER
-    private val startDateDay = 26
-    private val endDateMonth = Calendar.NOVEMBER
-    private val endDateDay = 5
+    private val startDateMonth = Calendar.JANUARY
+    private val startDateDay = 4
+    private val endDateMonth = Calendar.DECEMBER
+    private val endDateDay = 31
 
     @Before
     fun setUp() {
-        val context: Context = ApplicationProvider.getApplicationContext<Context>()
+        val context: Context = ApplicationProvider.getApplicationContext()
         db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
             .allowMainThreadQueries()
             .build()
@@ -53,7 +54,7 @@ class DatesDatabaseTests {
     @Test
     @Throws(Exception::class)
     fun testInsertStartDate() = runBlocking {
-        val (startDate: Calendar, endDate: Calendar) = setupStartEndCalendars()
+        val (startDate: Calendar, _: Calendar) = setupStartEndCalendars()
 
         cuttingSeasonDatesDao.insertStartDate(startDate)
         assertEquals(cuttingSeasonDatesDao.getNumEntries(), 1)
@@ -64,7 +65,7 @@ class DatesDatabaseTests {
     @Test
     @Throws(Exception::class)
     fun testInsertEndDate() = runBlocking {
-        val (startDate: Calendar, endDate: Calendar) = setupStartEndCalendars()
+        val (_: Calendar, endDate: Calendar) = setupStartEndCalendars()
 
         cuttingSeasonDatesDao.insertEndDate(endDate)
         assertEquals(cuttingSeasonDatesDao.getNumEntries(), 1)
@@ -191,14 +192,16 @@ class DatesDatabaseTests {
         return Pair(startVal, endVal)
     }
 
-    private fun setupStartEndCalendars(): Pair<Calendar, Calendar> {
+    private fun setupStartEndCalendars(year: Int = UtilFunctions.getCurrentYear()): Pair<Calendar, Calendar> {
         val startDate: Calendar = Calendar.getInstance()
         val endDate: Calendar = Calendar.getInstance()
 
         startDate.set(Calendar.MONTH, startDateMonth)
         startDate.set(Calendar.DAY_OF_MONTH, startDateDay)
+        startDate.set(Calendar.YEAR, year)
         endDate.set(Calendar.MONTH, endDateMonth)
         endDate.set(Calendar.DAY_OF_MONTH, endDateDay)
+        endDate.set(Calendar.YEAR, year)
         return Pair(startDate, endDate)
     }
 
@@ -240,6 +243,86 @@ class DatesDatabaseTests {
         assertEquals(cuttingSeasonDatesDao.isOutsideOfCuttingSeasonDates(), false)
     }
 
+    // Edge cases where the today's calendar aligns on the same day as both the start/end dates and is offset by one of the time fields
+    @Test
+    @Throws(Exception::class)
+    fun testInCuttingSeasonHourOfDayEdgeCase() = runBlocking {
+        val startCal = Calendar.getInstance()
+        val endCal = Calendar.getInstance()
+        startCal.set(Calendar.HOUR_OF_DAY, 10)
+        endCal.set(Calendar.HOUR_OF_DAY, 5)
+
+        val (startVal, endVal) = buildDates(startCal, endCal)
+        insertDatesIntoDB(startVal, endVal)
+        assertEquals(cuttingSeasonDatesDao.isInCuttingSeasonDates(), true)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testInCuttingSeasonHourEdgeCase() = runBlocking {
+        val startCal = Calendar.getInstance()
+        val endCal = Calendar.getInstance()
+        startCal.set(Calendar.HOUR, 10)
+        endCal.set(Calendar.HOUR, 5)
+
+        val (startVal, endVal) = buildDates(startCal, endCal)
+        insertDatesIntoDB(startVal, endVal)
+        assertEquals(cuttingSeasonDatesDao.isInCuttingSeasonDates(), true)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testInCuttingSeasonMinuteEdgeCase() = runBlocking {
+        val startCal = Calendar.getInstance()
+        val endCal = Calendar.getInstance()
+        startCal.set(Calendar.MINUTE, 10)
+        endCal.set(Calendar.MINUTE, 5)
+
+        val (startVal, endVal) = buildDates(startCal, endCal)
+        insertDatesIntoDB(startVal, endVal)
+        assertEquals(cuttingSeasonDatesDao.isInCuttingSeasonDates(), true)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testInCuttingSeasonSecondEdgeCase() = runBlocking {
+        val startCal = Calendar.getInstance()
+        val endCal = Calendar.getInstance()
+        startCal.set(Calendar.SECOND, 10)
+        endCal.set(Calendar.SECOND, 5)
+
+        val (startVal, endVal) = buildDates(startCal, endCal)
+        insertDatesIntoDB(startVal, endVal)
+        assertEquals(cuttingSeasonDatesDao.isInCuttingSeasonDates(), true)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testInCuttingSeasonMillisecondEdgeCase() = runBlocking {
+        val startCal = Calendar.getInstance()
+        val endCal = Calendar.getInstance()
+        startCal.set(Calendar.MILLISECOND, 10)
+        endCal.set(Calendar.MILLISECOND, 5)
+
+        val (startVal, endVal) = buildDates(startCal, endCal)
+        insertDatesIntoDB(startVal, endVal)
+        assertEquals(cuttingSeasonDatesDao.isInCuttingSeasonDates(), true)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testInCuttingSeasonPMEdgeCase() = runBlocking {
+        val startCal = Calendar.getInstance()
+        val endCal = Calendar.getInstance()
+        startCal.set(Calendar.AM_PM, Calendar.PM)
+        endCal.set(Calendar.AM_PM, Calendar.PM)
+
+        val (startVal, endVal) = buildDates(startCal, endCal)
+        insertDatesIntoDB(startVal, endVal)
+        assertEquals(cuttingSeasonDatesDao.isInCuttingSeasonDates(), true)
+    }
+
+
     @Test
     @Throws(Exception::class)
     fun testOutsideCuttingSeason() = runBlocking {
@@ -249,6 +332,35 @@ class DatesDatabaseTests {
         insertDatesIntoDB(startVal, endVal)
         assertEquals(cuttingSeasonDatesDao.isOutsideOfCuttingSeasonDates(), true)
         assertEquals(cuttingSeasonDatesDao.isInCuttingSeasonDates(), false)
+    }
+
+    @Test
+    fun testUpdateYears() {
+        val currentYear = UtilFunctions.getCurrentYear()
+        val previousYear = currentYear - 1
+
+        val calendars: Pair<Calendar, Calendar> = setupStartEndCalendars(previousYear)
+        val dates: Pair<CuttingSeasonDate, CuttingSeasonDate> = buildDates(calendars.first, calendars.second)
+        assertEquals(dates.first.calendarValue.get(Calendar.YEAR), previousYear)
+        assertEquals(dates.second.calendarValue.get(Calendar.YEAR), previousYear)
+
+        runBlocking {
+            insertDatesIntoDB(dates.first, dates.second)
+            assertTrue(cuttingSeasonDatesDao.hasStartDate())
+            assertTrue(cuttingSeasonDatesDao.hasEndDate())
+
+            // change to current year
+            cuttingSeasonDatesDao.updateCuttingSeasonYears()
+
+            val startDate = cuttingSeasonDatesDao.getStartDate()
+            val endDate = cuttingSeasonDatesDao.getEndDate()
+            assertTrue(cuttingSeasonDatesDao.hasStartDate())
+            assertTrue(cuttingSeasonDatesDao.hasEndDate())
+            assertNotNull(startDate)
+            assertNotNull(endDate)
+            assertEquals(startDate!!.calendarValue.get(Calendar.YEAR), currentYear)
+            assertEquals(endDate!!.calendarValue.get(Calendar.YEAR), currentYear)
+        }
     }
 
     @After

@@ -1,5 +1,6 @@
 package com.mbw101.lawn_companion.database
 
+import android.content.Context
 import com.mbw101.lawn_companion.utils.UtilFunctions
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -14,13 +15,16 @@ class CutEntryRepository @Inject constructor(private val cutEntryDAO: CutEntryDA
     // handles calling the DAO methods
     fun getCuts() = cutEntryDAO.getAllCuts()
     fun getSortedCuts() = cutEntryDAO.getAllCutsSorted()
-    suspend fun getLastCut() = cutEntryDAO.getLastCut()
-    suspend fun getLastCutSync() = cutEntryDAO.getLastCutAsync()
+    suspend fun getLastCut() = cutEntryDAO.getMostRecentCut()
+    suspend fun getLastCutSync() = cutEntryDAO.getMostRecentCutAsync()
     suspend fun getCutsByMonth(monthNum: Int) = cutEntryDAO.findByMonthNum(monthNum)
     suspend fun getCutsByYearSorted(year: Int) = cutEntryDAO.getEntriesFromSpecificYearSortedAsync(year)
     suspend fun getLastEntryFromSpecificYear(year: Int) = cutEntryDAO.getLastEntryFromSpecificYear(year)
     suspend fun addCut(cutEntry: CutEntry) = cutEntryDAO.insertAll(cutEntry)
-    suspend fun deleteCuts(vararg cuts: CutEntry) = cutEntryDAO.deleteCuts(*cuts)
+    suspend fun deleteCutById(id: Int) = cutEntryDAO.deleteCutById(id)
+    suspend fun deleteAllCuts() = cutEntryDAO.deleteAll()
+    suspend fun getYearDropdownArray() = cutEntryDAO.getYearDropdownArray()
+    suspend fun updateCuts(vararg cutEntries: CutEntry) = cutEntryDAO.updateCut(*cutEntries)
 
     suspend fun hasANewYearOccurredSinceLastCut(): Boolean {
         val currentYearCuts = cutEntryDAO.getEntriesFromSpecificYearSortedAsync(UtilFunctions.getCurrentYear())
@@ -31,4 +35,11 @@ class CutEntryRepository @Inject constructor(private val cutEntryDAO: CutEntryDA
         }
         return false
     }
+
+    suspend fun hasCutEntry(entry: CutEntry) = cutEntryDAO.hasExistingCut(entry)
+}
+
+fun setupCutEntryRepository(context: Context): CutEntryRepository {
+    val dao = AppDatabaseBuilder.getInstance(context).cutEntryDao()
+    return CutEntryRepository(dao)
 }

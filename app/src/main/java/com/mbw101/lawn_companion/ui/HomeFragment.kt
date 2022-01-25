@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,13 +12,19 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.mbw101.lawn_companion.BuildConfig
 import com.mbw101.lawn_companion.R
+import com.mbw101.lawn_companion.database.AppDatabaseBuilder
 import com.mbw101.lawn_companion.database.CutEntry
-import com.mbw101.lawn_companion.database.setupLawnLocationRepository
 import com.mbw101.lawn_companion.databinding.FragmentHomeBinding
+import com.mbw101.lawn_companion.notifications.AlarmReceiver
+import com.mbw101.lawn_companion.notifications.AlarmReceiver.Companion.callWeatherAPI
 import com.mbw101.lawn_companion.utils.ApplicationPrefs
 import com.mbw101.lawn_companion.utils.Constants
 import com.mbw101.lawn_companion.utils.UtilFunctions
+import com.mbw101.lawn_companion.utils.UtilFunctions.allowReads
+import com.mbw101.lawn_companion.weather.WeatherResponse
+import com.mbw101.lawn_companion.weather.isCurrentWeatherSuitable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -29,9 +36,12 @@ class HomeFragment : Fragment() {
     private lateinit var openPermissions: Button
     private lateinit var createLawnLocationButton: Button
     private lateinit var mainTextView: TextView
+    private lateinit var secondaryTextView: TextView
     private lateinit var salutationTextView: TextView
+    private lateinit var weatherSuitabilityTextView: TextView
     private val viewModel: CutEntryViewModel by viewModels()
     private var _binding: FragmentHomeBinding? = null
+    private var withinCuttingSeason: Boolean = false
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
@@ -46,7 +56,7 @@ class HomeFragment : Fragment() {
         fun getDescriptionMessage(entries: List<CutEntry>): String {
             // take into account the last cut (or if there even is an entry made)
             if (entries.isEmpty()) {
-                return  MyApplication.applicationContext().getString(R.string.noCutMessage)
+                return MyApplication.applicationContext().getString(R.string.noCutMessage)
             }
 
             // get the current date
@@ -63,10 +73,10 @@ class HomeFragment : Fragment() {
                 val cal = Calendar.getInstance()
                 cal.set(Calendar.MONTH, latestCut.month_number - 1) // month numbers in Calendar start at 0
                 cal.set(Calendar.DAY_OF_MONTH, latestCut.day_number)
+                val preferences = ApplicationPrefs()
 
-                // TODO: Implement the user's preference for how long they require a cut (replace the 1 week value -> 7 days)
                 val numDaysSince = UtilFunctions.getNumDaysSince(cal)
-                return if (numDaysSince > 7) {
+                return if (numDaysSince > preferences.getDesiredCutFrequency() || numDaysSince < 0) { // 2nd condition accounts for cuts in previous year
                     MyApplication.applicationContext().getString(R.string.passedIntervalMessage)
                 }
                 else if (numDaysSince > 1) { // days will be multiple
@@ -77,8 +87,12 @@ class HomeFragment : Fragment() {
                 }
             }
         }
-    }
 
+        // used for tracking latest weather response
+        private lateinit var weatherHttpResponse: WeatherResponse
+        private lateinit var timeOfWeatherCall: Calendar
+        private fun isWeatherCallInitialized() = ::timeOfWeatherCall.isInitialized
+    }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
@@ -93,23 +107,119 @@ class HomeFragment : Fragment() {
     }
 
     private fun init() {
+        val dbBuilder = AppDatabaseBuilder.getInstance(MyApplication.applicationContext())
         openPermissions = binding.openPermissionsButton
         createLawnLocationButton = binding.createLawnLocationButton
         mainTextView = binding.mainMessageTextView
+        secondaryTextView = binding.secondaryTextView
         salutationTextView = binding.salutationTextView
-
-        checkPermissionsOrIfLocationSaved()
-        setCorrectSalutation()
+        weatherSuitabilityTextView = binding.weatherSuitabilityTextView
         setupListeners()
+        setCorrectSalutation()
+
+        showProgressBar()
+        val cuttingSeasonDatesDao = dbBuilder.cuttingSeasonDatesDao()
+        runBlocking {
+            launch (Dispatchers.IO) {
+                // update cutting season years
+                cuttingSeasonDatesDao.updateCuttingSeasonYears()
+
+                // check if in cutting season
+                withinCuttingSeason = cuttingSeasonDatesDao.isInCuttingSeasonDates()
+                val preferences = ApplicationPrefs()
+                requireActivity().runOnUiThread {
+                    checkPermissionsOrIfLocationSaved()
+                    performSuitabilityTextViewWork(preferences)
+                    hideProgressBar()
+                }
+            }
+        }
+    }
+
+    private fun updateSuitabilityTextView() {
+        // check if we've recently updated it
+        if (!shouldCallAPI()) {
+            // the suitability text gets reset when switching fragments, so we must update it based on the weather
+            updateWeatherSuitabilityText(weatherHttpResponse)
+            return
+        }
+
+        runBlocking {
+            launch(Dispatchers.IO) {
+                val httpWeatherResponse = callWeatherAPI(MyApplication.applicationContext())
+
+                if (!httpWeatherResponse.isSuccessful) {
+                    return@launch
+                }
+
+                val weatherData = httpWeatherResponse.body() ?: return@launch
+
+                weatherHttpResponse = weatherData
+                timeOfWeatherCall = Calendar.getInstance()
+                Log.e(Constants.TAG, "Weather response = $weatherHttpResponse")
+
+                // update the text view with correct string
+                requireActivity().runOnUiThread {
+                    updateWeatherSuitabilityText(weatherData)
+                }
+            }
+        }
+    }
+
+    private fun updateWeatherSuitabilityText(weatherData: WeatherResponse) {
+        if (isCurrentWeatherSuitable(weatherData.current)) {
+            val appContext = MyApplication.applicationContext()
+            val hasSkippedNotification = ApplicationPrefs().shouldSkipNotification()
+            val areNotificationsEnabled = ApplicationPrefs().areNotificationsEnabled()
+
+            weatherSuitabilityTextView.text =
+                if (hasSkippedNotification) {
+                    appContext.getString(R.string.suitableWeatherMessage) + " " + appContext.getString(R.string.skippedNotificationMessage)
+                }
+                else if (!areNotificationsEnabled) {
+                    appContext.getString(R.string.suitableWeatherMessage) + " " + appContext.getString(R.string.disabledNotificationsMessage)
+                }
+                else {
+                    appContext.getString(R.string.suitableWeatherMessage) + " " + appContext.getString(R.string.expectNotificationMessage)
+                }
+
+        } else {
+            weatherSuitabilityTextView.text = MyApplication.applicationContext()
+                .getString(R.string.unsuitableWeatherMessage)
+        }
+    }
+
+    private val MILLIS_TO_HOURS = 3600000
+    private val HOURS_UNTIL_UPDATE = 2
+    private fun shouldCallAPI(): Boolean {
+        if (!isWeatherCallInitialized()) {
+            return true
+        }
+
+        val currentTime = Calendar.getInstance()
+        val diff: Long = currentTime.timeInMillis - timeOfWeatherCall.timeInMillis
+        val hours = diff / MILLIS_TO_HOURS
+
+        return hours >= HOURS_UNTIL_UPDATE
     }
 
     private fun setCorrectSalutation() {
         salutationTextView.text = getSalutation()
     }
 
-    override fun onResume() {
-        super.onResume()
-        checkPermissionsOrIfLocationSaved() // check if permissions have been updated when app is reopened
+    private fun performSuitabilityTextViewWork(preferences: ApplicationPrefs) {
+        if (!AlarmReceiver.preDownloadCriteriaCheckForWeatherSuitability(preferences)) {
+            weatherSuitabilityTextView.visibility = View.INVISIBLE
+        }
+        else if (!AlarmReceiver.connectionTypeMatchesPreferences(preferences, MyApplication.applicationContext())) {
+            weatherSuitabilityTextView.visibility = View.VISIBLE
+            weatherSuitabilityTextView.text =
+                getString(R.string.noConnectionAvailableWeatherMessage)
+        }
+        else {
+            weatherSuitabilityTextView.visibility = View.VISIBLE
+            updateSuitabilityTextView()
+        }
     }
 
     private fun setupListeners() {
@@ -134,49 +244,34 @@ class HomeFragment : Fragment() {
         val preferences = ApplicationPrefs()
 
         // look at if they turned on/off cutting season
-        if (!preferences.isInCuttingSeason()) {
+        if (!preferences.isInCuttingSeason() || !withinCuttingSeason) {
             mainTextView.text = getString(R.string.cuttingSeasonOver)
             openPermissions.visibility = View.INVISIBLE
             createLawnLocationButton.visibility = View.INVISIBLE
+            secondaryTextView.visibility = View.INVISIBLE
         }
         else {
-            // this might be causing the bug with app crashing since it's in a different thread than UI but
-            // will be used for updating the UI
-            val preferences = ApplicationPrefs()
             val hasLocationSavedInDB = preferences.hasLocationSaved()
-            if (hasLocationSavedInDB) {
-                setupViewModel()
-                openPermissions.visibility = View.INVISIBLE
-                createLawnLocationButton.visibility = View.INVISIBLE
-            }
-            else if (!UtilFunctions.hasLocationPermissions() && !hasLocationSavedInDB) {
-                mainTextView.text = getString(R.string.needsPermissionString)
+            if (!UtilFunctions.hasLocationPermissions()) {
+                secondaryTextView.text = getString(R.string.needsPermissionString)
+                secondaryTextView.visibility = View.VISIBLE
                 createLawnLocationButton.visibility = View.INVISIBLE
                 openPermissions.visibility = View.VISIBLE
             }
+            else if (hasLocationSavedInDB) {
+                setupViewModel()
+                secondaryTextView.visibility = View.INVISIBLE
+                openPermissions.visibility = View.INVISIBLE
+                createLawnLocationButton.visibility = View.INVISIBLE
+                secondaryTextView.visibility = View.INVISIBLE
+            }
             else if (!hasLocationSavedInDB) {
                 // show button + text
-                mainTextView.text = getString(R.string.noLawnLocationMessage)
+                secondaryTextView.text = getString(R.string.noLawnLocationMessage)
+                secondaryTextView.visibility = View.VISIBLE
                 createLawnLocationButton.visibility = View.VISIBLE
             }
         }
-    }
-
-    private fun createCoroutineToCheckIfLocationIsSaved(): Boolean {
-        var hasLocationSaved = false
-
-        runBlocking {
-            launch (Dispatchers.IO) {
-                hasLocationSaved = checkIfLocationSaved()
-            }
-        }
-
-        return hasLocationSaved
-    }
-
-    private suspend fun checkIfLocationSaved(): Boolean {
-        val lawnLocationRepository = setupLawnLocationRepository(MyApplication.applicationContext())
-        return lawnLocationRepository.hasALocationSaved()
     }
 
     /***
@@ -185,20 +280,19 @@ class HomeFragment : Fragment() {
      */
     private fun getSalutation(): String {
         val cal: Calendar = Calendar.getInstance()
-        val hourOfDay = cal.get(Calendar.HOUR_OF_DAY)
 
-         when (hourOfDay) {
+        return when (cal.get(Calendar.HOUR_OF_DAY)) {
             in Constants.MORNING_HOUR_START_TIME..Constants.MORNING_HOUR_END_TIME -> {
-                return getString(R.string.goodMorning)
+                getString(R.string.goodMorning)
             }
             in Constants.AFTERNOON_HOUR_START_TIME..Constants.AFTERNOON_HOUR_END_TIME -> {
-                return getString(R.string.goodAfternoon)
+                getString(R.string.goodAfternoon)
             }
             in Constants.EVENING_HOUR_START_TIME..Constants.EVENING_HOUR_END_TIME -> {
-                return getString(R.string.goodEvening)
+                getString(R.string.goodEvening)
             }
             else -> { // between NIGHT_HOUR_START_TIME downTo Constants.NIGHT_HOUR_END_TIME
-                return getString(R.string.goodNight)
+                getString(R.string.goodNight)
             }
         }
     }
@@ -206,10 +300,22 @@ class HomeFragment : Fragment() {
     // sets up ViewModel and calls getDescriptionMessage
     private fun setupViewModel() {
         // set up view model with fragment
-        viewModel.getSortedCuts().observe(viewLifecycleOwner, { entries -> //update RecyclerView later
-            // set up text on home frag depending on if a location is saved or not
-            mainTextView.text = getDescriptionMessage(entries)
-        })
+        if (BuildConfig.DEBUG) {
+            allowReads {
+                viewModel.getSortedCuts()
+                    .observe(viewLifecycleOwner, { entries -> //update RecyclerView later
+                        // set up text on home frag depending on if a location is saved or not
+                        mainTextView.text = getDescriptionMessage(entries)
+                    })
+            }
+        }
+        else {
+            viewModel.getSortedCuts()
+                .observe(viewLifecycleOwner, { entries -> //update RecyclerView later
+                    // set up text on home frag depending on if a location is saved or not
+                    mainTextView.text = getDescriptionMessage(entries)
+                })
+        }
     }
 
     // Show permissions screen for app in settings
@@ -219,5 +325,21 @@ class HomeFragment : Fragment() {
         val uri: Uri = Uri.fromParts("package", MyApplication.applicationContext().packageName, null)
         intent.data = uri
         startActivity(intent)
+    }
+
+    private fun showProgressBar() {
+        if (binding != null) {
+            val progressBar = binding.progressBar
+            progressBar.visibility = View.VISIBLE
+            binding.homeFragmentContent.visibility = View.INVISIBLE
+        }
+    }
+
+    private fun hideProgressBar() {
+        if (binding != null) {
+            val progressBar = binding.progressBar
+            progressBar.visibility = View.INVISIBLE
+            binding.homeFragmentContent.visibility = View.VISIBLE
+        }
     }
 }

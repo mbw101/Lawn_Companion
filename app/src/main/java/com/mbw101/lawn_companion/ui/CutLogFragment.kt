@@ -1,13 +1,17 @@
 package com.mbw101.lawn_companion.ui
 
 import android.app.AlertDialog
-import android.content.DialogInterface
+import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.Spinner
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -30,17 +34,17 @@ Date: May 15th, 2021
  */
 
 
-class CutLogFragment : Fragment(), OnItemClickListener {
+class CutLogFragment : Fragment(), OnItemClickListener, AdapterView.OnItemSelectedListener {
     private lateinit var mainRecyclerView: RecyclerView
     private lateinit var monthSections: List<MonthSection>
     private lateinit var mainRecyclerAdaptor: MainRecyclerAdaptor
-
 
     private val viewModel: CutEntryViewModel by viewModels()
     private var _binding: FragmentCutLogBinding? = null
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+    private var currentYear = UtilFunctions.getCurrentYear()
 
     companion object {
         // sets up the hashmap containing all entries for each respective month
@@ -72,7 +76,7 @@ class CutLogFragment : Fragment(), OnItemClickListener {
         }
 
         private fun createEmptyMonthHashMap(): HashMap<Int, List<CutEntry>> {
-            val hashMap: java.util.HashMap<Int, List<CutEntry>> = HashMap()
+            val hashMap: HashMap<Int, List<CutEntry>> = HashMap()
 
             // map each month to empty list to start
             for (i in 1..12) {
@@ -81,23 +85,22 @@ class CutLogFragment : Fragment(), OnItemClickListener {
             return hashMap
         }
 
-        fun setupMonthSections(hashMap: HashMap<Int, List<CutEntry>>): List<MonthSection> {
-            val currentYear = UtilFunctions.getCurrentYear()
+        fun setupMonthSections(hashMap: HashMap<Int, List<CutEntry>>, year: Int): List<MonthSection> {
             println(hashMap)
             // add each month section
             return listOf(
-                MonthSection("Jan $currentYear", hashMap[Constants.Month.JANUARY.monthNum] ?: emptyList()),
-                MonthSection("Feb $currentYear", hashMap[Constants.Month.FEBRUARY.monthNum] ?: emptyList()),
-                MonthSection("Mar $currentYear", hashMap[Constants.Month.MARCH.monthNum] ?: emptyList()),
-                MonthSection("Apr $currentYear", hashMap[Constants.Month.APRIL.monthNum] ?: emptyList()),
-                MonthSection("May $currentYear", hashMap[Constants.Month.MAY.monthNum] ?: emptyList()),
-                MonthSection("June $currentYear", hashMap[Constants.Month.JUNE.monthNum] ?: emptyList()),
-                MonthSection("July $currentYear", hashMap[Constants.Month.JULY.monthNum] ?: emptyList()),
-                MonthSection("Aug $currentYear", hashMap[Constants.Month.AUGUST.monthNum] ?: emptyList()),
-                MonthSection("Sept $currentYear", hashMap[Constants.Month.SEPTEMBER.monthNum] ?: emptyList()),
-                MonthSection("Oct $currentYear", hashMap[Constants.Month.OCTOBER.monthNum] ?: emptyList()),
-                MonthSection("Nov $currentYear", hashMap[Constants.Month.NOVEMBER.monthNum] ?: emptyList()),
-                MonthSection("Dec $currentYear", hashMap[Constants.Month.DECEMBER.monthNum] ?: emptyList())
+                MonthSection("Jan $year", hashMap[Constants.Month.JANUARY.monthNum] ?: emptyList()),
+                MonthSection("Feb $year", hashMap[Constants.Month.FEBRUARY.monthNum] ?: emptyList()),
+                MonthSection("Mar $year", hashMap[Constants.Month.MARCH.monthNum] ?: emptyList()),
+                MonthSection("Apr $year", hashMap[Constants.Month.APRIL.monthNum] ?: emptyList()),
+                MonthSection("May $year", hashMap[Constants.Month.MAY.monthNum] ?: emptyList()),
+                MonthSection("June $year", hashMap[Constants.Month.JUNE.monthNum] ?: emptyList()),
+                MonthSection("July $year", hashMap[Constants.Month.JULY.monthNum] ?: emptyList()),
+                MonthSection("Aug $year", hashMap[Constants.Month.AUGUST.monthNum] ?: emptyList()),
+                MonthSection("Sept $year", hashMap[Constants.Month.SEPTEMBER.monthNum] ?: emptyList()),
+                MonthSection("Oct $year", hashMap[Constants.Month.OCTOBER.monthNum] ?: emptyList()),
+                MonthSection("Nov $year", hashMap[Constants.Month.NOVEMBER.monthNum] ?: emptyList()),
+                MonthSection("Dec $year", hashMap[Constants.Month.DECEMBER.monthNum] ?: emptyList())
             )
         }
     }
@@ -116,18 +119,22 @@ class CutLogFragment : Fragment(), OnItemClickListener {
 
     private fun init() {
         // initialize components
-        mainRecyclerView = binding.mainRecyclerview
+        mainRecyclerView = binding.cutlogRecyclerview
 
         // set up the adaptor
         mainRecyclerAdaptor = MainRecyclerAdaptor(this) // pass in our click listener method
         mainRecyclerView.adapter = mainRecyclerAdaptor
 
         val itemDecoration = DividerItemDecoration(mainRecyclerView.context, DividerItemDecoration.VERTICAL)
-        itemDecoration.setDrawable(ColorDrawable(resources.getColor(R.color.light_gray)))
+        itemDecoration.setDrawable(ColorDrawable(ContextCompat.getColor(MyApplication.applicationContext(), R.color.light_gray)))
         mainRecyclerView.addItemDecoration(itemDecoration)
 
+        // set up listener for year dropdown
+        val yearDropdown = requireActivity().findViewById<Spinner>(R.id.yearDropdown)
+        yearDropdown.onItemSelectedListener = this
+
         setupListeners()
-        setupViewModel()
+        setupViewModel(UtilFunctions.getCurrentYear())
     }
 
     private fun setupListeners() {
@@ -144,12 +151,14 @@ class CutLogFragment : Fragment(), OnItemClickListener {
         })
     }
 
-    private fun setupViewModel() {
+    private fun setupViewModel(year: Int) {
         runBlocking {
             launch (Dispatchers.IO) {
-                val sortedEntriesFromCurrentYear = viewModel.getEntriesFromSpecificYearSorted(UtilFunctions.getCurrentYear())
-                setupCutEntries(sortedEntriesFromCurrentYear)
-                mainRecyclerAdaptor.setSections(monthSections)
+                val sortedEntriesFromCurrentYear = viewModel.getEntriesFromSpecificYearSorted(year)
+                setupCutEntries(sortedEntriesFromCurrentYear, year)
+                requireActivity().runOnUiThread {
+                    mainRecyclerAdaptor.setSections(monthSections)
+                }
             }
         }
     }
@@ -158,38 +167,91 @@ class CutLogFragment : Fragment(), OnItemClickListener {
      * Will set up the list of data
      * which will be displayed in the recyclerview
      */
-    private fun setupCutEntries(entries: List<CutEntry>) {
+    private fun setupCutEntries(entries: List<CutEntry>, year: Int) {
         // set up hashmap with entries for each month and create month sections
         val hashMap: HashMap<Int, List<CutEntry>> = setupHashmap(entries)
-        monthSections = setupMonthSections(hashMap)
+        monthSections = setupMonthSections(hashMap, year)
     }
 
     override fun onItemClick(entry: CutEntry): Unit = runBlocking{
         Log.d(Constants.TAG, "onItemClick: $entry")
+        val noteToShow = entry.note ?: getString(R.string.noCutEntryNote)
+
+        // show dialog with note of cut entry
+        val builder = AlertDialog.Builder(context)
+            .setTitle(getString(R.string.cutEntryDetailsDialog))
+//            .setIcon(R.drawable.ic_notificationicon24)
+            .setMessage(getString(R.string.cutEntryNote) + " " + noteToShow)
+            .setPositiveButton(R.string.deleteOption) { _, _ ->
+                showConfirmationDialog(entry)
+            }
+            .setNegativeButton(R.string.editCutEntryAction) { _, _ ->
+                // TODO: Open up an edit activity that reuses the AddCutActivity
+                // passing in entry as data in intent
+                val intent = Intent(activity, EditCutActivity::class.java)
+                intent.putExtra(getString(R.string.cutEntryIntentKey), entry)
+                startActivity(intent)
+            }
+            .setNeutralButton(R.string.cancelOption) { _, _ ->
+            }
+
+        val alertDialog: AlertDialog = builder.create()
+        // allow back button presses when alert dialog is shown
+        alertDialog.setOnKeyListener { _, keyCode, _ ->
+            if (keyCode == KeyEvent.KEYCODE_BACK) {
+                alertDialog.dismiss()
+            }
+            true
+        }
+        alertDialog.show()
+    }
+
+    private fun showConfirmationDialog(entry: CutEntry) {
         val builder = AlertDialog.Builder(context)
         builder.setTitle(R.string.alertTitle)
-            .setPositiveButton(R.string.deleteOption,
-                DialogInterface.OnClickListener { dialog, id ->
-                    deleteCut(entry)
-                    // TODO: Make sure the user interface is updated to reflect the deleted entry
-//                    mainRecyclerAdaptor.notifyItemChanged(entry.month_number-1)
-                    mainRecyclerView.adapter!!.notifyItemRangeChanged(0, 12)
-                    mainRecyclerAdaptor.notifyItemRangeChanged(0, 12)
-
-                })
-            .setNegativeButton(R.string.cancelOption,
-                DialogInterface.OnClickListener { dialog, id ->
-                    // User cancelled the dialog
-                })
+            .setPositiveButton(R.string.deleteOption) { _, _ ->
+                // remove cut entry and update the list in the main recyclerview
+                deleteCut(entry)
+                setupViewModel(currentYear)
+                val myActivity = activity as MainActivity
+                myActivity.updateYearDropdown()
+            }
+            .setNegativeButton(R.string.cancelOption) { _, _ ->
+                // User cancelled the dialog
+            }
             .setMessage(R.string.alertMessage)
 
         // Create the AlertDialog object and set properties
         val alertDialog: AlertDialog = builder.create()
         alertDialog.setCancelable(false)
+        // allow back button presses when alert dialog is shown
+        alertDialog.setOnKeyListener { _, keyCode, _ ->
+            if (keyCode == KeyEvent.KEYCODE_BACK) {
+                alertDialog.dismiss()
+            }
+            true
+        }
         alertDialog.show()
     }
 
     private fun deleteCut(entry: CutEntry) = runBlocking {
-        viewModel.deleteCuts(entry)
+        viewModel.deleteCutById(entry.id)
+    }
+
+    override fun onItemSelected(p0: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        if (view == null) {
+            return
+        }
+
+        Log.d(Constants.TAG, "Position: $position")
+
+        val mainActivity = activity as MainActivity? ?: return
+        val selectedYear = mainActivity.yearDropdownArray[position].toInt()
+        Log.d(Constants.TAG, "Selected year: $selectedYear")
+        setupViewModel(selectedYear)
+        currentYear = selectedYear
+    }
+
+    override fun onNothingSelected(p0: AdapterView<*>?) {
     }
 }

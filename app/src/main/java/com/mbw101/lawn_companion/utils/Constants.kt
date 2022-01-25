@@ -1,5 +1,7 @@
 package com.mbw101.lawn_companion.utils
 
+import androidx.annotation.IdRes
+
 /**
 Lawn Companion
 Created by Malcolm Wright
@@ -13,6 +15,7 @@ object Constants {
     val months: Array<String> = arrayOf("Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec")
     const val IS_FIRST_TIME = "is_first_time"
     const val HAS_LOCATION_SAVED = "has_location_saved"
+    const val SKIP_DATE_KEY = "skip_date"
     const val APPLICATION_PREFS = "app_preference"
     const val TAG = "LAWN COMPANION"
 
@@ -29,6 +32,12 @@ object Constants {
         OCTOBER(10),
         NOVEMBER(11),
         DECEMBER(12),
+    }
+
+    enum class AlertDialogButton(@IdRes val resId: Int) {
+        POSITIVE(android.R.id.button1),
+        NEGATIVE(android.R.id.button2),
+        NEUTRAL(android.R.id.button3)
     }
 
     const val MORNING_HOUR_START_TIME = 5 // am

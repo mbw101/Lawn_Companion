@@ -2,21 +2,22 @@ package com.mbw101.lawn_companion.utils
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.os.StrictMode
 import androidx.core.content.ContextCompat
+import com.mbw101.lawn_companion.BuildConfig
 import com.mbw101.lawn_companion.ui.MyApplication
+import org.joda.time.DateTime
+import org.joda.time.Days
 import java.util.*
 import java.util.Calendar.DAY_OF_YEAR
-import java.util.concurrent.TimeUnit
-import kotlin.math.abs
 
 object UtilFunctions {
-   private const val MY_PERMISSIONS_REQUEST_LOCATION = 99
 
     /***
-     * Returns true if the COARSE location permission has been granted
+     * Returns true if the FINE location permission has been granted
      */
     fun hasLocationPermissions(): Boolean {
-        return (ContextCompat.checkSelfPermission(MyApplication.applicationContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+        return (ContextCompat.checkSelfPermission(MyApplication.applicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
             == PackageManager.PERMISSION_GRANTED)
     }
 
@@ -35,18 +36,29 @@ object UtilFunctions {
         return cal.get(Calendar.YEAR)
     }
 
-    // returns the number of days between the two dates
+    /** returns the number of days between the two dates
+     *
+     */
     fun getNumDaysBetween(start: Calendar, end: Calendar): Int {
         // set hours and minutes to 0
-        start.set(Calendar.HOUR_OF_DAY, 12)
-        end.set(Calendar.HOUR_OF_DAY, 12)
-        start.set(Calendar.MINUTE, 0)
-        end.set(Calendar.MINUTE, 0)
+        if (BuildConfig.DEBUG) {
+            var newStart: DateTime? = null
+            var newEnd: DateTime? = null
 
-        val millis = abs(end.timeInMillis - start.timeInMillis)
+            // DateTime constructor results in a StrictMode policy violation
+            allowReads {
+                newStart = DateTime(start)
+                newEnd = DateTime(end)
+            }
 
-//        return (millis / (24 * 60 * 60 * 1000)).toInt()
-        return TimeUnit.MILLISECONDS.toDays(millis).toInt()
+            return Days.daysBetween(newStart!!, newEnd!!).days
+        }
+        else {
+            val newStart = DateTime(start)
+            val newEnd = DateTime(end)
+
+            return Days.daysBetween(newStart, newEnd).days
+        }
     }
 
     fun sameDate(date1: Calendar, date2: Calendar): Boolean {
@@ -57,5 +69,16 @@ object UtilFunctions {
     // Finds num days since the given date (using current date)
     fun getNumDaysSince(date: Calendar): Int {
         return getNumDaysBetween(date, Calendar.getInstance())
+    }
+
+    // StrictMode testing function
+    // https://stackoverflow.com/questions/49841781/strictmode-strictmodediskreadviolation-when-creating-sharedpreference
+    fun <T> allowReads(block: () -> T): T {
+        val oldPolicy = StrictMode.allowThreadDiskReads()
+        try {
+            return block()
+        } finally {
+            StrictMode.setThreadPolicy(oldPolicy)
+        }
     }
 }

@@ -2,8 +2,11 @@ package com.mbw101.lawn_companion.utils
 
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
+import com.mbw101.lawn_companion.BuildConfig
 import com.mbw101.lawn_companion.R
+import com.mbw101.lawn_companion.notifications.NotificationHelper
 import com.mbw101.lawn_companion.ui.MyApplication
+import com.mbw101.lawn_companion.utils.UtilFunctions.allowReads
 import java.util.*
 
 /**
@@ -32,6 +35,25 @@ class ApplicationPrefs {
     fun setNotFirstTime(b: Boolean) {
         val mEditor = mPreferences.edit()
         mEditor.putBoolean(Constants.IS_FIRST_TIME, b).apply()
+    }
+
+    /**
+     *  compares skip date with current date and returns true
+     *  if notification should be skipped
+     */
+    fun shouldSkipNotification(): Boolean {
+        return mPreferences.getString(Constants.SKIP_DATE_KEY, "").equals(NotificationHelper.createSkipDateString())
+    }
+
+    fun saveSkipDate(skipDate: String = NotificationHelper.createSkipDateString()) {
+        val editor = mPreferences.edit()
+        editor.putString(Constants.SKIP_DATE_KEY, skipDate).apply()
+    }
+
+    fun clearPreferences() {
+        val editor = mPreferences.edit()
+        editor.clear()
+        editor.apply()
     }
 
     fun getWeatherCheckFrequencyInMillis(): Int {
@@ -74,7 +96,7 @@ class ApplicationPrefs {
         return getBooleanPreferenceFromSharedPrefs(MyApplication.applicationContext().getString(R.string.cuttingSeasonKey))
     }
 
-    fun isNotificationsEnabled(): Boolean {
+    fun areNotificationsEnabled(): Boolean {
         return getBooleanPreferenceFromSharedPrefs(MyApplication.applicationContext().getString(R.string.notificationPreferenceKey))
     }
 
@@ -84,19 +106,18 @@ class ApplicationPrefs {
 
     fun isInTimeOfDay(): Boolean {
         val cal = Calendar.getInstance()
-        val hourOfDay = cal.get(Calendar.HOUR_OF_DAY)
-        when (hourOfDay) {
+        return when (cal.get(Calendar.HOUR_OF_DAY)) {
             in Constants.MORNING_HOUR_START_TIME..Constants.MORNING_HOUR_END_TIME -> {
-                return areMorningsSelected()
+                areMorningsSelected()
             }
             in Constants.AFTERNOON_HOUR_START_TIME..Constants.AFTERNOON_HOUR_END_TIME -> {
-                return areAfternoonsSelected()
+                areAfternoonsSelected()
             }
             in Constants.EVENING_HOUR_START_TIME..Constants.EVENING_HOUR_END_TIME -> {
-                return areEveningsSelected()
+                areEveningsSelected()
             }
             else -> { // between NIGHT_HOUR_START_TIME downTo Constants.NIGHT_HOUR_END_TIME
-                return areNightsSelected()
+                areNightsSelected()
             }
         }
     }
@@ -117,9 +138,43 @@ class ApplicationPrefs {
         return getBooleanPreferenceFromSharedPrefs(MyApplication.applicationContext().getString(R.string.nightTimeOfDayKey))
     }
 
-    private fun getBooleanPreferenceFromSharedPrefs(preferenceKey: String): Boolean {
-        val preferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(MyApplication.applicationContext())
-        val defaultBooleanPreferenceValue = true
-        return preferences.getBoolean(preferenceKey, defaultBooleanPreferenceValue)
+    fun saveBoolPreferenceValueInSharedPrefs(preferenceKey: String, value: Boolean) {
+        if (BuildConfig.DEBUG) {
+            lateinit var preferences: SharedPreferences
+
+            allowReads {
+                preferences =
+                    PreferenceManager.getDefaultSharedPreferences(MyApplication.applicationContext())
+                val mEditor = preferences.edit()
+                mEditor.putBoolean(preferenceKey, value).apply()
+            }
+        }
+
+    }
+
+    /**
+     *      Defaults to true for boolean return value
+     */
+    fun getBooleanPreferenceFromSharedPrefs(preferenceKey: String): Boolean {
+        if (BuildConfig.DEBUG) {
+            lateinit var preferences: SharedPreferences
+
+            allowReads {
+                preferences = PreferenceManager.getDefaultSharedPreferences(MyApplication.applicationContext())
+            }
+
+            val defaultBooleanPreferenceValue = true
+            var booleanPreferenceValue: Boolean = defaultBooleanPreferenceValue
+            allowReads {
+                booleanPreferenceValue = preferences.getBoolean(preferenceKey, defaultBooleanPreferenceValue)
+            }
+
+            return booleanPreferenceValue
+        }
+        else {
+            val preferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(MyApplication.applicationContext())
+            val defaultBooleanPreferenceValue = true
+            return preferences.getBoolean(preferenceKey, defaultBooleanPreferenceValue)
+        }
     }
 }

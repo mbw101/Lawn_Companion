@@ -1,12 +1,15 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-parcelize'
+    id 'kotlin-kapt'
+    id 'jacoco'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
 }
 
-apply plugin: 'kotlin-kapt'
-
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion "30.0.2"
 
     dataBinding {
@@ -14,10 +17,21 @@ android {
     }
 
     testOptions {
+        // Causes issues on versions API 29 and greater
         execution 'ANDROIDX_TEST_ORCHESTRATOR'
+
+        // allows for application context (in homescreen test)
         unitTests {
             includeAndroidResources = true
             unitTests.includeAndroidResources = true
+        }
+
+        reportDir = "$project.buildDir/test-results"
+        unitTests.all {
+            jacoco {
+//                includeNoLocationClasses = true
+                jvmArgs '-noverify'
+            }
         }
     }
 
@@ -27,11 +41,11 @@ android {
         }
 
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 31
 
         applicationId 'com.mbw101.lawn_companion'
         versionCode 1
-        versionName '0.9'
+        versionName '1.0'
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
 
@@ -46,18 +60,15 @@ android {
         }
 
         debug {
-            versionNameSuffix "DEBUG"
+            versionNameSuffix "BETA"
             resValue "string", "app_version",
                     "${defaultConfig.versionName} - ${versionNameSuffix}"
-            // add the API key from the gradle.properties file
-            buildConfigField 'String', 'OPEN_WEATHER_MAP_API_KEY', open_weather_map_api_key
+            testCoverageEnabled true
         }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             resValue "string", "app_version", "${defaultConfig.versionName}"
-            // add the API key from the gradle.properties file
-            buildConfigField 'String', 'OPEN_WEATHER_MAP_API_KEY', open_weather_map_api_key
         }
     }
     compileOptions {
@@ -69,85 +80,104 @@ android {
     }
     buildFeatures {
         viewBinding true
+        dataBinding = true
+    }
+
+    // fixes the annotation issues when compiling with Gradle locally
+    if (project.hasProperty('kapt')) {
+        // Reference for 'kapt' DSL: https://kotlinlang.org/docs/reference/kapt.html#java-compiler-options
+        kapt {
+            // we expect this closure to run over a org.jetbrains.kotlin.gradle.plugin.KaptExtension
+            javacOptions {
+                option("-source", "8")
+                option("-target", "8")
+            }
+        }
     }
 }
 
 dependencies {
-    def espresso_version = 1.3
+    kapt "androidx.lifecycle:lifecycle-compiler:2.0.0"
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'androidx.core:core-ktx:1.3.1'
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'com.google.android.material:material:1.2.1'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.6.0"
+    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.appcompat:appcompat:1.4.0'
+    implementation 'com.google.android.material:material:1.4.0'
+    // Causes UI elements to not be shown
     implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.preference:preference:1.1.1'
+    implementation 'androidx.preference:preference-ktx:1.1.1'
 
     // location
-    implementation 'com.google.android.gms:play-services:11.6.0'
+    implementation 'com.google.android.gms:play-services-location:19.0.1'
 
     // navigation
     implementation "androidx.viewpager2:viewpager2:1.0.0"
-    implementation 'androidx.navigation:navigation-fragment:2.3.0-ktx'
-    implementation 'androidx.navigation:navigation-ui:2.3.0-ktx'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.0'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.3.0'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
     implementation 'javax.inject:javax.inject:1'
 
     // room database
-    implementation "androidx.room:room-runtime:2.3.0"
-    kapt "androidx.room:room-compiler:2.3.0"
-    implementation "androidx.room:room-ktx:2.3.0"
+    implementation "androidx.room:room-runtime:2.4.0"
+    kapt "androidx.room:room-compiler:2.4.0"
+    implementation "androidx.room:room-ktx:2.4.0"
     testImplementation "androidx.arch.core:core-testing:2.1.0"
-    testImplementation "androidx.room:room-testing:2.3.0"
-
-    // worker
-    def work_version = "2.5.0"
-    implementation "androidx.work:work-runtime-ktx:$work_version"
+    testImplementation "androidx.room:room-testing:2.4.0"
+    implementation 'javax.annotation:javax.annotation-api:1.3.2'
 
     // api
     implementation 'com.squareup.retrofit2:retrofit:2.7.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.7.0'
-    implementation 'com.squareup.okhttp3:okhttp:4.3.1'
-    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.squareup.okhttp3:okhttp:4.8.0'
+    implementation 'com.google.code.gson:gson:2.8.6'
 
     // testing
 
     // JUnit
     testImplementation 'junit:junit:4.12'
-    testImplementation 'androidx.test:rules:1.2.0'
-    testImplementation 'androidx.test:core:1.2.0'
+    testImplementation 'androidx.test:rules:1.4.0'
+    testImplementation 'androidx.test:core:1.4.0'
     testImplementation "org.robolectric:robolectric:4.2.1"
-    testImplementation 'androidx.test.ext:junit:1.1.0'
-    androidTestUtil 'androidx.test:orchestrator:1.1.0'
+    testImplementation 'androidx.test.ext:junit:1.1.3'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.1'
+    androidTestUtil 'androidx.test:orchestrator:1.4.1'
 
-    //testImplementation 'org.mockito:mockito-core:2.23.0'
+    // Mockito
+    testImplementation 'org.mockito:mockito-core:2.23.0'
 
     // espresso
-    androidTestImplementation 'androidx.test:runner:1.1.0'
+    androidTestImplementation 'androidx.test:runner:1.4.0'
     androidTestImplementation "androidx.test:rules:1.4.0"
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    androidTestImplementation 'androidx.test:core:1.2.0'
-    androidTestImplementation "com.android.support.test.espresso:espresso-intents:$espresso_version"
-    androidTestImplementation "com.android.support.test.espresso:espresso-core:$espresso_version"
-    androidTestImplementation "com.android.support.test.espresso:espresso-contrib:$espresso_version"
-    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
-    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version@aar"
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test:core:1.4.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-intents:3.4.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.4.0'
 
     //App's dependencies, including test
-    implementation 'com.android.support:support-annotations:22.2.0'
+    implementation 'androidx.annotation:annotation:1.3.0'
 
     // Testing-only dependencies
     androidTestImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:rules:1.3.0'
+    androidTestImplementation 'androidx.test:rules:1.4.0'
 
     // integrate libraries
     implementation "com.squareup.okhttp3:okhttp:4.8.0"
     implementation 'com.google.code.gson:gson:2.8.6'
-    implementation "android.arch.persistence.room:runtime:1.0.0"
-    kapt "android.arch.persistence.room:compiler:1.0.0"
-    testImplementation "android.arch.persistence.room:testing:1.0.0"
-    implementation "android.arch.persistence.room:rxjava2:1.0.0"
+    kapt 'androidx.room:room-compiler:2.4.0'
+    testImplementation 'androidx.room:room-testing:2.4.0'
+    implementation 'androidx.room:room-rxjava2:2.4.0'
 
-    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'androidx.multidex:multidex:2.0.1'
+
+    // used for improved date calculations
+    implementation 'joda-time:joda-time:2.9.4'
+
+    // Import the Firebase BoM (see: https://firebase.google.com/docs/android/learn-more#bom)
+    implementation platform('com.google.firebase:firebase-bom:29.0.3')
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    // Firebase Crashlytics (Kotlin)
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
 }

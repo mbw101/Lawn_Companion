@@ -1,10 +1,10 @@
 package com.mbw101.lawn_companion
 
-import androidx.test.runner.AndroidJUnit4
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.mbw101.lawn_companion.database.CutEntry
 import com.mbw101.lawn_companion.ui.HomeFragment
 import com.mbw101.lawn_companion.utils.UtilFunctions
-import junit.framework.Assert.assertEquals
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
@@ -28,8 +28,9 @@ class HomeScreenTests {
         val currentDate = Calendar.getInstance()
 
         // test no cuts made
-        val list: MutableList<CutEntry> = mutableListOf<CutEntry>()
+        val list: MutableList<CutEntry> = mutableListOf()
         var expectedString = "No cuts have been made yet. Add a new cut to get started!"
+        println(HomeFragment.getDescriptionMessage(list.toList()))
         assertEquals(HomeFragment.getDescriptionMessage(list.toList()), expectedString)
 
         // test 1 cut in the list (with cut on the same day)
@@ -80,6 +81,16 @@ class HomeScreenTests {
         list.add(CutEntry(
             "4:36pm", newDate.get(Calendar.DAY_OF_MONTH), "January",
             newDate.get(Calendar.MONTH)+1, UtilFunctions.getCurrentYear()
+        ))
+        expectedString = "Your last cut has surpassed the cutting interval. You will likely need a cut."
+        assertEquals(HomeFragment.getDescriptionMessage(list), expectedString)
+
+        // test date in previous year
+        newDate.add(Calendar.DAY_OF_YEAR, -10000)
+        list.clear()
+        list.add(CutEntry(
+            "4:36pm", newDate.get(Calendar.DAY_OF_MONTH), "January",
+            newDate.get(Calendar.MONTH)+1, UtilFunctions.getCurrentYear() - 1
         ))
         expectedString = "Your last cut has surpassed the cutting interval. You will likely need a cut."
         assertEquals(HomeFragment.getDescriptionMessage(list), expectedString)

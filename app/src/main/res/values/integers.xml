@@ -3,4 +3,5 @@
     <integer name="desired_cutfreq_default">7</integer>
     <integer name="desired_cutfreq_min">5</integer>
     <integer name="desired_cutfreq_max">14</integer>
+    <integer name="maxNoteLength">250</integer>
 </resources>

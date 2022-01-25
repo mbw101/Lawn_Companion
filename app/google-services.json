@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "498389620423",
+    "project_id": "lawn-companion",
+    "storage_bucket": "lawn-companion.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:498389620423:android:ca3f45f62881edba1790e2",
+        "android_client_info": {
+          "package_name": "com.mbw101.lawn_companion"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "498389620423-avd7t89038s1r5mefaq62gspvoblatq6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVbsj-7ZlT6DyYzy4lgBxqPj0oyCCC4Pc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "498389620423-avd7t89038s1r5mefaq62gspvoblatq6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -4,8 +4,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
-import android.net.NetworkInfo
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.util.Log
+import com.mbw101.lawn_companion.BuildConfig
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.*
 import com.mbw101.lawn_companion.ui.MyApplication
@@ -34,6 +36,123 @@ class AlarmReceiver : BroadcastReceiver() {
         // can start checking weather/cut suitability 2 days before there next desired cut frequency
         // ex: 2 weeks but would start checking on the 12th day
         const val DAYS_SINCE_DELTA = 2
+
+        // used for weather text view on home fragment
+        fun preDownloadCriteriaCheckForWeatherSuitability(preferences: ApplicationPrefs): Boolean {
+            if (!isCuttingSeasonTurnedOn(preferences)
+                || !isInCuttingSeason()
+                || !preferences.hasLocationSaved()
+            ) {
+                Log.e(Constants.TAG, "Won't show weather suitability text view on home screen")
+                return false
+            }
+
+            return true
+        }
+
+        fun notificationsAreEnabled(preferences: ApplicationPrefs): Boolean {
+            return preferences.areNotificationsEnabled()
+        }
+
+        fun isCuttingSeasonTurnedOn(preferences: ApplicationPrefs): Boolean {
+            return preferences.isInCuttingSeason()
+        }
+
+        fun isInCuttingSeason(): Boolean {
+            var inCuttingSeason = false
+            val db = AppDatabaseBuilder.getInstance(MyApplication.applicationContext())
+            val cuttingSeasonDatesDao = db.cuttingSeasonDatesDao()
+
+            // access result from DB function in a different coroutine scope
+            runBlocking {
+                launch (Dispatchers.IO) {
+                    inCuttingSeason = cuttingSeasonDatesDao.isInCuttingSeasonDates()
+                }
+            }
+
+            return inCuttingSeason
+        }
+
+        private fun buildWeatherAPI(): WeatherService {
+            val retrofit = Retrofit.Builder()
+                .baseUrl(WeatherService.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+            return retrofit.create(WeatherService::class.java)
+        }
+
+        // passing in the weatherAPI allows us to pass in a mock to it
+        suspend fun callWeatherAPI(context: Context, weatherService: WeatherService = buildWeatherAPI()): Response<WeatherResponse> {
+            val (lat, long) = getCoordinates(context)
+            return weatherService.getWeather(lat, long)
+        }
+
+        private fun getCoordinates(context: Context): Pair<Double, Double> {
+            val lat: Double
+            val long: Double
+
+            val repository = setupLawnLocationRepository(context)
+
+            val lawnLocation = repository.getLocation()
+            lat = lawnLocation.latitude
+            long = lawnLocation.longitude
+            if (BuildConfig.DEBUG) {
+                Log.d(Constants.TAG, "Got $lawnLocation from DB!")
+            }
+            return Pair(lat, long)
+        }
+
+        fun connectionTypeMatchesPreferences(
+            preferences: ApplicationPrefs,
+            context: Context
+        ): Boolean {
+            if (!hasInternetConnection(context)) {
+                Log.e(Constants.TAG, "Has no internet connection!")
+                return false
+            }
+            if (!isDataUseEnabled(preferences)) {
+                return isUsingWifiConnection(context)
+            }
+
+            Log.e(Constants.TAG, "Connection type matches preferences!")
+            return true
+        }
+
+        private fun hasInternetConnection(context: Context): Boolean {
+            // determines whether the user has an internet connection
+            val connectivityManager =
+                context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                val network = connectivityManager.activeNetwork ?: return false
+                val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+
+                // include Wi-Fi or data in this check
+                return activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) || activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+            }
+            else {
+                return connectivityManager.activeNetworkInfo?.isConnectedOrConnecting ?: false
+            }
+        }
+
+        private fun isDataUseEnabled(preferences: ApplicationPrefs): Boolean {
+            return preferences.isDataUseEnabled()
+        }
+
+        private fun isUsingWifiConnection(context: Context): Boolean {
+            if (isUsingDataConnection(context)) {
+                Log.d(Constants.TAG, "Has data connection but preference says not to use data!")
+                return false
+            }
+
+            Log.d(Constants.TAG, "Connection type matches preferences!")
+            return true
+        }
+
+        private fun isUsingDataConnection(context: Context): Boolean {
+            val connectivityManager =
+                context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            return connectivityManager.isActiveNetworkMetered
+        }
     }
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -61,8 +180,9 @@ class AlarmReceiver : BroadcastReceiver() {
     private fun preferencesHaveHappyConditions(preferences: ApplicationPrefs): Boolean {
         if (!preferences.isInTimeOfDay()
             || !notificationsAreEnabled(preferences)
-            || !isCuttingSeasonTurnedOff(preferences)
+            || !isCuttingSeasonTurnedOn(preferences)
             || !isInCuttingSeason()
+            || preferences.shouldSkipNotification()
         ) {
             Log.d(Constants.TAG, "The happy conditions have not been met! Check settings configuration!")
             return false
@@ -87,33 +207,6 @@ class AlarmReceiver : BroadcastReceiver() {
         return locationExists
     }
 
-    private fun notificationsAreEnabled(preferences: ApplicationPrefs): Boolean {
-        return preferences.isNotificationsEnabled()
-    }
-
-    private fun isCuttingSeasonTurnedOff(preferences: ApplicationPrefs): Boolean {
-        return preferences.isInCuttingSeason()
-    }
-
-    private fun isInCuttingSeason(): Boolean {
-        var inCuttingSeason = false
-        val db = AppDatabaseBuilder.getInstance(MyApplication.applicationContext())
-        val cuttingSeasonDatesDao = db.cuttingSeasonDatesDao()
-
-        // access result from DB function in a different coroutine scope
-        runBlocking {
-            launch (Dispatchers.IO) {
-                inCuttingSeason = cuttingSeasonDatesDao.isInCuttingSeasonDates()
-            }
-        }
-
-        return inCuttingSeason
-    }
-
-    private fun isDataUseEnabled(preferences: ApplicationPrefs): Boolean {
-        return preferences.isDataUseEnabled()
-    }
-
     private fun runNotificationCoroutineWork(repository: CutEntryRepository, preferences: ApplicationPrefs, context: Context)
     = runBlocking {
         // starts a new coroutine, so we can access the DB concurrently without blocking the current thread (UI)
@@ -131,69 +224,6 @@ class AlarmReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun connectionTypeMatchesPreferences(
-        preferences: ApplicationPrefs,
-        context: Context
-    ): Boolean {
-        if (!hasInternetConnection(context)) {
-            Log.d(Constants.TAG, "Has no internet connection!")
-            return false
-        }
-        if (!isDataUseEnabled(preferences)) {
-            return isUsingWifiConnection(context)
-        }
-
-        Log.d(Constants.TAG, "Connection type matches preferences!")
-        return true
-    }
-
-    private fun isUsingWifiConnection(context: Context): Boolean {
-        if (isUsingDataConnection(context)) {
-            Log.d(Constants.TAG, "Has data connection but preference says not to use data!")
-            return false
-        }
-
-        Log.d(Constants.TAG, "Connection type matches preferences!")
-        return true
-    }
-
-    private fun isUsingDataConnection(context: Context): Boolean {
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        return connectivityManager.isActiveNetworkMetered
-    }
-
-    private fun hasInternetConnection(context: Context): Boolean {
-        // determines whether the user has an internet connection
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetwork: NetworkInfo? = connectivityManager.activeNetworkInfo
-        return activeNetwork?.isConnectedOrConnecting == true
-    }
-
-    private suspend fun callWeatherAPI(context: Context): Response<WeatherResponse> {
-        val retrofit = Retrofit.Builder()
-            .baseUrl(WeatherService.BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-        val weatherService = retrofit.create(WeatherService::class.java)
-        val (lat, long) = getCoordinates(context)
-        return weatherService.getWeather(lat, long)
-    }
-
-    private fun getCoordinates(context: Context): Pair<Double, Double> {
-        val lat: Double
-        val long: Double
-
-        val repository = setupLawnLocationRepository(context)
-
-        val lawnLocation = repository.getLocation()
-        lat = lawnLocation.latitude
-        long = lawnLocation.longitude
-        Log.d(Constants.TAG, "Got $lawnLocation from DB!")
-        return Pair(lat, long)
-    }
-
     private suspend fun retrieveLastCutFromDB(repository: CutEntryRepository): CutEntry? {
         return repository.getLastCutSync()
     }
@@ -208,7 +238,6 @@ class AlarmReceiver : BroadcastReceiver() {
         }
 
         val weatherData = weatherHttpResponse.body()
-//        Log.d(Constants.TAG, weatherData.toString())
         Log.d(Constants.TAG, "Current weather: " + weatherData!!.current.toString())
         val prefs = ApplicationPrefs()
         if (lastCut == null) {
@@ -241,19 +270,19 @@ class AlarmReceiver : BroadcastReceiver() {
         val minDaysSince = preferences.getDesiredCutFrequency() - DAYS_SINCE_DELTA
 
         // go through many checks and include the weather for determining the right time for a cut
-        if (daysSince < minDaysSince) {
-            Log.d(Constants.TAG, "The minimum days since last cut has NOT been surpassed yet!")
+        if (daysSince in 0 until minDaysSince) {
+            Log.e(Constants.TAG, "The minimum days since last cut has NOT been surpassed yet!")
             return false
         }
 
         if (weatherData == null) {
-            Log.d(Constants.TAG, "The weather data is null!")
+            Log.e(Constants.TAG, "The weather data is null!")
             return false
         }
 
-        Log.d(Constants.TAG, "Checking if current weather object of weather data is suitable")
+        Log.e(Constants.TAG, "Checking if current weather object of weather data is suitable")
         if (!isCurrentWeatherSuitable(weatherData.current)) {
-            Log.d(Constants.TAG, "The Current weather data is NOT suitable for a cut!")
+            Log.e(Constants.TAG, "The Current weather data is NOT suitable for a cut!")
             return false
         }
 

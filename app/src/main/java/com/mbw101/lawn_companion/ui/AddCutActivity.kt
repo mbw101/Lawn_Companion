@@ -1,8 +1,10 @@
 package com.mbw101.lawn_companion.ui
 
 import android.app.TimePickerDialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.format.DateFormat
 import android.text.format.DateUtils
 import android.util.Log
 import android.view.View
@@ -14,6 +16,9 @@ import com.mbw101.lawn_companion.database.CutEntry
 import com.mbw101.lawn_companion.databinding.ActivityAddCutBinding
 import com.mbw101.lawn_companion.utils.Constants
 import com.mbw101.lawn_companion.utils.UtilFunctions
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.util.*
 
 
@@ -29,11 +34,10 @@ class AddCutActivity : AppCompatActivity() {
     private lateinit var dayDropdown: Spinner
     private lateinit var backIcon: ImageView
     private lateinit var selectedTimeTextView: TextView
+    private lateinit var noteEditText: EditText
     private lateinit var addCutButton: Button
     private lateinit var cutTime: Calendar
     private lateinit var binding: ActivityAddCutBinding
-
-    // database variables
     private lateinit var cutEntryViewModel: CutEntryViewModel
 
     companion object {
@@ -41,6 +45,70 @@ class AddCutActivity : AppCompatActivity() {
         fun checkDateValidity(desiredDate: Calendar): Boolean {
             val currentDate = Calendar.getInstance()
             return currentDate.after(desiredDate) // check to see if the desired comes before the current date
+        }
+
+        fun addDaysToDropdown(context: Context, monthValue: Int): ArrayAdapter<String> {
+            val days = ArrayList<String>(31)
+            for (i in 1..31) {
+                days.add(i.toString())
+            }
+            Log.d(Constants.TAG, days.toString())
+
+            return getCorrectDayAdapter(context, monthValue, days)
+        }
+
+        private fun getCorrectDayAdapter(context: Context, monthValue: Int, days: ArrayList<String>): ArrayAdapter<String> {
+            val cal = Calendar.getInstance()
+            val isLeapYear: Boolean = UtilFunctions.isLeapYear(cal.get(Calendar.YEAR))
+            val dayAdaptor: ArrayAdapter<String>
+
+            when (monthValue) {
+
+                Calendar.FEBRUARY -> {
+                    dayAdaptor = if (!isLeapYear) { // 28 days (non-leap year)
+                        ArrayAdapter(context, android.R.layout.simple_spinner_item, days.subList(0, 28))
+                    } else { // leap year, so 29 days
+                        ArrayAdapter(context, android.R.layout.simple_spinner_item, days.subList(0, 29))
+                    }
+                }
+
+                // 30 days (april, june, september, november)
+                Calendar.APRIL, Calendar.JUNE, Calendar.SEPTEMBER, Calendar.NOVEMBER -> {
+                    dayAdaptor =
+                        ArrayAdapter(context, android.R.layout.simple_spinner_item, days.subList(0, 30))
+                }
+
+                // 31 days (January, march, may, july, august, october, december)
+                Calendar.JANUARY, Calendar.MARCH, Calendar.MAY, Calendar.JULY, Calendar.AUGUST, Calendar.OCTOBER, Calendar.DECEMBER -> {
+                    dayAdaptor =
+                        ArrayAdapter(context, android.R.layout.simple_spinner_item, days.subList(0, 31))
+                }
+
+                else -> {
+                    dayAdaptor =
+                        ArrayAdapter(context, android.R.layout.simple_spinner_item, days.subList(0, 31))
+                }
+            }
+
+            // fill in the day values based on current month
+            dayAdaptor.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line)
+            return dayAdaptor
+        }
+
+        /***
+         * Calls checkDateValidity with a created calendar
+         * object from the dropdown menus
+         */
+        fun isValidDate(dayDropdown: Spinner, monthDropdown: Spinner): Boolean {
+            val desiredDate = Calendar.getInstance()
+            desiredDate.set(Calendar.DAY_OF_MONTH, dayDropdown.selectedItemPosition+1)
+            desiredDate.set(Calendar.MONTH, monthDropdown.selectedItemPosition) // months are zero based
+            // set to 00:00 or 12:00 start of the day to avoid any conflicts with validity checking
+            desiredDate.set(Calendar.HOUR_OF_DAY, 0)
+            desiredDate.set(Calendar.MINUTE, 0)
+            Log.d(Constants.TAG, desiredDate.toString())
+
+            return checkDateValidity(desiredDate)
         }
     }
 
@@ -60,6 +128,7 @@ class AddCutActivity : AppCompatActivity() {
         backIcon = binding.backIcon
         selectedTimeTextView = binding.selectedTimeTextView
         addCutButton = binding.addCutButton
+        noteEditText = binding.noteEditText
 
         fillDropdownMenus()
         setMonthSelection()
@@ -99,7 +168,7 @@ class AddCutActivity : AppCompatActivity() {
      * based on the month selected and if it's a leap year
      */
     private fun setupDaysDropdown(monthValue: Int, cal: Calendar) {
-        addDaysToDropdown(monthValue)
+        dayDropdown.adapter = addDaysToDropdown(this, monthValue)
         // set the default day value selected in the dropdown
         setDayDropdownSelection(cal)
     }
@@ -118,54 +187,6 @@ class AddCutActivity : AppCompatActivity() {
         }
     }
 
-    private fun addDaysToDropdown(monthValue: Int) {
-        val days = ArrayList<String>(31)
-        for (i in 1..31) {
-            days.add(i.toString())
-        }
-        Log.d(Constants.TAG, days.toString())
-
-        dayDropdown.adapter = getCorrectDayAdapter(monthValue, days)
-    }
-
-    private fun getCorrectDayAdapter(monthValue: Int, days: ArrayList<String>): ArrayAdapter<String> {
-        val cal = Calendar.getInstance()
-        val isLeapYear: Boolean = UtilFunctions.isLeapYear(cal.get(Calendar.YEAR))
-        val dayAdaptor: ArrayAdapter<String>
-
-        when (monthValue) {
-
-            Calendar.FEBRUARY -> {
-                dayAdaptor = if (!isLeapYear) { // 28 days (non-leap year)
-                    ArrayAdapter(this, android.R.layout.simple_spinner_item, days.subList(0, 28))
-                } else { // leap year, so 29 days
-                    ArrayAdapter(this, android.R.layout.simple_spinner_item, days.subList(0, 29))
-                }
-            }
-
-            // 30 days (april, june, september, november)
-            Calendar.APRIL, Calendar.JUNE, Calendar.SEPTEMBER, Calendar.NOVEMBER -> {
-                dayAdaptor =
-                    ArrayAdapter(this, android.R.layout.simple_spinner_item, days.subList(0, 30))
-            }
-
-            // 31 days (January, march, may, july, august, october, december)
-            Calendar.JANUARY, Calendar.MARCH, Calendar.MAY, Calendar.JULY, Calendar.AUGUST, Calendar.OCTOBER, Calendar.DECEMBER -> {
-                dayAdaptor =
-                    ArrayAdapter(this, android.R.layout.simple_spinner_item, days.subList(0, 31))
-            }
-
-            else -> {
-                dayAdaptor =
-                    ArrayAdapter(this, android.R.layout.simple_spinner_item, days.subList(0, 31))
-            }
-        }
-
-        // fill in the day values based on current month
-        dayAdaptor.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line)
-        return dayAdaptor
-    }
-
     private fun setListeners() {
         // set listener for back button
         backIcon.setOnClickListener {
@@ -178,13 +199,10 @@ class AddCutActivity : AppCompatActivity() {
 
         addCutButton.setOnClickListener {
             // Check to make sure the date isn't past current date
-            if (isValidDate()) {
+            if (isValidDate(dayDropdown, monthDropdown)) {
                 // Add cut to DB
                 cutEntryViewModel = CutEntryViewModel(application)
-
                 addCut()
-
-                launchMainActivity()
             }
             else {
                 Toast.makeText(this, getString(R.string.futureCutsToastMessage), Toast.LENGTH_LONG).
@@ -193,7 +211,10 @@ class AddCutActivity : AppCompatActivity() {
         }
 
         monthDropdown.onItemSelectedListener = object : OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                if (view == null) {
+                    return
+                }
                 val cal: Calendar = Calendar.getInstance()
                 cal.set(Calendar.MONTH, position) // set the month to what they picked
                 Log.d(Constants.TAG, "Month selected = $position")
@@ -206,35 +227,37 @@ class AddCutActivity : AppCompatActivity() {
         }
     }
 
-    /***
-     * Calls checkDateValidity with a created calendar
-     * object from the dropdown menus
-     */
-    private fun isValidDate(): Boolean {
-        val desiredDate = Calendar.getInstance()
-        desiredDate.set(Calendar.DAY_OF_MONTH, dayDropdown.selectedItemPosition+1)
-        desiredDate.set(Calendar.MONTH, monthDropdown.selectedItemPosition) // months are zero based
-        // set to 00:00 or 12:00 start of the day to avoid any conflicts with validity checking
-        desiredDate.set(Calendar.HOUR_OF_DAY, 0)
-        desiredDate.set(Calendar.MINUTE, 0)
-        Log.d(Constants.TAG, desiredDate.toString())
-
-        return checkDateValidity(desiredDate)
-    }
-
     private fun addCut() {
         // build cutEntry object and add to database
         // access the correct time from the selected time text view
         val cutTimeString = DateUtils.formatDateTime(this, cutTime.timeInMillis, DateUtils.FORMAT_SHOW_TIME)
         Log.d(Constants.TAG, "Time of cut: $cutTimeString")
+        val note: String? = if (noteEditText.text.isNotEmpty() && noteEditText.text.isNotBlank()) noteEditText.text.toString() else null
         val cutEntry = CutEntry(
             cutTimeString,
             dayDropdown.selectedItemPosition+1,
             Constants.months[monthDropdown.selectedItemPosition],
-            monthDropdown.selectedItemPosition+1, UtilFunctions.getCurrentYear()
+            monthDropdown.selectedItemPosition+1, UtilFunctions.getCurrentYear(),
+            note
         )
 
-        cutEntryViewModel.addEntry(cutEntry)
+        runBlocking {
+            launch (Dispatchers.IO) {
+                val hasEntry = cutEntryViewModel.hasCutEntry(cutEntry)
+
+                runOnUiThread {
+                    if (hasEntry) {
+                        // show toast
+                        Toast.makeText(this@AddCutActivity, getString(R.string.moreThanOneCutToastMsg), Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                    else { // go ahead with adding
+                        cutEntryViewModel.addEntry(cutEntry)
+                        launchMainActivity()
+                    }
+                }
+            }
+        }
     }
 
     private fun launchMainActivity() {
@@ -250,7 +273,6 @@ class AddCutActivity : AppCompatActivity() {
      */
     private fun openClockDialog() {
         // Launch Time Picker Dialog
-        // selectedTimeTextView.text =  DateUtils.formatDateTime(this,"HH:mm")
         val timePickerDialog = TimePickerDialog(this,
             { _, hourOfDay, selectedMin ->
                 // set up calendar with the same time in order to get millis
@@ -264,11 +286,11 @@ class AddCutActivity : AppCompatActivity() {
                 cutTime = cal
 
                 // set the text view to have the time they picked
-                selectedTimeTextView.text =  DateUtils.formatDateTime(this,cal.timeInMillis, DateUtils.FORMAT_SHOW_TIME)
+                selectedTimeTextView.text = DateUtils.formatDateTime(this, cal.timeInMillis, DateUtils.FORMAT_SHOW_TIME)
             },
             cutTime.get(Calendar.HOUR_OF_DAY),
             cutTime.get(Calendar.MINUTE),
-            false // TODO: Add if statement to support 24-hour locales (based on preference)
+            DateFormat.is24HourFormat(this) // Shows a 24 hour time picker dialog based on the system settings for 24 hour format
         )
         timePickerDialog.show()
     }
@@ -287,7 +309,6 @@ class AddCutActivity : AppCompatActivity() {
         setupDaysDropdown(month, cal) // sets up the correct amount of days based on month value
         Log.d(Constants.TAG, "Month = $month")
 
-//        val day: Int = cal.get(Calendar.DAY_OF_MONTH)
         dayDropdown.setSelection(0)
     }
 

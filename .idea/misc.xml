@@ -3,10 +3,40 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout/activity_intro.xml" value="0.25" />
-        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout/activity_main.xml" value="0.26992753623188404" />
+        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/drawable/custom_spinner.xml" value="0.23854166666666668" />
+        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/drawable/ic_baseline_arrow_back_24.xml" value="0.3587962962962963" />
+        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/drawable/ic_baseline_arrow_back_48.xml" value="0.3587962962962963" />
+        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/drawable/ic_baseline_refresh_32.xml" value="0.1125" />
+        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout-land/activity_save_location.xml" value="0.328042328042328" />
+        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout-land/fragment_home.xml" value="0.21472663139329806" />
+        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout-land/fragment_last_intro_screen.xml" value="0.328042328042328" />
+        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout-sw600dp/activity_add_cut.xml" value="0.3875" />
+        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout-sw600dp/activity_intro.xml" value="0.3525326797385621" />
+        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout-sw600dp/activity_main.xml" value="0.3875" />
+        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout-sw600dp/activity_save_location.xml" value="0.33" />
+        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout-sw600dp/activity_set_dates.xml" value="0.33" />
+        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout-sw600dp/fragment_2nd_intro_screen.xml" value="0.26552287581699346" />
+        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout-sw600dp/fragment_3rd_intro_screen.xml" value="0.26552287581699346" />
+        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout-sw600dp/fragment_first_intro_screen.xml" value="0.26552287581699346" />
+        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout-sw600dp/fragment_last_intro_screen.xml" value="0.26552287581699346" />
+        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout/activity_add_cut.xml" value="0.18" />
+        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout/activity_edit_cut.xml" value="0.1" />
+        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout/activity_intro.xml" value="0.1" />
+        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout/activity_main.xml" value="0.21" />
+        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout/activity_save_location.xml" value="0.2" />
+        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout/activity_set_dates.xml" value="0.25" />
+        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout/cut_entry_row.xml" value="0.25" />
+        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout/fragment_2nd_intro_screen.xml" value="0.18" />
+        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout/fragment_3rd_intro_screen.xml" value="0.24166666666666667" />
         <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout/fragment_cut_log.xml" value="0.18070652173913043" />
+        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout/fragment_first_intro_screen.xml" value="0.24166666666666667" />
+        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout/fragment_home.xml" value="0.33" />
+        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout/fragment_last_intro_screen.xml" value="0.28351449275362317" />
+        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout/fragment_new_cut_log.xml" value="0.33" />
+        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout/section_row.xml" value="0.22708333333333333" />
         <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout/settings_activity.xml" value="0.17831813576494426" />
+        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout/spinner_item.xml" value="0.215625" />
+        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/menu/bottom_navigation_file.xml" value="0.20989583333333334" />
         <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/xml/root_preferences.xml" value="0.20520833333333333" />
       </map>
     </option>
@@ -16,5 +46,12 @@
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
+  </component>
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+        <option name="scale" value="0.21" />
+      </ProjectState>
+    </option>
   </component>
 </project>

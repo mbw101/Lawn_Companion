@@ -1,7 +1,7 @@
 package com.mbw101.lawn_companion
 
 import android.content.Context
-import androidx.test.core.app.ApplicationProvider
+import android.content.Intent
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -12,14 +12,18 @@ import androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
 import com.mbw101.lawn_companion.database.AppDatabase
 import com.mbw101.lawn_companion.database.AppDatabaseBuilder
 import com.mbw101.lawn_companion.database.CuttingSeasonDatesDao
+import com.mbw101.lawn_companion.database.LawnLocationDAO
 import com.mbw101.lawn_companion.ui.IntroActivity
 import com.mbw101.lawn_companion.ui.MainActivity
 import com.mbw101.lawn_companion.ui.SaveLocationActivity
+import com.mbw101.lawn_companion.utils.ApplicationPrefs
+import com.mbw101.lawn_companion.utils.UtilFunctions
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matchers.not
@@ -40,34 +44,50 @@ Date: 2021-08-22
 @LargeTest
 class TestFirstUse {
     @get:Rule
-    val introActivityTestRule: ActivityTestRule<IntroActivity> = ActivityTestRule(IntroActivity::class.java)
+    val introActivityTestRule: ActivityTestRule<IntroActivity> = ActivityTestRule(IntroActivity::class.java, true, false)
 
     @get:Rule
-    var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION,
-        android.Manifest.permission.ACCESS_COARSE_LOCATION)
+    var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_COARSE_LOCATION)
 
     private lateinit var db: AppDatabase
     private lateinit var cuttingSeasonDatesDao: CuttingSeasonDatesDao
+    private lateinit var lawnLocationDAO: LawnLocationDAO
+    private lateinit var customIntent: Intent
+
+    companion object {
+        fun resetAppPreferences() {
+            // set not first time to true
+            val preferenceManager = ApplicationPrefs()
+            preferenceManager.clearPreferences()
+        }
+    }
 
     @Before
     fun setup() {
         Intents.init()
         setupDatesDB()
+        customIntent = Intent()
+        customIntent.putExtra("your_key", "your_value")
     }
 
     private fun setupDatesDB() {
-        val context: Context = ApplicationProvider.getApplicationContext<Context>()
+        val context: Context = InstrumentationRegistry.getInstrumentation().targetContext
         db = AppDatabaseBuilder.getInstance(context)
         cuttingSeasonDatesDao = db.cuttingSeasonDatesDao()
+        lawnLocationDAO = db.lawnLocationDao()
     }
-
-
+    
     @Test
+    // Sometimes this test doesn't work on emulator due to network location
     fun testHappyPathOfAppNavigation() {
+        resetAppPreferences()
+        introActivityTestRule.launchActivity(customIntent)
+        ensureIntroActivityIsShown()
         pressNavButtons()
         ensureSaveActivityIsShown()
+        Thread.sleep(1000)
         pressSaveLocation()
-        Thread.sleep(1500)
+        Thread.sleep(2000)
         pressHomeNavButton()
         ensureMainActivityIsShown()
         compareHappyExpectedOutputs()
@@ -82,6 +102,9 @@ class TestFirstUse {
 
     @Test
     fun testDenyLocationPathOfAppNavigation() {
+        resetAppPreferences()
+        introActivityTestRule.launchActivity(customIntent)
+        ensureIntroActivityIsShown()
         pressNavButtons()
         ensureSaveActivityIsShown()
         pressDenySaveLocation()
@@ -112,6 +135,10 @@ class TestFirstUse {
 
     private fun ensureMainActivityIsShown() {
         Intents.intended(IntentMatchers.hasComponent(MainActivity::class.java.name))
+    }
+
+    private fun ensureIntroActivityIsShown() {
+        Intents.intended(IntentMatchers.hasComponent(IntroActivity::class.java.name))
     }
 
     private fun compareHappyExpectedOutputs() {
@@ -147,8 +174,9 @@ class TestFirstUse {
     private fun ensureDefaultDatesAreDisplayed() {
         onView(ViewMatchers.withId(R.id.settingsIcon)).perform(ViewActions.click())
         TestSettingsScreen.tapSetCuttingSeasonDates()
-        onView(ViewMatchers.withId(R.id.startDateSelector)).check(matches(ViewMatchers.withText("1/1/2021")))
-        onView(ViewMatchers.withId(R.id.endDateSelector)).check(matches(ViewMatchers.withText("31/12/2021")))
+        val year = UtilFunctions.getCurrentYear()
+        onView(ViewMatchers.withId(R.id.startDateSelector)).check(matches(ViewMatchers.withText("$year/1/1")))
+        onView(ViewMatchers.withId(R.id.endDateSelector)).check(matches(ViewMatchers.withText("$year/12/31")))
     }
 
     private fun compareNoLocationExpectedOutputs() {
@@ -157,10 +185,15 @@ class TestFirstUse {
                 isCompletelyDisplayed()
             )
         )
+        onView(ViewMatchers.withId(R.id.secondaryTextView)).check(
+            matches(
+                isCompletelyDisplayed()
+            )
+        )
         onView(ViewMatchers.withId(R.id.openPermissionsButton)).check(
             matches(not(isDisplayed()))
         )
-        onView(ViewMatchers.withId(R.id.mainMessageTextView)).check(matches(
+        onView(ViewMatchers.withId(R.id.secondaryTextView)).check(matches(
             ViewMatchers.withText(CoreMatchers.containsString("There is no current lawn location saved. Add a location to receive notifications."))
         ))
         onView(ViewMatchers.withId(R.id.createLawnLocationButton)).check(

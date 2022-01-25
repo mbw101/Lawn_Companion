@@ -17,7 +17,7 @@ enum class DateType(val typeOfDate: String){
 
 object Converters {
     @TypeConverter
-    fun fromTimestamp(value: Long?): Calendar? = value?.let { value ->
+    fun fromTimestamp(longValue: Long?): Calendar? = longValue?.let { value ->
         GregorianCalendar().also { calendar ->
             calendar.timeInMillis = value
         }

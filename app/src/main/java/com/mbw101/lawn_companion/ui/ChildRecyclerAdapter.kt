@@ -18,7 +18,7 @@ Date: May 16th, 2021
  */
 
 class ChildRecyclerAdapter(cutEntries: List<CutEntry>,
-                           var onItemClickListener: OnItemClickListener) :
+                           private var onItemClickListener: OnItemClickListener) :
     RecyclerView.Adapter<ChildRecyclerAdapter.ChildCustomViewHolder>() {
     var entries: List<CutEntry> = cutEntries
 
@@ -46,19 +46,15 @@ class ChildRecyclerAdapter(cutEntries: List<CutEntry>,
 
         // set on click listener, so we can call our custom interface to pass the
         // CutEntry data to our fragment
-        holder.itemView.setOnClickListener(View.OnClickListener {
+        holder.itemView.setOnClickListener {
             Log.d(Constants.TAG, "onClick: $position")
             // call the interface method
             onItemClickListener.onItemClick(entry)
-        })
+        }
     }
 
     override fun getItemCount(): Int = entries.size
 
-    fun setCuts(entries: List<CutEntry>) {
-        this.entries = entries
-        notifyItemRangeChanged(0, entries.size) // redraw the layout
-    }
 }
 
 interface OnItemClickListener {
