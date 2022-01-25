@@ -40,13 +40,13 @@ object AlarmScheduler {
             val prefs = ApplicationPrefs()
             if (BuildConfig.DEBUG) {
                 alarmMgr.setInexactRepeating(
-                    AlarmManager.RTC_WAKEUP,
+                    AlarmManager.RTC,
                     datetimeToAlarm.timeInMillis,
                     (1000 * 60 * 2).toLong(), alarmIntent) // (1000 * 60 * 2).toLong()
             }
             else {
                 alarmMgr.setInexactRepeating(
-                    AlarmManager.RTC_WAKEUP,
+                    AlarmManager.RTC,
                     datetimeToAlarm.timeInMillis,
                     prefs.getWeatherCheckFrequencyInMillis().toLong(), alarmIntent)
             }

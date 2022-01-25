@@ -29,10 +29,9 @@ fun isCurrentWeatherSuitable(current: Current): Boolean {
     if (current.weather == null) return false
     if (!isWeatherDescriptionSuitable(current.weather[0])) return false
     if (!isWithinDayTempRange(current.temp)) return false
-    // TODO: Fails on humidity range check
     if (!isWithinHumidityRange(current.humidity)) return false
 
-    // TODO: Implement UV Index range check
+    // TODO: Implement UV Index range check in future
 
     return true
 }

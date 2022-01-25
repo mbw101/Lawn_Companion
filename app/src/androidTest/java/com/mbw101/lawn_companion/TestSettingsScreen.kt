@@ -223,25 +223,27 @@ class TestSettingsScreen {
         // mornings, afternoons, and evenings are true by default while nights are false
         val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
         val prefs = ApplicationPrefs()
-        if (currentHour in Constants.MORNING_HOUR_START_TIME..Constants.MORNING_HOUR_END_TIME) {
-            assertEquals(prefs.isInTimeOfDay(), true)
-            tapMorningsPreference()
-            assertEquals(prefs.isInTimeOfDay(), false)
-        }
-        else if (currentHour in Constants.AFTERNOON_HOUR_START_TIME..Constants.AFTERNOON_HOUR_END_TIME) {
-            assertEquals(prefs.isInTimeOfDay(), true)
-            tapAfternoonPreference()
-            assertEquals(prefs.isInTimeOfDay(), false)
-        }
-        else if (currentHour in Constants.EVENING_HOUR_START_TIME..Constants.EVENING_HOUR_END_TIME) {
-            assertEquals(prefs.isInTimeOfDay(), true)
-            tapEveningsPreference()
-            assertEquals(prefs.isInTimeOfDay(), false)
-        }
-        else if (currentHour in Constants.NIGHT_HOUR_START_TIME downTo Constants.NIGHT_HOUR_END_TIME) {
-            assertEquals(prefs.isInTimeOfDay(), false)
-            tapNightsPreference()
-            assertEquals(prefs.isInTimeOfDay(), true)
+        when (currentHour) {
+            in Constants.MORNING_HOUR_START_TIME..Constants.MORNING_HOUR_END_TIME -> {
+                assertEquals(prefs.isInTimeOfDay(), true)
+                tapMorningsPreference()
+                assertEquals(prefs.isInTimeOfDay(), false)
+            }
+            in Constants.AFTERNOON_HOUR_START_TIME..Constants.AFTERNOON_HOUR_END_TIME -> {
+                assertEquals(prefs.isInTimeOfDay(), true)
+                tapAfternoonPreference()
+                assertEquals(prefs.isInTimeOfDay(), false)
+            }
+            in Constants.EVENING_HOUR_START_TIME..Constants.EVENING_HOUR_END_TIME -> {
+                assertEquals(prefs.isInTimeOfDay(), true)
+                tapEveningsPreference()
+                assertEquals(prefs.isInTimeOfDay(), false)
+            }
+            in Constants.NIGHT_HOUR_START_TIME downTo Constants.NIGHT_HOUR_END_TIME -> {
+                assertEquals(prefs.isInTimeOfDay(), false)
+                tapNightsPreference()
+                assertEquals(prefs.isInTimeOfDay(), true)
+            }
         }
     }
 
