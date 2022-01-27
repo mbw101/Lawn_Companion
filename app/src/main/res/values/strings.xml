@@ -59,7 +59,6 @@
 
     <!-- Intro activity accessibility strings -->
     <string name="viewPagerDescription">Intro screens</string>
-    <!-- TODO: Include description for the TabLayout selectors? -->
     <string name="nextButtonDescription">Next</string>
 
     <!-- Main activity strings -->

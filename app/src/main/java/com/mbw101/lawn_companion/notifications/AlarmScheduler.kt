@@ -42,7 +42,7 @@ object AlarmScheduler {
                 alarmMgr.setInexactRepeating(
                     AlarmManager.RTC,
                     datetimeToAlarm.timeInMillis,
-                    (1000 * 60 * 2).toLong(), alarmIntent) // (1000 * 60 * 2).toLong()
+                    prefs.getWeatherCheckFrequencyInMillis().toLong(), alarmIntent) // (1000 * 60 * 2).toLong() - Might be cause the issue of the timeout error on crashlytics
             }
             else {
                 alarmMgr.setInexactRepeating(

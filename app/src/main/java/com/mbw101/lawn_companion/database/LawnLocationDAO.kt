@@ -11,7 +11,7 @@ Date: 2021-08-15
 interface LawnLocationDAO {
 
     @Query("SELECT * FROM location_table LIMIT 1")
-    fun getFirstLocation(): LawnLocation
+    suspend fun getFirstLocation(): LawnLocation
 
     @Query("SELECT * FROM location_table")
     fun getAllLocations(): List<LawnLocation>

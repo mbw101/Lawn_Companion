@@ -23,6 +23,7 @@ import com.mbw101.lawn_companion.utils.ApplicationPrefs
 import com.mbw101.lawn_companion.utils.Constants
 import com.mbw101.lawn_companion.utils.UtilFunctions
 import com.mbw101.lawn_companion.utils.UtilFunctions.allowReads
+import com.mbw101.lawn_companion.weather.GetWeatherListener
 import com.mbw101.lawn_companion.weather.WeatherResponse
 import com.mbw101.lawn_companion.weather.isCurrentWeatherSuitable
 import kotlinx.coroutines.Dispatchers
@@ -31,7 +32,7 @@ import kotlinx.coroutines.runBlocking
 import java.util.*
 
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), GetWeatherListener {
 
     private lateinit var openPermissions: Button
     private lateinit var createLawnLocationButton: Button
@@ -144,24 +145,10 @@ class HomeFragment : Fragment() {
             return
         }
 
+        val weatherListener = this
         runBlocking {
-            launch(Dispatchers.IO) {
-                val httpWeatherResponse = callWeatherAPI(MyApplication.applicationContext())
-
-                if (!httpWeatherResponse.isSuccessful) {
-                    return@launch
-                }
-
-                val weatherData = httpWeatherResponse.body() ?: return@launch
-
-                weatherHttpResponse = weatherData
-                timeOfWeatherCall = Calendar.getInstance()
-                Log.e(Constants.TAG, "Weather response = $weatherHttpResponse")
-
-                // update the text view with correct string
-                requireActivity().runOnUiThread {
-                    updateWeatherSuitabilityText(weatherData)
-                }
+            launch (Dispatchers.IO) {
+                callWeatherAPI(MyApplication.applicationContext(), weatherListener)
             }
         }
     }
@@ -341,5 +328,18 @@ class HomeFragment : Fragment() {
             progressBar.visibility = View.INVISIBLE
             binding.homeFragmentContent.visibility = View.VISIBLE
         }
+    }
+
+    override fun onSuccess(response: WeatherResponse) {
+        timeOfWeatherCall = Calendar.getInstance()
+        Log.e(Constants.TAG, "Weather response = $response")
+
+        // update the text view with correct string
+        updateWeatherSuitabilityText(response)
+        weatherHttpResponse = response
+    }
+
+    override fun onFailure(errorMessage: String) {
+        // TODO("Not yet implemented")
     }
 }

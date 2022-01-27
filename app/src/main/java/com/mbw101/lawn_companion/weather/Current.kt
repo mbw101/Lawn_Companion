@@ -1,5 +1,8 @@
 package com.mbw101.lawn_companion.weather
 
+import android.util.Log
+import com.mbw101.lawn_companion.utils.Constants
+
 /**
 Lawn Companion
 Created by Malcolm Wright
@@ -26,10 +29,22 @@ data class Current(val sunrise: Int = 0,
 // assumes celsius temperature when calculating if it's suitable
 fun isCurrentWeatherSuitable(current: Current): Boolean {
     // especially ones relating to temperature, humidity, and uvIndex
-    if (current.weather == null) return false
-    if (!isWeatherDescriptionSuitable(current.weather[0])) return false
-    if (!isWithinDayTempRange(current.temp)) return false
-    if (!isWithinHumidityRange(current.humidity)) return false
+    if (current.weather == null) {
+        Log.e(Constants.TAG, "Current weather is null, weather is not suitable for cut!")
+        return false
+    }
+    if (!isWeatherDescriptionSuitable(current.weather[0])) {
+        Log.e(Constants.TAG, "Current weather is not suitable for a cut!")
+        return false
+    }
+    if (!isWithinDayTempRange(current.temp)) {
+        Log.e(Constants.TAG, "Current temperature is not within the temp range, so the weather is not suitable for cut!")
+        return false
+    }
+    if (!isWithinHumidityRange(current.humidity)) {
+        Log.e(Constants.TAG, "The current humidity is not within range, so the weather is not suitable for cut!")
+        return false
+    }
 
     // TODO: Implement UV Index range check in future
 

@@ -14,16 +14,22 @@ import com.mbw101.lawn_companion.ui.MyApplication
 import com.mbw101.lawn_companion.utils.ApplicationPrefs
 import com.mbw101.lawn_companion.utils.Constants
 import com.mbw101.lawn_companion.utils.UtilFunctions
+import com.mbw101.lawn_companion.weather.GetWeatherListener
 import com.mbw101.lawn_companion.weather.WeatherResponse
 import com.mbw101.lawn_companion.weather.WeatherService
 import com.mbw101.lawn_companion.weather.isCurrentWeatherSuitable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import okhttp3.OkHttpClient
+import retrofit2.Call
+import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.*
+import java.util.concurrent.TimeUnit
+
 
 /**
 Lawn Companion
@@ -31,7 +37,7 @@ Created by Malcolm Wright
 Date: 2021-07-01
  */
 
-class AlarmReceiver : BroadcastReceiver() {
+class AlarmReceiver : BroadcastReceiver(), GetWeatherListener {
     companion object {
         // can start checking weather/cut suitability 2 days before there next desired cut frequency
         // ex: 2 weeks but would start checking on the 12th day
@@ -74,20 +80,48 @@ class AlarmReceiver : BroadcastReceiver() {
         }
 
         private fun buildWeatherAPI(): WeatherService {
+            val client: OkHttpClient = OkHttpClient.Builder()
+                .connectTimeout(100, TimeUnit.SECONDS)
+                .readTimeout(100, TimeUnit.SECONDS)
+//                .retryOnConnectionFailure(true)
+                .build()
             val retrofit = Retrofit.Builder()
                 .baseUrl(WeatherService.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
                 .build()
             return retrofit.create(WeatherService::class.java)
         }
 
-        // passing in the weatherAPI allows us to pass in a mock to it
-        suspend fun callWeatherAPI(context: Context, weatherService: WeatherService = buildWeatherAPI()): Response<WeatherResponse> {
+        // Gets the retrofit Call and gets a response from the weather API
+        // Calls the respective GetWeatherListener function based on success or failure
+        suspend fun callWeatherAPI(context: Context, weatherListener: GetWeatherListener, weatherService: WeatherService = buildWeatherAPI()) {
             val (lat, long) = getCoordinates(context)
-            return weatherService.getWeather(lat, long)
+            val weatherCall = weatherService.getWeather(lat, long)
+            weatherCall.enqueue(object : Callback<WeatherResponse?> {
+                override fun onResponse(
+                    call: Call<WeatherResponse?>,
+                    response: Response<WeatherResponse?>
+                ) {
+                    if (!response.isSuccessful) {
+                        Log.e(Constants.TAG, "Response wasn't success. Code: " + response.code())
+                        return
+                    }
+                    if (response.body() == null) {
+                        return
+                    }
+
+                    weatherListener.onSuccess(response.body()!!)
+                }
+
+                override fun onFailure(call: Call<WeatherResponse?>, error: Throwable) {
+                    Log.e(Constants.TAG, error.toString())
+                    weatherListener.onFailure(error.toString())
+                }
+            })
         }
 
-        private fun getCoordinates(context: Context): Pair<Double, Double> {
+        private suspend fun getCoordinates(context: Context): Pair<Double, Double> {
             val lat: Double
             val long: Double
 
@@ -171,10 +205,7 @@ class AlarmReceiver : BroadcastReceiver() {
         }
 
         Log.d(Constants.TAG, "Has a lawn location saved in the DB!")
-
-        val repository =
-            CutEntryRepository(AppDatabaseBuilder.getInstance(context).cutEntryDao())
-        runNotificationCoroutineWork(repository, preferences, context)
+        runNotificationCoroutineWork(preferences, context)
     }
 
     private fun preferencesHaveHappyConditions(preferences: ApplicationPrefs): Boolean {
@@ -207,20 +238,19 @@ class AlarmReceiver : BroadcastReceiver() {
         return locationExists
     }
 
-    private fun runNotificationCoroutineWork(repository: CutEntryRepository, preferences: ApplicationPrefs, context: Context)
-    = runBlocking {
-        // starts a new coroutine, so we can access the DB concurrently without blocking the current thread (UI)
-        launch (Dispatchers.IO) {
-            val lastCut: CutEntry? = retrieveLastCutFromDB(repository)
-
-            // only run through the notification logic and call the api if we have right connection type
-            if (connectionTypeMatchesPreferences(preferences, context)) {
-                Log.d(Constants.TAG, "Connection type matches preferences!")
-                val weatherHttpResponse: Response<WeatherResponse> = callWeatherAPI(context)
-                performNotificationLogic(lastCut, weatherHttpResponse, context)
-            } else {
-                Log.d(Constants.TAG, "Connection type does not match preferences!")
+    private fun runNotificationCoroutineWork(preferences: ApplicationPrefs, context: Context) {
+        val weatherListener = this
+        // only run through the notification logic and call the api if we have right connection type
+        if (connectionTypeMatchesPreferences(preferences, context)) {
+            Log.d(Constants.TAG, "Connection type matches preferences!")
+            runBlocking {
+                launch (Dispatchers.IO) {
+                    callWeatherAPI(context, weatherListener)
+                }
             }
+        }
+        else {
+            Log.d(Constants.TAG, "Connection type does not match preferences!")
         }
     }
 
@@ -230,15 +260,10 @@ class AlarmReceiver : BroadcastReceiver() {
 
     private fun performNotificationLogic(
         lastCut: CutEntry?,
-        weatherHttpResponse: Response<WeatherResponse>,
+        weatherData: WeatherResponse,
         context: Context
     ) {
-        if (!weatherHttpResponse.isSuccessful) {
-            return
-        }
-
-        val weatherData = weatherHttpResponse.body()
-        Log.d(Constants.TAG, "Current weather: " + weatherData!!.current.toString())
+        Log.d(Constants.TAG, "Current weather: " + weatherData.current.toString())
         val prefs = ApplicationPrefs()
         if (lastCut == null) {
             // just suggest an appropriate cut (given weather conditions) anytime since there is no cut registered
@@ -304,5 +329,20 @@ class AlarmReceiver : BroadcastReceiver() {
             context, context.getString(R.string.app_name),
             context.getString(R.string.cutSuggestionMessage), true
         )
+    }
+
+    override fun onSuccess(response: WeatherResponse) {
+        Log.e(Constants.TAG, "Response: $response")
+        runBlocking {
+            launch (Dispatchers.IO) {
+                val repository = setupCutEntryRepository(MyApplication.applicationContext())
+                val lastCut: CutEntry? = retrieveLastCutFromDB(repository)
+                performNotificationLogic(lastCut, response, MyApplication.applicationContext())
+            }
+        }
+    }
+
+    override fun onFailure(errorMessage: String) {
+        // TODO("Not yet implemented")
     }
 }

@@ -12,7 +12,7 @@ Date: 2021-08-15
 @Singleton
 class LawnLocationRepository @Inject constructor(private val lawnLocationDAO: LawnLocationDAO) {
     // handles calling the DAO methods
-    fun getLocation() = lawnLocationDAO.getFirstLocation()
+    suspend fun getLocation() = lawnLocationDAO.getFirstLocation()
     suspend fun getNumEntries() = lawnLocationDAO.getNumEntries()
     suspend fun hasALocationSaved(): Boolean {
         if (lawnLocationDAO.getNumEntries() >= 1) return true

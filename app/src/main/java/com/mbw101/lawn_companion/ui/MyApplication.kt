@@ -17,7 +17,6 @@ class MyApplication: Application() {
         private var myApp: MyApplication? = null
 
         fun applicationContext() : Context {
-            // TODO: Returning null on testExpectedMessage
             return myApp!!.applicationContext
         }
     }

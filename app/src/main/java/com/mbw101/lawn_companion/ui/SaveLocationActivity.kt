@@ -73,6 +73,7 @@ class SaveLocationActivity : AppCompatActivity(), LocationListener {
 
             runBlocking {
                 launch (Dispatchers.IO) {
+                    // add location
                     saveNetworkLocationIfExists()
                 }
             }
@@ -114,6 +115,8 @@ class SaveLocationActivity : AppCompatActivity(), LocationListener {
 
     private suspend fun saveNetworkLocationIfExists() {
         if (locationNetwork != null) {
+            // remove existing location
+            lawnLocationRepository.deleteAllLocations()
             lawnLocationRepository.addLocation(LawnLocation(locationNetwork!!.latitude, locationNetwork!!.longitude))
             // save location flag
             val preferences = ApplicationPrefs()

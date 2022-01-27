@@ -6,6 +6,7 @@ plugins {
     id 'jacoco'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
+    id 'com.google.firebase.firebase-perf'
 }
 
 android {
@@ -180,4 +181,5 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics-ktx'
     // Firebase Crashlytics (Kotlin)
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    implementation 'com.google.firebase:firebase-perf-ktx' // performance monitoring SDK
 }

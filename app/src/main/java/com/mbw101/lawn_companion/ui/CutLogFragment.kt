@@ -186,7 +186,6 @@ class CutLogFragment : Fragment(), OnItemClickListener, AdapterView.OnItemSelect
                 showConfirmationDialog(entry)
             }
             .setNegativeButton(R.string.editCutEntryAction) { _, _ ->
-                // TODO: Open up an edit activity that reuses the AddCutActivity
                 // passing in entry as data in intent
                 val intent = Intent(activity, EditCutActivity::class.java)
                 intent.putExtra(getString(R.string.cutEntryIntentKey), entry)

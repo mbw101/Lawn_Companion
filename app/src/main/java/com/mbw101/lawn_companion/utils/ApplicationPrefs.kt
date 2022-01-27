@@ -58,27 +58,45 @@ class ApplicationPrefs {
 
     fun getWeatherCheckFrequencyInMillis(): Int {
         val freq = getWeatherCheckFrequency()
-        if (freq.equals("15 minutes")) {
-            return Constants.FIFTEEN_MINUTES
+        when {
+            freq.equals("15 minutes") -> {
+                return Constants.FIFTEEN_MINUTES
+            }
+            freq.equals("30 minutes") -> {
+                return Constants.THIRTY_MINUTES
+            }
+            freq.equals("1 hour") -> {
+                return Constants.ONE_HOUR
+            }
+            freq.equals("2 hours") -> {
+                return Constants.TWO_HOURS
+            }
+            else -> return Constants.FIFTEEN_MINUTES
         }
-        else if (freq.equals("30 minutes")) {
-            return Constants.THIRTY_MINUTES
-        }
-        else if (freq.equals("1 hour")) {
-            return Constants.ONE_HOUR
-        }
-        else if (freq.equals("2 hours")) {
-            return Constants.TWO_HOURS
-        }
-
-        return Constants.FIFTEEN_MINUTES
     }
 
     fun getWeatherCheckFrequency(): String? {
-        val applicationContext = MyApplication.applicationContext()
-        val preferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(
-            applicationContext
-        )
+        val applicationContext =
+            if (BuildConfig.DEBUG) {
+                allowReads {
+                    MyApplication.applicationContext()
+                }
+            }
+            else {
+                MyApplication.applicationContext()
+            }
+
+        val preferences: SharedPreferences =
+            if (BuildConfig.DEBUG) {
+                allowReads {
+                    PreferenceManager.getDefaultSharedPreferences(
+                        applicationContext)
+                }
+            }
+            else {
+                PreferenceManager.getDefaultSharedPreferences(
+                    applicationContext)
+            }
         val defaultWeatherCheckFrequency = "15 minutes"
         return preferences.getString(applicationContext.getString(R.string.weatherCheckFrequencyKey), defaultWeatherCheckFrequency)
     }
