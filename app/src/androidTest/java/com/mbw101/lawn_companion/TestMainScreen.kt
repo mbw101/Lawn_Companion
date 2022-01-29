@@ -320,7 +320,6 @@ class TestMainScreen {
 
     @Test
     fun testWeatherSuitabilityTextViewVisibility() {
-        // TODO: Pass in a mock weather data which we can make sure we show the correct string (The specific string is dependent finally on the weather)
         val prefs = ApplicationPrefs()
         removeExistingLocation()
         onView(withId(R.id.weatherSuitabilityTextView)).check(matches(not(isDisplayed())))

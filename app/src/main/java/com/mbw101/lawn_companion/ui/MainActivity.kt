@@ -112,21 +112,6 @@ class MainActivity : AppCompatActivity() {
         createNotificationChannel(this)
 
         setupNotificationAlarmManager()
-
-//        if (ActivityCompat.checkSelfPermission(
-//                this,
-//                Manifest.permission.ACCESS_COARSE_LOCATION
-//            ) != PackageManager.PERMISSION_GRANTED
-//        ) {
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                // TODO: Cause of issue in espresso UI tests
-////                requestPermissions(
-////                    arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
-////                    MY_PERMISSIONS_REQUEST_LOCATION
-////                )
-//            }
-//            return
-//        }
     }
 
     private fun retrieveYearsList() {
