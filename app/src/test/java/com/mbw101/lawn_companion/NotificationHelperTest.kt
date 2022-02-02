@@ -15,16 +15,28 @@ class NotificationHelperTest {
     @Test
     fun testSkipDateHelper() {
         val date = NotificationHelper.createSkipDateString()
+        println("Skip date format string = $date")
 
         assert(date.isNotEmpty())
-        println(date)
         val cal = Calendar.getInstance()
-        if (cal.get(Calendar.MONTH) < Calendar.OCTOBER) {
-            // include leading zero
-            assertEquals(date, "${cal.get(Calendar.YEAR)}-0${cal.get(Calendar.MONTH)+1}-${cal.get(Calendar.DAY_OF_MONTH)}")
+
+        // add leading zero if needed for day and month
+        val dayOfMonth: String
+        val day = cal.get(Calendar.DAY_OF_MONTH)
+        dayOfMonth = if (day < 10) {
+            "0$day"
+        } else {
+            day.toString()
         }
-        else {
-            assertEquals(date, "${cal.get(Calendar.YEAR)}-${cal.get(Calendar.MONTH)+1}-${cal.get(Calendar.DAY_OF_MONTH)}")
+
+        val monthOfYear: String
+        val month = cal.get(Calendar.MONTH) + 1
+        monthOfYear = if (day < 10) {
+            "0$month"
+        } else {
+            month.toString()
         }
+
+        assertEquals(date, "${cal.get(Calendar.YEAR)}-${monthOfYear}-${dayOfMonth}")
     }
 }

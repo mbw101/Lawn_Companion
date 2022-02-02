@@ -2,7 +2,7 @@ package com.mbw101.lawn_companion
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.mbw101.lawn_companion.weather.*
-import junit.framework.Assert.assertEquals
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
@@ -19,17 +19,17 @@ class WeatherTests {
 
     @Test
     fun testSuitableFunctionForCurrentWeather() {
-        var weatherDescription = WeatherItem("05d", "Rain", "light rain",500)
-        var currentWeather = Current(0, 12.0, 10000, 12.0, 10000, 17,
-            17.0, 92.0, 50000, 12, listOf(weatherDescription), 0, 12.0)
+        var weatherDescription = Weather("05d", "Rain", 500, "light rain")
+        var currentWeather = Current(0, 0.1, 1000, 12.0, 45, 0, 0, 0, 12.3,
+        12.1, 0, listOf(weatherDescription), 0, 0.0, 0.0)
 
         assertEquals(isWeatherDescriptionSuitable(weatherDescription), false)
         assertEquals(isCurrentWeatherSuitable(currentWeather), false)
 
         // test good weather
-        weatherDescription = WeatherItem("05d", "Clouds", "few clouds: 11-25%", 801)
-        currentWeather = Current(0, 16.0, 10000, 12.0, 10000, 17,
-            17.0, 92.0, 50000, 12, listOf(weatherDescription), MIN_CUTTING_HUMIDITY, 12.0)
+        weatherDescription = Weather("05d", "Clouds", 801, "few clouds: 11-25%")
+        currentWeather = Current(0, 0.1, 1000, 12.0, 45, 0, 0, 0, 16.0,
+            12.1, 0, listOf(weatherDescription), 0, 0.0, 0.0)
 
         assertEquals(isWeatherDescriptionSuitable(weatherDescription), true)
         assertEquals(isCurrentWeatherSuitable(currentWeather), true)
@@ -80,34 +80,34 @@ class WeatherTests {
 
     @Test
     fun testSuitableSingleDayWeather() {
-        var weatherDescription = WeatherItem("05d", "Rain", "light rain", 500)
+        var weatherDescription = Weather("05d", "Rain", 500, "light rain")
         var temperature = Temp(0.0, 0.0, 0.0, 0.0, 0.0)
         var feelsLikeTemp = FeelsLike(0.0, 0.0, 0.0, 0.0)
-        var singleDayWeather = DailyItem(0.0, 10000, temperature, 12.0, 100,
-            0, feelsLikeTemp, 16.0, 1000, 0.0, 0, 0.0,
-            0, listOf(weatherDescription), 0, 0.0)
+        var singleDayWeather = Daily(0, 0.1, 1000, feelsLikeTemp, MIN_CUTTING_HUMIDITY,
+            0.5, 0, 0, 0.0, 0, 0.0, 0.0, 0, 0, temperature,
+        0.0, listOf(weatherDescription), 0, 0.0, 0.0)
 
         // test bad case
         assertEquals(isSingleDaySuitable(singleDayWeather), false)
 
-        weatherDescription = WeatherItem("05d","Rain", "light rain", 500)
+        weatherDescription = Weather("05d","Rain", 500, "light rain")
         temperature = Temp(16.0, 12.0, 12.0, 12.0, 12.0)
         feelsLikeTemp = FeelsLike(16.0, 12.0, 12.0, 12.0)
-        singleDayWeather = DailyItem(0.0, 10000, temperature, 12.0, 100,
-            0, feelsLikeTemp, 16.0, 1000, 0.0, 0, 0.0,
-            0, listOf(weatherDescription), 0, 0.0)
+        singleDayWeather = Daily(0, 0.1, 1000, feelsLikeTemp, MIN_CUTTING_HUMIDITY,
+            0.5, 0, 0, 0.0, 0, 0.0, 0.0, 0, 0, temperature,
+            0.0, listOf(weatherDescription), 0, 0.0, 0.0)
 
         assertEquals(isSingleDaySuitable(singleDayWeather), false)
 
-        weatherDescription = WeatherItem("05d","Sunny", "clear", 800)
+        weatherDescription = Weather("05d","Sunny", 800, "clear")
         assertEquals(isWeatherDescriptionSuitable(weatherDescription), true)
         temperature = Temp(16.0, 12.0, 12.0, 12.0, 12.0, 12.0)
         assertEquals(isTemperatureSuitable(temperature), true)
         feelsLikeTemp = FeelsLike(16.0, 16.0, 16.0, 16.0)
         assertEquals(isFeelsLikeSuitable(feelsLikeTemp), true)
-        singleDayWeather = DailyItem(0.0, 10000, temperature, 12.0, 100,
-            0, feelsLikeTemp, 16.0, 1000, 0.0, 0, 0.0,
-            0, listOf(weatherDescription), MIN_CUTTING_HUMIDITY, 0.0)
+        singleDayWeather = Daily(0, 0.1, 1000, feelsLikeTemp, MIN_CUTTING_HUMIDITY,
+            0.5, 0, 0, 0.0, 0, 0.0, 0.0, 0, 0, temperature,
+            0.0, listOf(weatherDescription), 0, 0.0, 0.0)
         assertEquals(isSingleDaySuitable(singleDayWeather), true)
     }
 }

@@ -145,11 +145,11 @@ object NotificationHelper {
     }
 
     /**
-     * Returns a string with the format of YYYY-MM-DD.
+     * Returns a string with the format of YYYY-MM-dd.
      * The skip date is the date that a cut notification was skipped
      */
     fun createSkipDateString(): String {
-        val dateFormatter = SimpleDateFormat("yyyy-MM-DD", Locale.getDefault())
+        val dateFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val date = Date()
         return dateFormatter.format(date)
     }

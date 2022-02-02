@@ -40,7 +40,6 @@ import java.util.*
 Lawn Companion
 Created by Malcolm Wright
 Date: 2021-09-24
- Date format: YYYY-MM-DD
  */
 @RunWith(AndroidJUnit4::class)
 @LargeTest

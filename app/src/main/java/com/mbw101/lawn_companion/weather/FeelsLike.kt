@@ -1,9 +1,25 @@
 package com.mbw101.lawn_companion.weather
 
-data class FeelsLike(val eve: Double = 0.0,
-                     val night: Double = 0.0,
-                     val day: Double = 0.0,
-                     val morn: Double = 0.0)
+import com.google.gson.annotations.Expose
+import com.google.gson.annotations.SerializedName
+
+data class FeelsLike(
+    @SerializedName("day")
+    @Expose
+    val day: Double,
+
+    @SerializedName("eve")
+    @Expose
+    val eve: Double,
+
+    @SerializedName("morn")
+    @Expose
+    val morn: Double,
+
+    @SerializedName("night")
+    @Expose
+    val night: Double
+)
 
 fun isFeelsLikeSuitable(feelsLikeTemp: FeelsLike): Boolean {
     if (!isWithinRange(feelsLikeTemp.morn) || !isWithinRange(feelsLikeTemp.day) ||

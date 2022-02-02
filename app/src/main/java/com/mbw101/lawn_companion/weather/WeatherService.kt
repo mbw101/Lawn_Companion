@@ -16,12 +16,12 @@ interface WeatherService {
         const val BASE_URL = "https://api.openweathermap.org"
     }
 
-    @GET("/data/2.5/onecall") // /data/2.5/weather
+    @GET("/data/2.5/onecall")
     fun getWeather(@Query("lat") lat: Double, @Query("lon") lon: Double, @Query("appid") apiID: String = BuildConfig.OPEN_WEATHER_MAP_API_KEY,
         @Query("units") unitsOfMeasurement: String = "metric"): Call<WeatherResponse>
 }
 
 interface GetWeatherListener {
-    fun onSuccess(response: WeatherResponse)
+    fun onSuccess(response: WeatherResponse?)
     fun onFailure(errorMessage: String)
 }

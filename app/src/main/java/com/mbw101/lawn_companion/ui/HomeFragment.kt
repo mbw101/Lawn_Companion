@@ -330,7 +330,11 @@ class HomeFragment : Fragment(), GetWeatherListener {
         }
     }
 
-    override fun onSuccess(response: WeatherResponse) {
+    override fun onSuccess(response: WeatherResponse?) {
+        if (response == null) {
+            return
+        }
+
         timeOfWeatherCall = Calendar.getInstance()
         Log.e(Constants.TAG, "Weather response = $response")
 

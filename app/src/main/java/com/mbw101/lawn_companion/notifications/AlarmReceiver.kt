@@ -7,6 +7,8 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import android.util.Log
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import com.mbw101.lawn_companion.BuildConfig
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.database.*
@@ -98,20 +100,23 @@ class AlarmReceiver : BroadcastReceiver(), GetWeatherListener {
         suspend fun callWeatherAPI(context: Context, weatherListener: GetWeatherListener, weatherService: WeatherService = buildWeatherAPI()) {
             val (lat, long) = getCoordinates(context)
             val weatherCall = weatherService.getWeather(lat, long)
+
             weatherCall.enqueue(object : Callback<WeatherResponse?> {
                 override fun onResponse(
                     call: Call<WeatherResponse?>,
                     response: Response<WeatherResponse?>
                 ) {
+                    Log.e(Constants.TAG, "LOGGING FROM BROADCAST RECEIVER")
                     if (!response.isSuccessful) {
                         Log.e(Constants.TAG, "Response wasn't success. Code: " + response.code())
                         return
                     }
-                    if (response.body() == null) {
-                        return
-                    }
+                    val weatherResponse: WeatherResponse = response.body() ?: return
 
-                    weatherListener.onSuccess(response.body()!!)
+                    Log.e(Constants.TAG, "response.body() = $weatherResponse")
+                    Log.e(Constants.TAG, "response = $response")
+
+                    weatherListener.onSuccess(weatherResponse)
                 }
 
                 override fun onFailure(call: Call<WeatherResponse?>, error: Throwable) {
@@ -281,6 +286,7 @@ class AlarmReceiver : BroadcastReceiver(), GetWeatherListener {
         context: Context,
         preferences: ApplicationPrefs
     ) {
+        Firebase.crashlytics.log("Weather data = $weatherData")
         if (hasSuitableConditionsForCutNotification(weatherData, daysSince, preferences)) {
             Log.d(Constants.TAG, "The conditions are suitable for a cut!")
             showNotification(context)
@@ -331,8 +337,12 @@ class AlarmReceiver : BroadcastReceiver(), GetWeatherListener {
         )
     }
 
-    override fun onSuccess(response: WeatherResponse) {
+    override fun onSuccess(response: WeatherResponse?) {
         Log.e(Constants.TAG, "Response: $response")
+        if (response == null) {
+            return
+        }
+
         runBlocking {
             launch (Dispatchers.IO) {
                 val repository = setupCutEntryRepository(MyApplication.applicationContext())
