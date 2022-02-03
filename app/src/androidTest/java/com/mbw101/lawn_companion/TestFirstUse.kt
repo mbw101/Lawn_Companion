@@ -64,6 +64,7 @@ class TestFirstUse {
 
     @Before
     fun setup() {
+//        AccessibilityChecks.enable().setRunChecksFromRootView(true)
         Intents.init()
         setupDatesDB()
         customIntent = Intent()
@@ -203,6 +204,7 @@ class TestFirstUse {
 
     @After
     fun release() {
+//        AccessibilityChecks.disable()
         Intents.release()
     }
 }

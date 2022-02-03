@@ -57,6 +57,7 @@ class TestAddCutScreen {
 
     @Before
     fun setup() {
+//        AccessibilityChecks.enable().setRunChecksFromRootView(true)
         Intents.init()
         setupDB()
     }
@@ -142,6 +143,7 @@ class TestAddCutScreen {
 
     @After
     fun release() {
+//        AccessibilityChecks.disable()
         Intents.release()
     }
 

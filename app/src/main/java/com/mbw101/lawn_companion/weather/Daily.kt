@@ -20,7 +20,7 @@ data class Daily(
 
     @SerializedName("feels_like")
     @Expose
-    val feels_like: FeelsLike,
+    val feels_like: FeelsLike?,
 
     @SerializedName("humidity")
     @Expose
@@ -72,7 +72,7 @@ data class Daily(
 
     @SerializedName("weather")
     @Expose
-    val weather: List<Weather>,
+    val weather: List<Weather>?,
 
     @SerializedName("wind_deg")
     @Expose

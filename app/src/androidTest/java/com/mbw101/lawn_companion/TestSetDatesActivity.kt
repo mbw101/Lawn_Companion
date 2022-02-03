@@ -76,6 +76,7 @@ class TestSetDatesActivity {
 
     @Before
     fun setup() {
+//        AccessibilityChecks.enable().setRunChecksFromRootView(true)
         Intents.init()
         setupDB()
         customIntent = Intent()
@@ -231,6 +232,7 @@ class TestSetDatesActivity {
 
     @After
     fun release() {
+//        AccessibilityChecks.disable()
         Intents.release()
     }
 }

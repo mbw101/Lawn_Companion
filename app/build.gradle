@@ -47,8 +47,8 @@ android {
         targetSdkVersion 31
 
         applicationId 'com.mbw101.lawn_companion'
-        versionCode 3
-        versionName '3.1'
+        versionCode 4
+        versionName '4.1'
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
 
@@ -71,7 +71,7 @@ android {
 //            minifyEnabled true
         }
         release {
-//            minifyEnabled true
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             resValue "string", "app_version", "${defaultConfig.versionName}"
         }
@@ -160,6 +160,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     androidTestImplementation 'androidx.test.espresso:espresso-intents:3.4.0'
     androidTestImplementation ('androidx.test.espresso:espresso-contrib:3.4.0')
+    androidTestImplementation 'androidx.test.espresso:espresso-accessibility:3.4.0'
 
     //App's dependencies, including test
     implementation 'androidx.annotation:annotation:1.3.0'

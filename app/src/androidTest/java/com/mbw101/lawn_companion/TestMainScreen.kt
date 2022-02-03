@@ -76,6 +76,7 @@ class TestMainScreen {
 
     @Before
     fun setup() {
+//        AccessibilityChecks.enable().setRunChecksFromRootView(true)
         Intents.init()
 
         setupLocationDB()
@@ -376,6 +377,7 @@ class TestMainScreen {
 
     @After
     fun release() {
+//        AccessibilityChecks.disable()
         Intents.release()
     }
 }

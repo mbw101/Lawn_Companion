@@ -47,6 +47,7 @@ class TestSaveLocationScreen {
 
     @Before
     fun setup() {
+//        AccessibilityChecks.enable().setRunChecksFromRootView(true)
         Intents.init()
     }
 
@@ -74,6 +75,7 @@ class TestSaveLocationScreen {
 
     @After
     fun release() {
+//        AccessibilityChecks.disable()
         Intents.release()
     }
 }

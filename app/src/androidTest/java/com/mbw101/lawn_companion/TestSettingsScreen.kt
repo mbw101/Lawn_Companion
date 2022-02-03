@@ -63,6 +63,7 @@ class TestSettingsScreen {
 
     @Before
     fun setup() {
+//        AccessibilityChecks.enable().setRunChecksFromRootView(true)
         Intents.init()
     }
 
@@ -339,6 +340,7 @@ class TestSettingsScreen {
 
     @After
     fun release() {
+//        AccessibilityChecks.disable()
         Intents.release()
     }
 }

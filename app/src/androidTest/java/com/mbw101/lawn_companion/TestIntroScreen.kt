@@ -32,6 +32,7 @@ class TestIntroScreen {
 
     @Before
     fun setup() {
+//        AccessibilityChecks.enable().setRunChecksFromRootView(true)
         TestFirstUse.resetAppPreferences()
         Intents.init()
         customIntent = Intent()
@@ -100,6 +101,7 @@ class TestIntroScreen {
 
     @After
     fun cleanup() {
+//        AccessibilityChecks.disable()
         Intents.release()
     }
 }

@@ -32,14 +32,6 @@ data class Hourly(
     @Expose
     val pressure: Int,
 
-//    @SerializedName("rain")
-//    @Expose
-//    val rain: Rain,
-//
-//    @SerializedName("snow")
-//    @Expose
-//    val snow: Snow,
-
     @SerializedName("temp")
     @Expose
     val temp: Double,
@@ -54,7 +46,7 @@ data class Hourly(
 
     @SerializedName("weather")
     @Expose
-    val weather: List<Weather>,
+    val weather: List<Weather>?,
 
     @SerializedName("wind_deg")
     @Expose
@@ -68,11 +60,3 @@ data class Hourly(
     @Expose
     val wind_speed: Double
 )
-
-//data class Rain(
-//    val `1h`: Double
-//)
-//
-//data class Snow(
-//    val `1h`: Double
-//)

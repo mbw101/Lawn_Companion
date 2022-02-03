@@ -26,17 +26,17 @@ data class WeatherResponse(
 
     @SerializedName("current")
     @Expose
-    val current: Current,
+    val current: Current?,
 
     @SerializedName("minutely")
     @Expose
-    val minutely: List<Minutely>,
+    val minutely: List<Minutely>?,
 
     @SerializedName("hourly")
     @Expose
-    val hourly: List<Hourly>,
+    val hourly: List<Hourly>?,
 
     @SerializedName("daily")
     @Expose
-    val daily: List<Daily>
+    val daily: List<Daily>?
 )

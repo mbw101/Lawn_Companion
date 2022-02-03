@@ -61,7 +61,7 @@ data class Current(
 
     @SerializedName("weather")
     @Expose
-    val weather: List<Weather>,
+    val weather: List<Weather>?,
 
     @SerializedName("wind_deg")
     @Expose

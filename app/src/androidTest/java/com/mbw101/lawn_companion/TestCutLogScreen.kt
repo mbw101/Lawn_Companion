@@ -76,6 +76,7 @@ class TestCutLogScreen {
 
     @Before
     fun setup() {
+//        AccessibilityChecks.enable().setRunChecksFromRootView(true)
         Intents.init()
         setupCutEntryDB()
         customIntent = Intent()
@@ -178,6 +179,7 @@ class TestCutLogScreen {
 
     @After
     fun cleanup() {
+//        AccessibilityChecks.disable()
         Intents.release()
     }
 }
