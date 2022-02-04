@@ -7,6 +7,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItem
 import androidx.test.espresso.intent.Intents
@@ -295,9 +296,10 @@ class TestMainScreen {
 
     @Test
     fun testYeardropdownVisibility() {
-        onView(withId(R.id.yearDropdown)).check(matches(not(isDisplayed())))
+        // spinner doesn't exist in the view at the start since it's invisible
+        onView(withId(R.id.spinner)).check(doesNotExist())
         onView(withId(R.id.cutlog)).perform(click())
-        onView(withId(R.id.yearDropdown)).check(matches(isDisplayed()))
+        onView(withId(R.id.spinner)).check(matches(isDisplayed()))
     }
 
     @Test

@@ -18,52 +18,27 @@
         android:padding="5dp"
         android:theme="?attr/actionBarTheme">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="7dp"
-            android:layout_marginLeft="7dp"
-            android:layout_marginEnd="7dp"
-            android:layout_marginRight="7dp"
-            android:gravity="center|center_horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
+        <ImageView
+            android:id="@+id/settingsIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_baseline_settings_32"
+            android:contentDescription="@string/settings_icon"
+            android:foregroundGravity="center_vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                android:id="@+id/settingsIcon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:background="@drawable/ic_baseline_settings_32"
-                android:contentDescription="@string/settings_icon"
-                android:foregroundGravity="center_vertical" />
-
-            <TextView
-                android:id="@+id/titleTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_centerInParent="true"
-                android:gravity="center|center_vertical"
-                android:text="@string/home"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
-
-            <Spinner
-                android:id="@+id/yearDropdown"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentEnd="true"
-                android:layout_marginStart="12dp"
-                android:layout_toEndOf="@id/titleTextView"
-                android:contentDescription="@string/yearDropdownDescription"
-                android:gravity="center|center_vertical"
-                android:paddingTop="0dp"
-                android:paddingBottom="0dp"
-                android:spinnerMode="dropdown"
-                android:textAlignment="center"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
-            <!--            android:entries="@array/year_dropdown_test_values"-->
-        </RelativeLayout>
+        <TextView
+            android:id="@+id/titleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:gravity="center|center_vertical"
+            android:layout_gravity="center|center_vertical"
+            android:text="@string/home"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     </androidx.appcompat.widget.Toolbar>
 

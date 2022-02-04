@@ -130,7 +130,7 @@ class CutLogFragment : Fragment(), OnItemClickListener, AdapterView.OnItemSelect
         mainRecyclerView.addItemDecoration(itemDecoration)
 
         // set up listener for year dropdown
-        val yearDropdown = requireActivity().findViewById<Spinner>(R.id.yearDropdown)
+        val yearDropdown = requireActivity().findViewById<Spinner>(R.id.spinner)
         yearDropdown.onItemSelectedListener = this
 
         setupListeners()

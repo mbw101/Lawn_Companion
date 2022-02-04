@@ -98,7 +98,7 @@ class TestCutLogScreen {
             .check(matches(withViewAtPosition(MONTH_TO_TEST, hasDescendant(allOf(withText("Completed Cut"), isDisplayed())))))
 
         // test previous year
-        onView(withId(R.id.yearDropdown)).perform(click())
+        onView(withId(R.id.spinner)).perform(click())
         val previousYear = UtilFunctions.getCurrentYear() - 1
         Espresso.onData(
             AllOf.allOf(

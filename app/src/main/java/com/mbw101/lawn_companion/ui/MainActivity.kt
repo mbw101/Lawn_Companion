@@ -8,9 +8,10 @@ import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
 import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.*
+import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavController
@@ -50,6 +51,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var cutEntryRepository: CutEntryRepository
+    private var shouldShowDropdown = false
     var yearDropdownArray: List<String> = listOf()
 
     companion object {
@@ -114,6 +116,30 @@ class MainActivity : AppCompatActivity() {
         setupNotificationAlarmManager()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        super.onCreateOptionsMenu(menu)
+        menuInflater.inflate(R.menu.action_bar_spinner_menu, menu)
+        val item: MenuItem = menu.findItem(R.id.spinner)
+        yearDropdown = item.actionView as Spinner
+        val adapter = ArrayAdapter.createFromResource(
+            this,
+            R.array.year_dropdown_test_values, android.R.layout.simple_spinner_item
+        )
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        yearDropdown.adapter = adapter
+        fillInYearDropdown()
+
+        return true
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        super.onPrepareOptionsMenu(menu)
+        if (menu.findItem(R.id.spinner) != null) {
+            menu.findItem(R.id.spinner).isVisible = shouldShowDropdown
+        }
+
+        return true
+    }
     private fun retrieveYearsList() {
         runBlocking {
             launch(Dispatchers.IO) {
@@ -131,15 +157,12 @@ class MainActivity : AppCompatActivity() {
         settingsIcon = binding.settingsIcon
         titleTextView = binding.titleTextView
         addCutFAB = binding.addCutFAB
-        yearDropdown = binding.yearDropdown
-        yearDropdown.visibility = View.INVISIBLE
 
         // set up bottom navigation
         navController = findNavController(R.id.nav_host_fragment)
         bottomNav = binding.bottomNav
         bottomNav.setupWithNavController(navController)
 
-        fillInYearDropdown()
 
         if (BuildConfig.DEBUG) {
             val policy: StrictMode.ThreadPolicy = StrictMode.ThreadPolicy.Builder()
@@ -150,6 +173,11 @@ class MainActivity : AppCompatActivity() {
                 .build()
             StrictMode.setThreadPolicy(policy)
         }
+
+        // allows createOptionsMenu to be called
+        val toolbar = binding.toolbar
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(false) // hide default title
     }
 
     override fun onResume() {
@@ -174,18 +202,17 @@ class MainActivity : AppCompatActivity() {
 
         Log.d(Constants.TAG, "Year array: $yearArray")
 
-        // testing purposes
-//        yearDropdownArray = MyApplication.applicationContext().resources.getStringArray(R.array.year_dropdown_test_values)
-//            .toList()
-        yearDropdownArray = yearArray
-        val yearAdaptor: ArrayAdapter<String> = ArrayAdapter(
-            this, android.R.layout.simple_spinner_item,
-            yearDropdownArray //MyApplication.applicationContext().resources.getStringArray(R.array.year_dropdown_test_values)
-        )
+        if (this::yearDropdown.isInitialized) {
+            yearDropdownArray = yearArray
+            val yearAdaptor: ArrayAdapter<String> = ArrayAdapter(
+                this, android.R.layout.simple_spinner_item,
+                yearDropdownArray //MyApplication.applicationContext().resources.getStringArray(R.array.year_dropdown_test_values)
+            )
 
-        yearDropdown.adapter = yearAdaptor
-        yearAdaptor.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line)
-        yearDropdown.setSelection(0) // always set to current year in dropdown menu
+            yearDropdown.adapter = yearAdaptor
+            yearAdaptor.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line)
+            yearDropdown.setSelection(0) // always set to current year in dropdown menu
+        }
     }
 
     private fun setListeners() {
@@ -195,14 +222,20 @@ class MainActivity : AppCompatActivity() {
                 R.id.home -> {
                     // navigate to the home fragment
                     titleTextView.text = getString(R.string.home)
-                    yearDropdown.visibility = View.INVISIBLE
+                    if (this::yearDropdown.isInitialized) {
+                        shouldShowDropdown = false
+                        invalidateOptionsMenu()
+                    }
                 }
                 R.id.cutlog -> {
                     // navigate to the cut log fragment
                     titleTextView.text = getString(R.string.cutLog)
-                    yearDropdown.visibility = View.VISIBLE
-                    // switch year dropdown value to the most recent year
-                    yearDropdown.setSelection(0)
+                    if (this::yearDropdown.isInitialized) {
+                        shouldShowDropdown = true
+                        // switch year dropdown value to the most recent year
+                        yearDropdown.setSelection(0)
+                        invalidateOptionsMenu()
+                    }
                 }
             }
         }
