@@ -7,11 +7,17 @@
     android:background="@color/background_black"
     tools:context=".ui.SaveLocationActivity">
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/titleGuide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.04" />
+
     <TextView
         android:id="@+id/saveCurrentLocationTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
         android:gravity="center"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
@@ -20,14 +26,12 @@
         android:textColor="@color/floral_white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@id/titleGuide" />
 
     <TextView
         android:id="@+id/saveCurrentLocationDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
         android:gravity="center"
         android:padding="16dp"
         android:text="@string/lawnLocationBodyText"
@@ -44,8 +48,6 @@
         android:id="@+id/denySaveLocationButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginBottom="28dp"
         android:contentDescription="@string/lawnLocationDenyDescription"
         android:minHeight="48dp"
         android:padding="8dp"
@@ -53,32 +55,73 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textSize="12sp"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintRight_toLeftOf="@id/noGuideline"
+        app:layout_constraintLeft_toRightOf="@id/noGuideline2"
+        app:layout_constraintTop_toTopOf="@id/heightButtonsGuide" />
 
     <Button
         android:id="@+id/acceptSaveLocationButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="15dp"
-        android:layout_marginBottom="27dp"
         android:contentDescription="@string/lawnLocationAcceptDescription"
         android:minHeight="48dp"
         android:padding="8dp"
         android:text="@string/lawnLocationAccept"
         android:textSize="12sp"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintRight_toLeftOf="@id/yesGuideline"
+        app:layout_constraintLeft_toRightOf="@id/yesGuideline2"
+        app:layout_constraintTop_toTopOf="@id/heightButtonsGuide" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="60dp"
+        android:gravity="center"
         android:text="@string/lawnLocationDisclaimer"
-        app:layout_constraintBottom_toTopOf="@+id/denySaveLocationButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/disclaimerGuide" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/noGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.05" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/noGuideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.4" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/yesGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.65" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/yesGuideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.95" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/heightButtonsGuide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.9" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/disclaimerGuide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.8" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -31,7 +31,7 @@ class NotificationHelperTest {
 
         val monthOfYear: String
         val month = cal.get(Calendar.MONTH) + 1
-        monthOfYear = if (day < 10) {
+        monthOfYear = if (month < 10) {
             "0$month"
         } else {
             month.toString()
