@@ -4,7 +4,6 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -25,7 +24,6 @@ Created by Malcolm Wright
 Date: 2021-09-24
  */
 class SetDatesActivity : AppCompatActivity() {
-    private lateinit var backIcon: ImageView
     private lateinit var saveDatesButton: Button
     private lateinit var startDateSelector: TextView
     private lateinit var endDateSelector: TextView
@@ -94,17 +92,21 @@ class SetDatesActivity : AppCompatActivity() {
     }
 
     private fun init() {
-        backIcon = binding.backIcon
         saveDatesButton = binding.saveDatesButton
         startDateSelector = binding.startDateSelector
         endDateSelector = binding.endDateSelector
+
+        // set up back button icon
+        val toolbar = binding.toolbar
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true) // allows back button
+        toolbar.setNavigationOnClickListener {
+            launchSettingsActivity()
+        }
+        supportActionBar?.title = getString(R.string.setCuttingSeasonDatesTitle)
     }
 
     private fun setListeners() {
-        backIcon.setOnClickListener {
-            launchSettingsActivity()
-        }
-
         startDateSelector.setOnClickListener {
             val cal = getAppropriateStartCalendar() ?: Calendar.getInstance()
             val day: Int = cal!!.get(Calendar.DAY_OF_MONTH)

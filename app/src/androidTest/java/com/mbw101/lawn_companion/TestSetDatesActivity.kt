@@ -94,7 +94,7 @@ class TestSetDatesActivity {
         setDatesActivityTestRule.launchActivity(customIntent)
         Thread.sleep(500)
         // hit back icon
-        onView(withId(R.id.backIcon)).perform(click())
+        onView(withContentDescription(R.string.abc_action_bar_up_description)).perform(click())
         // test to see if main activity appeared on screen
         Intents.intended(IntentMatchers.hasComponent(SettingsActivity::class.java.name))
     }

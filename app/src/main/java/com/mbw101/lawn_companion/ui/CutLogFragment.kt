@@ -131,7 +131,7 @@ class CutLogFragment : Fragment(), OnItemClickListener, AdapterView.OnItemSelect
 
         // set up listener for year dropdown
         val yearDropdown = requireActivity().findViewById<Spinner>(R.id.spinner)
-        yearDropdown.onItemSelectedListener = this
+        yearDropdown?.onItemSelectedListener = this
 
         setupListeners()
         setupViewModel(UtilFunctions.getCurrentYear())

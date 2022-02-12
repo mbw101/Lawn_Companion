@@ -32,7 +32,6 @@ class AddCutActivity : AppCompatActivity() {
 
     private lateinit var monthDropdown: Spinner
     private lateinit var dayDropdown: Spinner
-    private lateinit var backIcon: ImageView
     private lateinit var selectedTimeTextView: TextView
     private lateinit var noteEditText: EditText
     private lateinit var addCutButton: Button
@@ -125,7 +124,6 @@ class AddCutActivity : AppCompatActivity() {
     private fun init() {
         monthDropdown = binding.monthDropdownMenu
         dayDropdown = binding.dayDropdownMenu
-        backIcon = binding.backIcon
         selectedTimeTextView = binding.selectedTimeTextView
         addCutButton = binding.addCutButton
         noteEditText = binding.noteEditText
@@ -133,6 +131,14 @@ class AddCutActivity : AppCompatActivity() {
         fillDropdownMenus()
         setMonthSelection()
         updateInputs()
+
+        val toolbar = binding.toolbar
+        setSupportActionBar(toolbar)
+        toolbar.setNavigationOnClickListener {
+            launchMainActivity()
+        }
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = getString(R.string.addCutTitle)
     }
 
     /**
@@ -188,11 +194,6 @@ class AddCutActivity : AppCompatActivity() {
     }
 
     private fun setListeners() {
-        // set listener for back button
-        backIcon.setOnClickListener {
-            launchMainActivity()
-        }
-
         selectedTimeTextView.setOnClickListener {
             openClockDialog()
         }

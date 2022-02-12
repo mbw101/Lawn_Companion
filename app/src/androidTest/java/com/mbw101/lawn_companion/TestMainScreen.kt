@@ -1,7 +1,14 @@
 package com.mbw101.lawn_companion
 
 import android.content.Context
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.StateListDrawable
 import android.util.Log
+import android.view.View
+import androidx.annotation.DrawableRes
+import androidx.appcompat.view.menu.ActionMenuItemView
+import androidx.appcompat.widget.AppCompatImageButton
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
@@ -13,6 +20,7 @@ import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItem
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
+import androidx.test.espresso.matcher.BoundedMatcher
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
@@ -26,8 +34,10 @@ import com.mbw101.lawn_companion.utils.Constants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.hamcrest.CoreMatchers.containsString
-import org.hamcrest.CoreMatchers.not
+import org.hamcrest.CoreMatchers.*
+import org.hamcrest.Description
+import org.hamcrest.Matcher
+import org.hamcrest.Matchers
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -135,7 +145,11 @@ class TestMainScreen {
     @Test
     // tests opening the settings activity
     fun testClickingSettings() {
-        onView(withId(R.id.settingsIcon)).perform(click())
+        onView(
+            Matchers.allOf(
+            withContentDescription("Navigate up"), // TODO: Might not work due to settings icon
+            isDisplayed()
+        )).perform(click())
         // test to see if settings activity appeared on screen
         intended(hasComponent(SettingsActivity::class.java.name))
     }
@@ -173,7 +187,9 @@ class TestMainScreen {
         mainTextViewContainsText("No cuts have been made yet. Add a new cut to get started!")
         Thread.sleep(3000)
         // navigate to settings screen
-        onView(withId(R.id.settingsIcon)).perform(click())
+        onView(allOf(
+            instanceOf(AppCompatImageButton::class.java), withParent(withId(R.id.toolbar))
+        )).perform(click())
 
         // turns off the cutting season in the settings
         pressCuttingSeasonPreference()
@@ -185,7 +201,9 @@ class TestMainScreen {
         // Then, navigate back to turn on the cutting season again
 
         // navigate to settings screen
-        onView(withId(R.id.settingsIcon)).perform(click())
+        onView(allOf(
+            instanceOf(AppCompatImageButton::class.java), withParent(withId(R.id.toolbar))
+        )).perform(click())
 
         // turns off the cutting season in the settings
         pressCuttingSeasonPreference()
@@ -218,7 +236,9 @@ class TestMainScreen {
         mainTextViewContainsText("No cuts have been made yet. Add a new cut to get started!")
 
         // navigate to settings screen
-        onView(withId(R.id.settingsIcon)).perform(click())
+        onView(allOf(
+            instanceOf(AppCompatImageButton::class.java), withParent(withId(R.id.toolbar))
+        )).perform(click())
 
         pressCuttingSeasonPreference() // turns it off
 
@@ -228,7 +248,9 @@ class TestMainScreen {
         mainTextViewContainsText("cutting season")
 
         // navigate to settings screen
-        onView(withId(R.id.settingsIcon)).perform(click())
+        onView(allOf(
+            instanceOf(AppCompatImageButton::class.java), withParent(withId(R.id.toolbar))
+        )).perform(click())
 
         pressCuttingSeasonPreference() // turns season back on
 
@@ -302,6 +324,40 @@ class TestMainScreen {
         onView(withId(R.id.spinner)).check(matches(isDisplayed()))
     }
 
+    fun withActionIconDrawable(@DrawableRes resourceId: Int): Matcher<View?>? {
+        return object : BoundedMatcher<View?, ActionMenuItemView>(ActionMenuItemView::class.java) {
+            override fun describeTo(description: Description) {
+                description.appendText("has image drawable resource $resourceId")
+            }
+
+            override fun matchesSafely(actionMenuItemView: ActionMenuItemView): Boolean {
+                return sameBitmap(
+                    actionMenuItemView.context,
+                    actionMenuItemView.itemData.icon,
+                    resourceId
+                )
+            }
+        }
+    }
+
+    private fun sameBitmap(context: Context, drawable: Drawable, resourceId: Int): Boolean {
+        var drawable: Drawable? = drawable
+        var otherDrawable = context.resources.getDrawable(resourceId)
+        if (drawable == null || otherDrawable == null) {
+            return false
+        }
+        if (drawable is StateListDrawable && otherDrawable is StateListDrawable) {
+            drawable = drawable.getCurrent()
+            otherDrawable = otherDrawable.getCurrent()
+        }
+        if (drawable is BitmapDrawable) {
+            val bitmap = drawable.bitmap
+            val otherBitmap = (otherDrawable as BitmapDrawable).bitmap
+            return bitmap.sameAs(otherBitmap)
+        }
+        return false
+    }
+
     @Test
     fun testWeatherSuitabilityTextViewConditionCheck() {
         val prefs = ApplicationPrefs()
@@ -311,7 +367,7 @@ class TestMainScreen {
         assertEquals(AlarmReceiver.preDownloadCriteriaCheckForWeatherSuitability(prefs), false)
 
         // navigate to settings and enable cutting season manually
-        onView(withId(R.id.settingsIcon)).perform(click())
+        onView(withActionIconDrawable(R.drawable.ic_baseline_settings_32)).perform(click())
         pressPreferenceWithTitle("Enable/disable cutting season")
         assertEquals(AlarmReceiver.preDownloadCriteriaCheckForWeatherSuitability(prefs), false)
         pressPreferenceWithTitle("Enable/disable cutting season")
@@ -329,11 +385,15 @@ class TestMainScreen {
         addTestLocationBack()
 
         // navigate to settings and enable cutting season manually
-        onView(withId(R.id.settingsIcon)).perform(click())
+        onView(allOf(
+            instanceOf(AppCompatImageButton::class.java), withParent(withId(R.id.toolbar))
+        )).perform(click())
         pressPreferenceWithTitle("Enable/disable cutting season")
         pressBack()
         onView(withId(R.id.weatherSuitabilityTextView)).check(matches(not(isDisplayed())))
-        onView(withId(R.id.settingsIcon)).perform(click())
+        onView(allOf(
+            instanceOf(AppCompatImageButton::class.java), withParent(withId(R.id.toolbar))
+        )).perform(click())
         pressPreferenceWithTitle("Enable/disable cutting season")
         prefs.setHasLocationSavedValue(true)
         pressBack()

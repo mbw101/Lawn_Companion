@@ -8,8 +8,7 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
@@ -173,7 +172,7 @@ class TestFirstUse {
     }
 
     private fun ensureDefaultDatesAreDisplayed() {
-        onView(ViewMatchers.withId(R.id.settingsIcon)).perform(ViewActions.click())
+        onView(withContentDescription("Navigate up")).perform(ViewActions.click())
         TestSettingsScreen.tapSetCuttingSeasonDates()
         val year = UtilFunctions.getCurrentYear()
         onView(ViewMatchers.withId(R.id.startDateSelector)).check(matches(ViewMatchers.withText("$year/1/1")))

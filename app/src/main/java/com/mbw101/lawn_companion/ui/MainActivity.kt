@@ -13,6 +13,7 @@ import android.view.MenuItem
 import android.widget.*
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -45,7 +46,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var bottomNav: BottomNavigationView
     private lateinit var navController: NavController
-    private lateinit var settingsIcon: ImageView
     private lateinit var yearDropdown: Spinner
     private lateinit var titleTextView: TextView
 
@@ -118,7 +118,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         super.onCreateOptionsMenu(menu)
-        menuInflater.inflate(R.menu.action_bar_spinner_menu, menu)
+        menuInflater.inflate(R.menu.action_bar_spinner_menu, menu) // dropdown menu
         val item: MenuItem = menu.findItem(R.id.spinner)
         yearDropdown = item.actionView as Spinner
         val adapter = ArrayAdapter.createFromResource(
@@ -154,7 +154,6 @@ class MainActivity : AppCompatActivity() {
      */
     private fun init() {
         // initialize components
-        settingsIcon = binding.settingsIcon
         titleTextView = binding.titleTextView
         addCutFAB = binding.addCutFAB
 
@@ -176,8 +175,14 @@ class MainActivity : AppCompatActivity() {
 
         // allows createOptionsMenu to be called
         val toolbar = binding.toolbar
+        // https://stackoverflow.com/questions/17707029/setting-navigation-icon-on-android-actionbar
+        toolbar.navigationIcon = AppCompatResources.getDrawable(applicationContext, R.drawable.ic_baseline_settings_32)
         setSupportActionBar(toolbar)
+        toolbar.setNavigationOnClickListener {
+            launchSettings()
+        }
         supportActionBar?.setDisplayShowTitleEnabled(false) // hide default title
+//        supportActionBar?.setHomeActionContentDescription("Go to settings screen")
     }
 
     override fun onResume() {
@@ -216,6 +221,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setListeners() {
+        binding.bottomNav.setOnItemReselectedListener {  }
         // bottom navigation listener
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
@@ -238,11 +244,6 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-        }
-
-        // toolbar button listeners
-        settingsIcon.setOnClickListener {
-            launchSettings()
         }
 
         // FAB listener

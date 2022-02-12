@@ -134,7 +134,7 @@
     <string name="noLawnLocationMessage">There is no current lawn location saved. Add a location to receive notifications.</string>
 
     <string name="createLawnLocationButton">
-        Create a lawn location
+        Create lawn location
     </string>
 
     <!-- Main Activity accessibility -->

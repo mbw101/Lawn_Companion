@@ -1,16 +1,21 @@
 package com.mbw101.lawn_companion
 
+import androidx.appcompat.widget.AppCompatImageButton
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
+import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
 import com.mbw101.lawn_companion.ui.MainActivity
 import com.mbw101.lawn_companion.ui.SaveLocationActivity
+import org.hamcrest.CoreMatchers
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -53,20 +58,26 @@ class TestSaveLocationScreen {
 
     @Test
     fun testDeny() {
-        Espresso.onView(ViewMatchers.withId(R.id.settingsIcon)).perform(ViewActions.click())
+        // TODO: Figure out how to press the settings icon in the test
+        Espresso.onView(withContentDescription(R.string.abc_action_bar_up_description)).perform(click())
         TestMainScreen.pressPreferenceWithTitle("Create a lawn location")
         ensureActivityIsShown(SaveLocationActivity::class.java.name)
-        Espresso.onView(ViewMatchers.withId(R.id.denySaveLocationButton)).perform(ViewActions.click())
+        Espresso.onView(withId(R.id.denySaveLocationButton)).perform(ViewActions.click())
         // test to see if main activity appeared on screen
         ensureMainActivityIsShown()
     }
 
     @Test
     fun testAccept() {
-        Espresso.onView(ViewMatchers.withId(R.id.settingsIcon)).perform(ViewActions.click())
+        Espresso.onView(
+            CoreMatchers.allOf(
+                CoreMatchers.instanceOf(AppCompatImageButton::class.java),
+                ViewMatchers.withParent(withId(R.id.toolbar))
+            )
+        ).perform(ViewActions.click())
         TestMainScreen.pressPreferenceWithTitle("Create a lawn location")
         ensureActivityIsShown(SaveLocationActivity::class.java.name)
-        Espresso.onView(ViewMatchers.withId(R.id.acceptSaveLocationButton)).perform(ViewActions.click())
+        Espresso.onView(withId(R.id.acceptSaveLocationButton)).perform(ViewActions.click())
         // test to see if main activity appeared on screen
         Timer().schedule(1500) {
             ensureMainActivityIsShown()

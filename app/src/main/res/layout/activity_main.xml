@@ -17,17 +17,8 @@
         android:minHeight="?attr/actionBarSize"
         android:padding="5dp"
         android:theme="?attr/actionBarTheme">
-
-        <ImageView
-            android:id="@+id/settingsIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/ic_baseline_settings_32"
-            android:contentDescription="@string/settings_icon"
-            android:foregroundGravity="center_vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+<!--
+        app:navigationContentDescription="Go to settings screen"-->
 
         <TextView
             android:id="@+id/titleTextView"
@@ -35,8 +26,8 @@
             android:layout_height="match_parent"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:gravity="center|center_vertical"
             android:layout_gravity="center|center_vertical"
+            android:gravity="bottom"
             android:text="@string/home"
             android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 

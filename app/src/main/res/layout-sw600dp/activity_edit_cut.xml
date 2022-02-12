@@ -13,35 +13,8 @@
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
-        android:padding="5dp"
         android:theme="?attr/actionBarTheme"
-        android:layout_gravity="top">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical">
-
-            <ImageView
-                android:id="@+id/backIcon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:background="@drawable/ic_baseline_arrow_back_48"
-                android:contentDescription="@string/backArrowDescription" />
-
-            <TextView
-                android:id="@+id/titleTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-
-                android:gravity="center|center_vertical"
-                android:text="@string/editCutTitle"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
-        </RelativeLayout>
-
-    </androidx.appcompat.widget.Toolbar>
+        android:layout_gravity="top" />
 
     <!--    The add cut part of the activity -->
     <androidx.constraintlayout.widget.ConstraintLayout

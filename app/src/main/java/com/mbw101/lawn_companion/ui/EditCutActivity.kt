@@ -26,7 +26,6 @@ class EditCutActivity : AppCompatActivity()  {
 
     private lateinit var monthDropdown: Spinner
     private lateinit var dayDropdown: Spinner
-    private lateinit var backIcon: ImageView
     private lateinit var selectedTimeTextView: TextView
     private lateinit var noteEditText: EditText
     private lateinit var saveButton: Button
@@ -51,19 +50,23 @@ class EditCutActivity : AppCompatActivity()  {
     private fun init() {
         monthDropdown = binding.monthDropdownMenu
         dayDropdown = binding.dayDropdownMenu
-        backIcon = binding.backIcon
         selectedTimeTextView = binding.selectedTimeTextView
         saveButton = binding.saveEditButton
         noteEditText = binding.noteEditText
         setListeners()
         cutTime = Calendar.getInstance()
+
+        // set up toolbar
+        val toolbar = binding.toolbar
+        setSupportActionBar(toolbar)
+        supportActionBar?.title = getString(R.string.editCutTitle)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        toolbar.setNavigationOnClickListener {
+            launchMainActivity()
+        }
     }
 
     private fun setListeners() {
-        backIcon.setOnClickListener {
-            launchMainActivity()
-        }
-
         selectedTimeTextView.setOnClickListener {
             openClockDialog()
         }
