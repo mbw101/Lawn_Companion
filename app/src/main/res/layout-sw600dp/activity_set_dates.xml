@@ -25,98 +25,159 @@
         android:background="@color/background_black"
         android:theme="@style/Theme.Lawn_Companion.NoActionBar">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraintLayout2"
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/startDateGuide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.05" />
+
+        <TextView
+            android:id="@+id/startDateTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:paddingStart="15dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:text="@string/saveStartDate"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display3"
+            android:textColor="@color/floral_white"
+            app:layout_constraintBottom_toBottomOf="@id/startDateGuide"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="@id/startDateGuide2" />
 
-            <TextView
-                android:id="@+id/startDateTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingStart="15dp"
-                android:paddingLeft="15dp"
-                android:paddingRight="15dp"
-                android:text="@string/saveStartDate"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display3"
-                android:textColor="@color/floral_white"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/startDateGuide2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.1" />
 
-            <TextView
-                android:id="@+id/startDateSelector"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="21dp"
-                android:gravity="center_horizontal"
-                android:paddingStart="15dp"
-                android:paddingLeft="25dp"
-                android:paddingRight="25dp"
-                android:text="@string/startDateEditTextDefault"
-                android:textAlignment="center"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display2"
-                android:textColor="@color/floral_white"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/startDateTextView" />
 
-            <TextView
-                android:id="@+id/endDateTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
-                android:paddingStart="15dp"
-                android:paddingLeft="15dp"
-                android:paddingRight="15dp"
-                android:text="@string/saveEndDate"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display3"
-                android:textColor="@color/floral_white"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/startDateSelector" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/startDateSelectorGuide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.12" />
 
-            <TextView
-                android:id="@+id/endDateSelector"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="21dp"
-                android:gravity="center_horizontal"
-                android:paddingStart="25dp"
-                android:paddingLeft="25dp"
-                android:paddingRight="25dp"
-                android:text="@string/endDateEditTextDefault"
-                android:textAlignment="center"
+        <TextView
+            android:id="@+id/startDateSelector"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:gravity="center_horizontal"
+            android:paddingStart="15dp"
+            android:paddingLeft="25dp"
+            android:paddingRight="25dp"
+            android:text="@string/startDateEditTextDefault"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display2"
+            android:textColor="@color/floral_white"
+            app:layout_constraintBottom_toBottomOf="@id/startDateSelectorGuide"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/startDateSelectorGuide2" />
 
-                android:textAppearance="@style/TextAppearance.AppCompat.Display2"
-                android:textColor="@color/floral_white"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/endDateTextView" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/startDateSelectorGuide2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.2" />
 
-            <Button
-                android:id="@+id/saveDatesButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="20dp"
-                android:contentDescription="@string/saveDatesButtonDescription"
-                android:padding="12dp"
-                android:text="@string/saveDatesButtonText"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/endDateSelector" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/endDateGuide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.4" />
+
+        <TextView
+            android:id="@+id/endDateTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="15dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:text="@string/saveEndDate"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display3"
+            android:textColor="@color/floral_white"
+            app:layout_constraintBottom_toBottomOf="@id/endDateGuide"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/endDateGuide2" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/endDateGuide2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.48" />
+
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/endDateSelectorGuide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.5" />
+
+        <TextView
+            android:id="@+id/endDateSelector"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:paddingStart="25dp"
+            android:paddingLeft="25dp"
+            android:paddingRight="25dp"
+            android:text="@string/endDateEditTextDefault"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display2"
+            android:textColor="@color/floral_white"
+            app:layout_constraintBottom_toBottomOf="@id/endDateSelectorGuide"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/endDateSelectorGuide2" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/endDateSelectorGuide2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.6" />
+
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/saveDatesButtonGuide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.7" />
+
+        <Button
+            android:id="@+id/saveDatesButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:contentDescription="@string/saveDatesButtonDescription"
+            android:padding="24dp"
+            android:text="@string/saveDatesButtonText"
+            android:textSize="45sp"
+            app:layout_constraintBottom_toBottomOf="@id/saveDatesButtonGuide"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/saveDatesButtonGuide2" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/saveDatesButtonGuide2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.8" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
