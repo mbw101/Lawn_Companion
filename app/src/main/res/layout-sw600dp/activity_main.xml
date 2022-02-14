@@ -22,12 +22,12 @@
             android:id="@+id/titleTextView"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
+            android:layout_centerInParent="true"
             android:layout_gravity="center|center_vertical"
             android:gravity="center|center_vertical"
             android:text="@string/home"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textSize="34sp" />
 
     </androidx.appcompat.widget.Toolbar>
 

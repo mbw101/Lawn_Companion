@@ -3,15 +3,15 @@
   <component name="deploymentTargetDropDown">
     <targetSelectedWithDropDown>
       <Target>
-        <type value="COLD_BOOT_TARGET" />
+        <type value="QUICK_BOOT_TARGET" />
         <deviceKey>
           <Key>
             <type value="VIRTUAL_DEVICE_PATH" />
-            <value value="C:\Users\Malcolm Wright\.android\avd\My_Phone_Oreo_API_26_.avd" />
+            <value value="C:\Users\Malcolm Wright\.android\avd\Nexus_7_API_28.avd" />
           </Key>
         </deviceKey>
       </Target>
     </targetSelectedWithDropDown>
-    <timeTargetWasSelectedWithDropDown value="2022-02-01T13:36:06.308110300Z" />
+    <timeTargetWasSelectedWithDropDown value="2022-02-13T02:19:00.483138Z" />
   </component>
 </project>
