@@ -354,6 +354,5 @@ class AlarmReceiver : BroadcastReceiver(), GetWeatherListener {
 
     override fun onFailure(errorMessage: String) {
         Log.e(Constants.TAG, "Error message = $errorMessage")
-        // TODO("Not yet implemented")
     }
 }

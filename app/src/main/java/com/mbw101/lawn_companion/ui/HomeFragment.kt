@@ -344,6 +344,6 @@ class HomeFragment : Fragment(), GetWeatherListener {
     }
 
     override fun onFailure(errorMessage: String) {
-        // TODO("Not yet implemented")
+        Log.e(Constants.TAG, "Error message = $errorMessage")
     }
 }

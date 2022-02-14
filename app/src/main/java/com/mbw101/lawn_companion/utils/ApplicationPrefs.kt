@@ -58,20 +58,20 @@ class ApplicationPrefs {
 
     fun getWeatherCheckFrequencyInMillis(): Int {
         val freq = getWeatherCheckFrequency()
-        when {
+        return when {
             freq.equals("15 minutes") -> {
-                return Constants.FIFTEEN_MINUTES
+                Constants.FIFTEEN_MINUTES
             }
             freq.equals("30 minutes") -> {
-                return Constants.THIRTY_MINUTES
+                Constants.THIRTY_MINUTES
             }
             freq.equals("1 hour") -> {
-                return Constants.ONE_HOUR
+                Constants.ONE_HOUR
             }
             freq.equals("2 hours") -> {
-                return Constants.TWO_HOURS
+                Constants.TWO_HOURS
             }
-            else -> return Constants.FIFTEEN_MINUTES
+            else -> Constants.FIFTEEN_MINUTES
         }
     }
 

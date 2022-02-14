@@ -324,7 +324,7 @@ class TestMainScreen {
         onView(withId(R.id.spinner)).check(matches(isDisplayed()))
     }
 
-    fun withActionIconDrawable(@DrawableRes resourceId: Int): Matcher<View?>? {
+    private fun withActionIconDrawable(@DrawableRes resourceId: Int): Matcher<View?>? {
         return object : BoundedMatcher<View?, ActionMenuItemView>(ActionMenuItemView::class.java) {
             override fun describeTo(description: Description) {
                 description.appendText("has image drawable resource $resourceId")
