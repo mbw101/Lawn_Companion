@@ -20,7 +20,14 @@ object LocationUtils {
     @SuppressLint("MissingPermission")
     fun requestLocation(context: Context, locationListener: LocationListener) {
         setupLocationManager(context)
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10, 0.0f, locationListener)
+
+        // double check for network provider
+        if (!hasNetworkProvider() || hasNoLocationPermissions(context)) {
+            return
+        }
+
+        setupLocationManager(context)
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0.0f, locationListener)
     }
 
     fun stopLocationUpdates(locationListener: LocationListener) {

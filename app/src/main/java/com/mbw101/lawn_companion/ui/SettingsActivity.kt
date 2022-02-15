@@ -12,10 +12,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.preference.Preference
+import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import com.mbw101.lawn_companion.BuildConfig
 import com.mbw101.lawn_companion.R
 import com.mbw101.lawn_companion.databinding.SettingsActivityBinding
+import com.mbw101.lawn_companion.utils.ApplicationPrefs
 import com.mbw101.lawn_companion.utils.Constants
 import com.mbw101.lawn_companion.utils.UtilFunctions.allowReads
 
@@ -72,7 +74,20 @@ class SettingsActivity : AppCompatActivity() {
             if (BuildConfig.DEBUG) {
                 // setPreferencesFromResource results in StrictMode policy violation
                 allowReads {
-                    setPreferencesFromResource(R.xml.root_preferences, rootKey)
+                    addPreferencesFromResource(R.xml.root_preferences)
+
+                    // add debug preference for clearing the intro completed flag
+                    val preferenceScreen = this.preferenceScreen
+
+                    val category = PreferenceCategory(preferenceScreen.context)
+                    category.title = "Debug Options"
+                    preferenceScreen.addPreference(category)
+
+                    val clearIntroFlagPreference = Preference(preferenceScreen.context)
+                    clearIntroFlagPreference.key = "clearIntroFlag"
+                    clearIntroFlagPreference.title = "Clear Intro Flag (will show intro when the app opened up again)"
+                    clearIntroFlagPreference.summary = "Clears the SharedPreferences flag"
+                    preferenceScreen.addPreference(clearIntroFlagPreference)
                 }
             }
             else {
@@ -96,6 +111,13 @@ class SettingsActivity : AppCompatActivity() {
             else if (preferenceTitle.contains("Cutting Season Dates")) {
                 openSetDatesActivity()
             }
+            else if (preferenceTitle.contains("Clear Intro Flag")) { // debug preference
+                // clear the intro flag, so it can be shown again once the app is opened
+                    Toast.makeText(context, "Clearing intro flag", Toast.LENGTH_SHORT).show()
+                val applicationPrefs = ApplicationPrefs()
+                applicationPrefs.setNotFirstTime(false)
+            }
+
             return super.onPreferenceTreeClick(preference)
         }
 

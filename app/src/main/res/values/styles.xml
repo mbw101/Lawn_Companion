@@ -19,6 +19,11 @@
         <item name="android:windowBackground">@color/background_black</item>
         <item name="android:textColorTertiary">@color/light_gray</item>
         <item name="android:actionBarStyle">@style/MyActionBar</item>
+
+        <!--  Sets the colour of the Preference Category title -->
+        <item name="android:colorAccent">@color/medium_spring_green_darker_shade</item>
+        <!--  Sets colour of the SwitchPreferenceCompat and the CheckBoxPreference  -->
+        <item name="colorControlActivated">@color/medium_spring_green_darker_shade</item>
     </style>
 
     <style name="MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">

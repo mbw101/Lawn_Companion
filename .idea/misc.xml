@@ -14,7 +14,7 @@
         <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout-sw600dp/fragment_2nd_intro_screen.xml" value="0.23860837438423646" />
         <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout/activity_add_cut.xml" value="0.5" />
         <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout/activity_edit_cut.xml" value="0.5" />
-        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout/activity_main.xml" value="0.75" />
+        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout/activity_save_location.xml" value="0.75" />
         <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout/activity_set_dates.xml" value="0.22" />
         <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/layout/fragment_cut_log.xml" value="0.30117753623188404" />
@@ -24,6 +24,7 @@
         <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/menu/action_bar_spinner_menu.xml" value="0.1" />
         <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/menu/settings_menu_item.xml" value="0.34444444444444444" />
         <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.26990740740740743" />
+        <entry key="..\:/Users/Malcolm Wright/Android Projects/Lawn_Companion/app/src/main/res/xml/root_preferences.xml" value="0.33" />
       </map>
     </option>
   </component>

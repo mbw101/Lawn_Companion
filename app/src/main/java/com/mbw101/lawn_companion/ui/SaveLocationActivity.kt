@@ -38,6 +38,7 @@ class SaveLocationActivity : AppCompatActivity(), LocationListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         // request location update now since it takes some time
         LocationUtils.requestLocation(this, this)
 
@@ -52,6 +53,8 @@ class SaveLocationActivity : AppCompatActivity(), LocationListener {
         createButtons()
         setupRepo()
         setupListeners()
+        Toast.makeText(this, "Gathering network location, please wait...", Toast.LENGTH_LONG)
+            .show()
     }
 
     private fun createButtons() {
