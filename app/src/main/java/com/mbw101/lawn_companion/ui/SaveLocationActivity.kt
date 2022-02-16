@@ -5,6 +5,7 @@ import android.location.Location
 import android.location.LocationListener
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -36,6 +37,8 @@ class SaveLocationActivity : AppCompatActivity(), LocationListener {
     private var locationNetwork: Location? = null
     private lateinit var binding: ActivitySaveLocationBinding
 
+    private val maxLocationWaitTimeMillis: Long = 2000
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -46,6 +49,7 @@ class SaveLocationActivity : AppCompatActivity(), LocationListener {
         val view = binding.root
         setContentView(view)
 
+        showProgressBar()
         init()
     }
 
@@ -53,8 +57,13 @@ class SaveLocationActivity : AppCompatActivity(), LocationListener {
         createButtons()
         setupRepo()
         setupListeners()
-        Toast.makeText(this, "Gathering network location, please wait...", Toast.LENGTH_LONG)
-            .show()
+
+        // show the layout if it has surpassed this time
+        Timer().schedule(maxLocationWaitTimeMillis) {
+            runOnUiThread {
+                hideProgressBar()
+            }
+        }
     }
 
     private fun createButtons() {
@@ -72,6 +81,13 @@ class SaveLocationActivity : AppCompatActivity(), LocationListener {
         }
 
         acceptSaveButton.setOnClickListener {
+            if (locationNetwork == null) {
+                Toast.makeText(this, "Having issues gathering network location, please try again later", Toast.LENGTH_LONG)
+                    .show()
+                launchMainActivity()
+                return@setOnClickListener
+            }
+
             Toast.makeText(this, "Saving lawn location...", Toast.LENGTH_LONG).show()
 
             runBlocking {
@@ -81,7 +97,7 @@ class SaveLocationActivity : AppCompatActivity(), LocationListener {
                 }
             }
 
-            Timer().schedule(2000) {
+            Timer().schedule(500) {
                 launchMainActivity()
             }
         }
@@ -107,6 +123,7 @@ class SaveLocationActivity : AppCompatActivity(), LocationListener {
     private fun createCoroutineForDB(location: Location) {
         saveNetworkLocation(location)
         LocationUtils.stopLocationUpdates(this) // stops the usage of network location since we are done with it
+        hideProgressBar()
     }
 
     /***
@@ -131,5 +148,25 @@ class SaveLocationActivity : AppCompatActivity(), LocationListener {
                 )
             }
         }
+    }
+
+    // Use this function, so we can get the location before input is accepted
+    private fun showProgressBar() {
+        if (binding.progressBarLayout == null || binding.saveLocationLayout == null) {
+            return
+        }
+
+        binding.progressBarLayout!!.visibility = View.VISIBLE
+        binding.saveLocationLayout!!.visibility = View.INVISIBLE
+    }
+
+    // Call this once a location is received OR it has surpassed a certain amount of time
+    private fun hideProgressBar() {
+        if (binding.progressBarLayout == null || binding.saveLocationLayout == null) {
+            return
+        }
+
+        binding.progressBarLayout!!.visibility = View.INVISIBLE
+        binding.saveLocationLayout!!.visibility = View.VISIBLE
     }
 }

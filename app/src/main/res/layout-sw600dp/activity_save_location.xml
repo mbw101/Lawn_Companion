@@ -1,113 +1,147 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_black"
-    tools:context=".ui.SaveLocationActivity">
+    tools:context=".ui.SaveLocationActivity"
+    android:layout_gravity="center_vertical|center_horizontal" >
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/titleGuide"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.08" />
+    <!-- This layout is only used for showing a progress bar which allows us to
+    gather the user's location before input can be accepted. This should fix the
+    location issue. -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/progressBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:background="@color/background_black"
+        android:foregroundGravity="center"
+        android:visibility="invisible">
 
-    <TextView
-        android:id="@+id/saveCurrentLocationTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:text="@string/lawnLocationTitle"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display2"
-        android:textColor="@color/floral_white"
-        app:layout_constraintBottom_toBottomOf="@id/titleGuide"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:foregroundGravity="center"
+            android:theme="@style/myPreferencesTheme"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/saveCurrentLocationDescription"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="16dp"
-        android:text="@string/lawnLocationBodyText"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-        android:textColor="@color/floral_white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.538" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/buttonsGuide"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.9" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/saveLocationLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/denyButtonGuide"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.05" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/titleGuide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.08" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/acceptButtonGuide"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.95" />
+        <TextView
+            android:id="@+id/saveCurrentLocationTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:text="@string/lawnLocationTitle"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display2"
+            android:textColor="@color/floral_white"
+            app:layout_constraintBottom_toBottomOf="@id/titleGuide"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-    <Button
-        android:id="@+id/denySaveLocationButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/lawnLocationDenyDescription"
-        android:minHeight="48dp"
-        android:padding="8dp"
-        android:text="@string/lawnLocationDeny"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textSize="32sp"
-        android:visibility="visible"
-        app:layout_constraintLeft_toRightOf="@id/denyButtonGuide"
-        app:layout_constraintTop_toTopOf="@id/buttonsGuide" />
+        <TextView
+            android:id="@+id/saveCurrentLocationDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="16dp"
+            android:text="@string/lawnLocationBodyText"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:textColor="@color/floral_white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.538" />
 
-    <Button
-        android:id="@+id/acceptSaveLocationButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/lawnLocationAcceptDescription"
-        android:minHeight="48dp"
-        android:padding="8dp"
-        android:text="@string/lawnLocationAccept"
-        android:textSize="32sp"
-        android:visibility="visible"
-        app:layout_constraintRight_toRightOf="@id/acceptButtonGuide"
-        app:layout_constraintTop_toTopOf="@id/buttonsGuide" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/buttonsGuide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.9" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/disclaimerGuide"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.8" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/denyButtonGuide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.05" />
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/lawnLocationDisclaimer"
-        android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/disclaimerGuide" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/acceptButtonGuide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.95" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <Button
+            android:id="@+id/denySaveLocationButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/lawnLocationDenyDescription"
+            android:minHeight="48dp"
+            android:padding="8dp"
+            android:text="@string/lawnLocationDeny"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textSize="32sp"
+            android:visibility="visible"
+            app:layout_constraintLeft_toRightOf="@id/denyButtonGuide"
+            app:layout_constraintTop_toTopOf="@id/buttonsGuide" />
+
+        <Button
+            android:id="@+id/acceptSaveLocationButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/lawnLocationAcceptDescription"
+            android:minHeight="48dp"
+            android:padding="8dp"
+            android:text="@string/lawnLocationAccept"
+            android:textSize="32sp"
+            android:visibility="visible"
+            app:layout_constraintRight_toRightOf="@id/acceptButtonGuide"
+            app:layout_constraintTop_toTopOf="@id/buttonsGuide" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/disclaimerGuide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.8" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/lawnLocationDisclaimer"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/disclaimerGuide" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

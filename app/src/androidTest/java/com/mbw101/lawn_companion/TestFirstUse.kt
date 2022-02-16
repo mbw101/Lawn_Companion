@@ -84,6 +84,7 @@ class TestFirstUse {
         introActivityTestRule.launchActivity(customIntent)
         ensureIntroActivityIsShown()
         pressNavButtons()
+        Thread.sleep(2000)
         ensureSaveActivityIsShown()
         Thread.sleep(1000)
         pressSaveLocation()
