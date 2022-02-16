@@ -68,6 +68,8 @@
         <Preference android:title="Version"
             android:summary="@string/app_version" />
 
+        <Preference android:title="Special thanks"
+            android:summary="Thank you to Cameron Johnson, Liam Burr, and Tyler Tucker" />
 
     </PreferenceCategory>
 
