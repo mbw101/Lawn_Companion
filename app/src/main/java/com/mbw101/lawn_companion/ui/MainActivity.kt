@@ -47,7 +47,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var bottomNav: BottomNavigationView
     private lateinit var navController: NavController
     private lateinit var yearDropdown: Spinner
-    private lateinit var titleTextView: TextView
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var cutEntryRepository: CutEntryRepository
@@ -154,7 +153,6 @@ class MainActivity : AppCompatActivity() {
      */
     private fun init() {
         // initialize components
-        titleTextView = binding.titleTextView
         addCutFAB = binding.addCutFAB
 
         // set up bottom navigation
@@ -181,7 +179,7 @@ class MainActivity : AppCompatActivity() {
         toolbar.setNavigationOnClickListener {
             launchSettings()
         }
-        supportActionBar?.setDisplayShowTitleEnabled(false) // hide default title
+        supportActionBar?.title = getString(R.string.home)
 //        supportActionBar?.setHomeActionContentDescription("Go to settings screen")
     }
 
@@ -227,7 +225,7 @@ class MainActivity : AppCompatActivity() {
             when (destination.id) {
                 R.id.home -> {
                     // navigate to the home fragment
-                    titleTextView.text = getString(R.string.home)
+                    supportActionBar?.title = getString(R.string.home)
                     if (this::yearDropdown.isInitialized) {
                         shouldShowDropdown = false
                         invalidateOptionsMenu()
@@ -235,7 +233,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.cutlog -> {
                     // navigate to the cut log fragment
-                    titleTextView.text = getString(R.string.cutLog)
+                    supportActionBar?.title = getString(R.string.cutLog)
                     if (this::yearDropdown.isInitialized) {
                         shouldShowDropdown = true
                         // switch year dropdown value to the most recent year

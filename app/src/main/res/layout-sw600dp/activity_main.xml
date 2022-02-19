@@ -15,21 +15,7 @@
         android:layout_gravity="top"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
-        android:padding="5dp"
-        android:theme="?attr/actionBarTheme">
-
-        <TextView
-            android:id="@+id/titleTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_centerInParent="true"
-            android:layout_gravity="center|center_vertical"
-            android:gravity="center|center_vertical"
-            android:text="@string/home"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textSize="34sp" />
-
-    </androidx.appcompat.widget.Toolbar>
+        android:theme="?attr/actionBarTheme" />
 
     <fragment
         android:id="@+id/nav_host_fragment"

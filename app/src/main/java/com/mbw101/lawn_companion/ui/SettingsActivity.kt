@@ -16,10 +16,14 @@ import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import com.mbw101.lawn_companion.BuildConfig
 import com.mbw101.lawn_companion.R
+import com.mbw101.lawn_companion.database.setupLawnLocationRepository
 import com.mbw101.lawn_companion.databinding.SettingsActivityBinding
 import com.mbw101.lawn_companion.utils.ApplicationPrefs
 import com.mbw101.lawn_companion.utils.Constants
 import com.mbw101.lawn_companion.utils.UtilFunctions.allowReads
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 /**
 Lawn Companion
@@ -88,6 +92,13 @@ class SettingsActivity : AppCompatActivity() {
                     clearIntroFlagPreference.title = "Clear Intro Flag (will show intro when the app opened up again)"
                     clearIntroFlagPreference.summary = "Clears the SharedPreferences flag"
                     preferenceScreen.addPreference(clearIntroFlagPreference)
+
+                    // add debug preference for removing location from DB
+                    val removeLocationPreference = Preference(preferenceScreen.context)
+                    removeLocationPreference.key = "clearLocationDB"
+                    removeLocationPreference.title = "Clear Lawn Location DB"
+                    removeLocationPreference.summary = "Removes all entries from the lawn location table"
+                    preferenceScreen.addPreference(removeLocationPreference)
                 }
             }
             else {
@@ -113,9 +124,22 @@ class SettingsActivity : AppCompatActivity() {
             }
             else if (preferenceTitle.contains("Clear Intro Flag")) { // debug preference
                 // clear the intro flag, so it can be shown again once the app is opened
-                    Toast.makeText(context, "Clearing intro flag", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Clearing intro flag", Toast.LENGTH_SHORT).show()
                 val applicationPrefs = ApplicationPrefs()
                 applicationPrefs.setNotFirstTime(false)
+            }
+            else if (preferenceTitle.contains("Clear Lawn Location DB")) {
+                Toast.makeText(context, "Clearing location DB", Toast.LENGTH_SHORT).show()
+                val lawnLocationRepository = setupLawnLocationRepository(MyApplication.applicationContext())
+                runBlocking {
+                    launch(Dispatchers.IO) {
+                        lawnLocationRepository.deleteAllLocations()
+                    }
+                }
+
+                // we also need to set location flag to false
+                val applicationPrefs = ApplicationPrefs()
+                applicationPrefs.setHasLocationSavedValue(false)
             }
 
             return super.onPreferenceTreeClick(preference)

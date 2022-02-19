@@ -14,7 +14,6 @@
         android:layout_gravity="top"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
-        android:padding="5dp"
         android:theme="?attr/actionBarTheme">
 
     </androidx.appcompat.widget.Toolbar>

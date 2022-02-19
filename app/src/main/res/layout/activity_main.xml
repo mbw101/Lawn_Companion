@@ -15,22 +15,9 @@
         android:layout_gravity="top"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
-        android:padding="5dp"
         android:theme="?attr/actionBarTheme">
-<!--
+        <!--
         app:navigationContentDescription="Go to settings screen"-->
-
-        <TextView
-            android:id="@+id/titleTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:layout_gravity="center|center_vertical"
-            android:gravity="bottom"
-            android:text="@string/home"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
-
     </androidx.appcompat.widget.Toolbar>
 
     <fragment
