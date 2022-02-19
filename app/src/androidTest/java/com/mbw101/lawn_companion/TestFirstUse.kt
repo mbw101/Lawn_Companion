@@ -7,7 +7,6 @@ import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
-import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
@@ -97,7 +96,7 @@ class TestFirstUse {
     }
 
     private fun pressHomeNavButton() {
-        onView(ViewMatchers.withId(R.id.home)).perform(ViewActions.click())
+        onView(withId(R.id.home)).perform(ViewActions.click())
             .check(matches(isDisplayed()))
     }
 
@@ -116,18 +115,18 @@ class TestFirstUse {
     }
 
     private fun pressNavButtons() {
-        onView(ViewMatchers.withId(R.id.nextButton)).perform(ViewActions.click())
-        onView(ViewMatchers.withId(R.id.nextButton)).perform(ViewActions.click())
-        onView(ViewMatchers.withId(R.id.nextButton)).perform(ViewActions.click())
-        onView(ViewMatchers.withId(R.id.getStartedButton)).perform(ViewActions.click())
+        onView(withId(R.id.nextButton)).perform(ViewActions.click())
+        onView(withId(R.id.nextButton)).perform(ViewActions.click())
+        onView(withId(R.id.nextButton)).perform(ViewActions.click())
+        onView(withId(R.id.getStartedButton)).perform(ViewActions.click())
     }
 
     private fun pressSaveLocation() {
-        onView(ViewMatchers.withId(R.id.acceptSaveLocationButton)).perform(ViewActions.click())
+        onView(withId(R.id.acceptSaveLocationButton)).perform(ViewActions.click())
     }
 
     private fun pressDenySaveLocation() {
-        onView(ViewMatchers.withId(R.id.denySaveLocationButton)).perform(ViewActions.click())
+        onView(withId(R.id.denySaveLocationButton)).perform(ViewActions.click())
     }
 
     private fun ensureSaveActivityIsShown() {
@@ -143,18 +142,18 @@ class TestFirstUse {
     }
 
     private fun compareHappyExpectedOutputs() {
-        onView(ViewMatchers.withId(R.id.mainMessageTextView)).check(
+        onView(withId(R.id.mainMessageTextView)).check(
             matches(
                 isCompletelyDisplayed()
             )
         )
-        onView(ViewMatchers.withId(R.id.mainMessageTextView)).check(matches(
-            ViewMatchers.withText(CoreMatchers.containsString("No cuts have been made yet. Add a new cut to get started!"))
+        onView(withId(R.id.mainMessageTextView)).check(matches(
+            withText(CoreMatchers.containsString("No cuts have been made yet. Add a new cut to get started!"))
         ))
-        onView(ViewMatchers.withId(R.id.openPermissionsButton)).check(
+        onView(withId(R.id.openPermissionsButton)).check(
             matches(not(isDisplayed()))
         )
-        onView(ViewMatchers.withId(R.id.createLawnLocationButton)).check(
+        onView(withId(R.id.createLawnLocationButton)).check(
             matches(not(isDisplayed()))
         )
     }
@@ -176,28 +175,28 @@ class TestFirstUse {
         onView(withContentDescription("Navigate up")).perform(ViewActions.click())
         TestSettingsScreen.tapSetCuttingSeasonDates()
         val year = UtilFunctions.getCurrentYear()
-        onView(ViewMatchers.withId(R.id.startDateSelector)).check(matches(ViewMatchers.withText("$year/1/1")))
-        onView(ViewMatchers.withId(R.id.endDateSelector)).check(matches(ViewMatchers.withText("$year/12/31")))
+        onView(withId(R.id.startDateSelector)).check(matches(withText("$year/1/1")))
+        onView(withId(R.id.endDateSelector)).check(matches(withText("$year/12/31")))
     }
 
     private fun compareNoLocationExpectedOutputs() {
-        onView(ViewMatchers.withId(R.id.mainMessageTextView)).check(
+        onView(withId(R.id.mainMessageTextView)).check(
             matches(
                 isCompletelyDisplayed()
             )
         )
-        onView(ViewMatchers.withId(R.id.secondaryTextView)).check(
+        onView(withId(R.id.secondaryTextView)).check(
             matches(
                 isCompletelyDisplayed()
             )
         )
-        onView(ViewMatchers.withId(R.id.openPermissionsButton)).check(
+        onView(withId(R.id.openPermissionsButton)).check(
             matches(not(isDisplayed()))
         )
-        onView(ViewMatchers.withId(R.id.secondaryTextView)).check(matches(
-            ViewMatchers.withText(CoreMatchers.containsString("There is no current lawn location saved. Add a location to receive notifications."))
+        onView(withId(R.id.secondaryTextView)).check(matches(
+            withText(CoreMatchers.containsString("There is no current lawn location saved. Add a location to receive notifications."))
         ))
-        onView(ViewMatchers.withId(R.id.createLawnLocationButton)).check(
+        onView(withId(R.id.createLawnLocationButton)).check(
             matches(isCompletelyDisplayed())
         )
     }

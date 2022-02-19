@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.mbw101.lawn_companion">
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -20,28 +21,33 @@
             android:label="@string/title_activity_set_dates"
             android:theme="@style/Theme.Lawn_Companion.NoActionBar"
             android:exported="false"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".ui.SaveLocationActivity"
             android:exported="false"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".ui.AddCutActivity"
             android:label="@string/addCutTitle"
             android:theme="@style/Theme.Lawn_Companion"
             android:exported="false"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".ui.MainActivity"
             android:exported="false"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".ui.IntroActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:theme="@style/Theme.Lawn_Companion.Fullscreen"
             android:exported="true"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -53,12 +59,14 @@
             android:parentActivityName=".ui.MainActivity"
             android:theme="@style/myPreferencesTheme"
             android:exported="false"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
         <activity android:name=".ui.EditCutActivity"
             android:parentActivityName=".ui.MainActivity"
             android:theme="@style/Theme.Lawn_Companion"
             android:exported="false"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
 
         <!-- Used for when the user presses the action button on the cut notification -->
         <receiver android:name=".notifications.AppGlobalReceiver" android:exported="false" />

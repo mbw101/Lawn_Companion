@@ -2,7 +2,6 @@ package com.mbw101.lawn_companion
 
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.test.espresso.Espresso
-import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
@@ -62,7 +61,7 @@ class TestSaveLocationScreen {
         Espresso.onView(withContentDescription(R.string.abc_action_bar_up_description)).perform(click())
         TestMainScreen.pressPreferenceWithTitle("Create a lawn location")
         ensureActivityIsShown(SaveLocationActivity::class.java.name)
-        Espresso.onView(withId(R.id.denySaveLocationButton)).perform(ViewActions.click())
+        Espresso.onView(withId(R.id.denySaveLocationButton)).perform(click())
         // test to see if main activity appeared on screen
         ensureMainActivityIsShown()
     }
@@ -74,10 +73,10 @@ class TestSaveLocationScreen {
                 CoreMatchers.instanceOf(AppCompatImageButton::class.java),
                 ViewMatchers.withParent(withId(R.id.toolbar))
             )
-        ).perform(ViewActions.click())
+        ).perform(click())
         TestMainScreen.pressPreferenceWithTitle("Create a lawn location")
         ensureActivityIsShown(SaveLocationActivity::class.java.name)
-        Espresso.onView(withId(R.id.acceptSaveLocationButton)).perform(ViewActions.click())
+        Espresso.onView(withId(R.id.acceptSaveLocationButton)).perform(click())
         // test to see if main activity appeared on screen
         Timer().schedule(1500) {
             ensureMainActivityIsShown()

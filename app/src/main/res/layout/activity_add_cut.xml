@@ -196,7 +196,8 @@
             app:layout_constraintBottom_toBottomOf="@id/selectedTimeTextViewGuide"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/selectedTimeTextViewGuide2" />
+            app:layout_constraintTop_toTopOf="@id/selectedTimeTextViewGuide2"
+            tools:ignore="HardcodedText" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/selectedTimeTextViewGuide2"
