@@ -5,12 +5,13 @@
     android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/fullscreenBackgroundColor"
+    android:background="@color/background_black"
     android:theme="@style/ThemeOverlay.Lawn_Companion.FullscreenContainer"
-    tools:context=".ui.IntroActivity">
+    tools:context=".ui.IntroActivity" >
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/introViewPager"
+        android:background="@color/background_black"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="110dp"
@@ -20,8 +21,7 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
-        android:background="@color/background_black" />
+        app:layout_constraintVertical_bias="1.0" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
