@@ -16,3 +16,6 @@ These 2 other lines are needed in the gradle.properties file for the project to 
 android.useAndroidX=true
 android.enableJetifier=true
 ```
+
+# Testing:
+I have included unit tests and Espresso automated UI tests for various parts of the app. They are located in the androidTest and test directories in ```Lawn_Companion/app/src/```.
